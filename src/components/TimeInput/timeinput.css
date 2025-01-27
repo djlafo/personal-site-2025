@@ -1,0 +1,4 @@
+.time-input {
+    display: inline-flex;
+    flex-direction: column;
+}

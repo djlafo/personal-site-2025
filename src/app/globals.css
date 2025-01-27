@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'Gohu';
+  src: local('Gohu'), url(@/font/GohuFont14NerdFontMono-Regular.ttf), format('ttf');
+}
+
+body {
+  background-color: #000000;
+  color: #FFFFFF;
+  margin: 0;
+  font-family: Gohu;
+  font-size: 22px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a, a:visited {
+  color: white;
+  text-decoration: none;
+  border: 1px solid cyan;
+  padding: 0px 6px;
+  border-radius: 5px;
+}
+
+textarea {
+background-color: #000000;
+color: #FFFFFF;
+border: 1px solid cyan;
+}
+
+a, input[type=button], input[type=submit] {
+background-color: rgba(0, 255, 255, 0.1);
+padding: 5px;
+}
+
+a:hover {
+color: cyan;
+}
+
+code {
+font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+background-color: #888888;
+border-radius: 10px;
+padding: 4px 8px;
+}
+
+p {
+line-height: 1.3;
+overflow: hidden;
+}
+
+input, input:active, input:focus {
+background-color: #000000;
+color: #FFFFFF;
+border: 0;
+border-bottom: 1px solid #777777;
+outline: 0;
+font-size: 22px;
+}
+
+input[type=button], input[type=submit] {
+border: 1px solid cyan;
+border-radius: 8px;
+}
+
+input[type=number], input[type=text] {
+width: 150px;
+}
+
+input:hover, input:focus, input:active {
+color: cyan;
+border-bottom: 1px solid cyan;
+}
+
+input[readOnly] {
+color: grey; 
+}
+
+.big-button {
+width: 100%;
+height: 50px;
+}
+
+.help-text, .error-text {
+font-size: 15px;
+font-style: italic;
+}
+.error-text {
+color: red;
+}
+
+label {
+font-weight: bold;
+}
+
+img.large {
+width: 100%;
+}
+
+/* animations */
+
+@keyframes fadein {
+from {
+  opacity: 0;
+}
+to {
+  opacity: 1;
+}
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+} 

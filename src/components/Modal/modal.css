@@ -1,0 +1,41 @@
+.modal-parent:not(.opened) {
+    visibility:hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s;
+}
+
+.modal-parent.opened {
+    position: fixed;
+    z-index: 50;
+
+    visibility: visible;
+    opacity: 1;
+    transition: visible 0.3s, opacity 0.3s;
+}
+
+.modal-background {
+    z-index: 51;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(30,30,30,0.9);
+}
+
+.modal-content {
+    z-index: 52;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    max-height: 85%;
+    max-width: 80%;
+    overflow-y: auto;
+}
+
+.modal-content.style-one {
+    background: #555555;
+    padding: 25px;
+    box-shadow: 0 0 6px 0 white;
+}

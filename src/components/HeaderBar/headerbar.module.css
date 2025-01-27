@@ -1,0 +1,39 @@
+.headerbar {
+    width: 100%;
+    padding: 15px 0px 5px 0px;
+}
+
+.linklist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+}
+
+.linklist span {
+    margin: 20px 0;
+}
+
+.linkdivider {
+    padding-top: 60px;
+}
+
+.burgermenu {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+    cursor: pointer;
+    width: 28px;
+}
+
+.burgerbar {
+    height: 3px;
+    background-color: white;
+    margin: 2px 0;
+}
+
+.headerbar.opened .burger-bar {
+    background-color: rgb(200, 200, 200);
+}

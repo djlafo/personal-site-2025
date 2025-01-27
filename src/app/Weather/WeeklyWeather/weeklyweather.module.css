@@ -1,0 +1,14 @@
+.graphcontainer {
+    width: 100%;
+    /* height: max(720px, 80%); */
+    padding-bottom: 20px;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.dayswitcher {
+    text-align: center;
+}
+.dayswitcher input {
+    margin: 5px 10px;
+}

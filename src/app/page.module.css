@@ -1,0 +1,44 @@
+.home h1 {
+  text-align: center;
+}
+
+.home {
+  max-width: 2000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.selfie {
+  width: min(50%, 500px);
+  float: right;
+  box-shadow: 0 0 6px 1px #444444;
+  margin: 25px;
+}
+
+@media screen and (max-width: 1800px) {
+  .selfie {
+      float: none;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+  }
+  .home h1 {
+      margin-bottom: 0;
+      margin-top: 0;
+  }
+}
+@media screen and (min-width: 1800px) {
+  .home h1 {
+      margin-bottom: 50px;
+      margin-top: 60px;
+  }
+  .home p {
+      padding-right: 30px;
+      margin-top: 90px;
+  }
+}
+
+.home p {
+  padding-bottom: 5px;
+  line-height: 2;
+}
