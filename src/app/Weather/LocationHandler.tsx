@@ -34,7 +34,11 @@ const grabOther = async ({zip, coords, auto} : LocationData) => {
 };
 
 const getParam = (s : string, params : URLSearchParams) => {
-    return params.get(s) || localStorage.getItem(s) || undefined;
+    let st = '';
+    if(typeof window !== 'undefined') {
+        st = localStorage.getItem(s) || '';
+    }
+    return params.get(s) || st || undefined;
 }
 
 export interface LocationData {
@@ -90,8 +94,10 @@ export function LocationProvider({children} : {children:React.ReactNode}) {
     }
 
     if(zip && coords) {
-        localStorage.setItem('zip', zip);
-        localStorage.setItem('coords', coords);
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('zip', zip);
+            localStorage.setItem('coords', coords);
+        }
         if(params.get('zip') !== zip || params.get('coords') !== coords) {
             params.set('zip', zip);
             params.set('coords', coords);

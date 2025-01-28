@@ -1,3 +1,5 @@
+"use client"
+
 import { UVAPIData, WeatherAPIData, WeatherPeriods, WeatherData } from "./types";
 
 const coordinateURL = (coord : string) => `https://api.weather.gov/points/${coord}`;
@@ -93,8 +95,11 @@ const apiFetch = async function<T>(f : common, cache = false) : Promise<T> {
     return new Promise((acc,rej) => {
         (async() => {
             try {
-                const storage = cache && localStorage.getItem(f.storageKey); 
-                const date = cache && localStorage.getItem(`${f.storageKey}Date`);
+                let storage, date;
+                if(cache && typeof window !== 'undefined') {
+                    storage = cache && localStorage.getItem(f.storageKey); 
+                    date = cache && localStorage.getItem(`${f.storageKey}Date`);
+                }
                 let tJson : T;
                 if(storage && date && new Date(date) > new Date()) {
                     tJson = JSON.parse(storage);
@@ -108,8 +113,10 @@ const apiFetch = async function<T>(f : common, cache = false) : Promise<T> {
                     }
                 }
                 const hourAhead = new Date(new Date().setHours(new Date().getHours() + 1)).toUTCString();
-                localStorage.setItem(f.storageKey, JSON.stringify(tJson));
-                localStorage.setItem(`${f.storageKey}Date`, hourAhead);
+                if(typeof window !== 'undefined') {
+                    localStorage.setItem(f.storageKey, JSON.stringify(tJson));
+                    localStorage.setItem(`${f.storageKey}Date`, hourAhead);
+                }
                 acc(tJson);
             } catch (e) {
                 rej(e);

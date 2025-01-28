@@ -1,6 +1,6 @@
 ## My personal site 
 
-Hello, this is the repo for my personal site at dylanlafont.com
+Hello, this is the repo for my personal site at dylanlafont.com.  WIP.  
 Don't expect production quality - the intention here is mostly for things I use myself and code with that intent.
 
 ## Getting Started

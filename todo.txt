@@ -23,8 +23,10 @@ POLL CREATOR
     - creator poll as admin, send link to whoever to vote, ranked choice etc for movies or food stuff like that
 
 WEATHER 
-    - SSR of weather data
+    - Redo with SSR in mind, seems like it's a mess atm
 
+LINUX
+    - Fix lag again
 
 NEXT STUFF 
     create accounts 
