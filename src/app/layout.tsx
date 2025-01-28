@@ -4,7 +4,10 @@ import "./globals.css";
 import HeaderBar from '@/components/HeaderBar';
 
 export const metadata: Metadata = {
-  title: "Dylan Lafont",
+  title: {
+    template: "Dylan Lafont | %s",
+    default: "Dylan Lafont"
+  },
   description: "Personal website of Dylan Lafont",
 };
 

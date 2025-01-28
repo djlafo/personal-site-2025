@@ -3,14 +3,6 @@
     height: calc(100vw/16*9);
 }
 
-.visualizer div {
-    margin: 30px 0;
-}
-
-.visualizer div > * {
-    margin: 0 5px;
-}
-
 .visualizer canvas {
     cursor: pointer;
     margin-bottom: 35px;
@@ -22,4 +14,12 @@ canvas.full {
     top: 0;
     height: 100vh;
     width: 100vw;
+}
+
+.options, .visualizer h2 {
+    margin: 15px;
+}
+
+.options > div {
+    margin-bottom: 25px;
 }

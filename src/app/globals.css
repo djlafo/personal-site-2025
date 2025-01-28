@@ -95,6 +95,7 @@ font-weight: bold;
 
 img.large {
 width: 100%;
+height: auto;
 }
 
 /* animations */

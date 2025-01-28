@@ -6,6 +6,10 @@
     animation: fadein .4s ease-in;
 }
 
+.textsection {
+    padding: 0 15px;
+}
+
 .imagedisplay {
     display: flex;
     flex-direction: column;

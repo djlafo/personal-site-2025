@@ -1,0 +1,33 @@
+change title to reflect page
+add loading animations to new sections, or generalize somehow
+
+INTERVAL TIMER 
+    -Timer animations
+
+DAILY PLANNER
+    - If has a timer, highlight red or something
+    - Use space better
+    - Fix mobile flexing
+    - Have timers enable to actively count down
+    - all checkbox vertical alignment
+    - Save/copy button feedback
+    - Indicator if not saved
+    - dont autofocus inactive rows (happens when switching to page)
+    - Keyboard shortcuts
+
+VISUALIZER
+    - Stylize
+    - enable PiP somehow?
+
+POLL CREATOR
+    - creator poll as admin, send link to whoever to vote, ranked choice etc for movies or food stuff like that
+
+WEATHER 
+    - SSR of weather data
+
+
+NEXT STUFF 
+    create accounts 
+    sync planner on an account
+    savable weather location
+    file hosting

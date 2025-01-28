@@ -12,7 +12,8 @@
   width: min(50%, 500px);
   float: right;
   box-shadow: 0 0 6px 1px #444444;
-  margin: 25px;
+  margin: 10px 25px;
+  height: auto;
 }
 
 @media screen and (max-width: 1800px) {
@@ -40,5 +41,6 @@
 
 .home p {
   padding-bottom: 5px;
+  margin: 0 15px;
   line-height: 2;
 }

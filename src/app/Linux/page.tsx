@@ -36,14 +36,16 @@ export default function Linux() {
     return <>
         <GlowBackdrop id='linux-ss-glow' deviation='20' saturation="20"/>
         <div className={styles.linux}>
-            <h2>
-                Themes
-            </h2>
-            <p>
-                Check out my custom desktop themes (Debian btw)<br/>
-                <br/>
-                I wrote a script and a SCSS template to generate a basic theme on the fly for the wallpaper, then add tweaks from there
-            </p>
+            <div className={styles.textsection}>
+                <h2>
+                    Themes
+                </h2>
+                <p>
+                    Check out my custom desktop themes (Debian btw)<br/>
+                    <br/>
+                    I wrote a script and a SCSS template to generate a basic theme on the fly for the wallpaper, then add tweaks from there
+                </p>
+            </div>
             <div className={styles.imagedisplay}>
                 <div>
                     <input type='button' value='<' onClick={() => setActiveImage(a => increment(a, - 1))}/>

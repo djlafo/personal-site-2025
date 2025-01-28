@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import styles from './visualizer.module.css';
+
 export interface VisualizerOptionsType {
     width: number;
     height: number;
@@ -40,8 +42,8 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
         if(!Number(shuffleTimer)) setShuffleTimer('15');
     }
 
-    return <>
-            <div>
+    return <div className={styles.options}>
+        <div>
             <label htmlFor='widthInput'>Render width: </label>
             <input type='text' id="widthInput" value={width} onChange={e => setWidth(e.target.value)}/><br/>
 
@@ -61,12 +63,11 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
                 setLock(e.target.checked);
             }}/>
         </div>
-
         <div>
             <input type='button' value={started ? 'Restart' : 'Start'} onClick={() => start()}/>
             {started && <input type='button' value='Shuffle' onClick={() => o.onShuffle()}/>}
             <br/><br/>
             {started && <>Click canvas to take up browser content</>}
         </div>
-    </>;
+    </div>;
 }
