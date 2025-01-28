@@ -8,7 +8,7 @@ const calculateTime = (s : string) : number => {
     
     let timeCalc = 0;
     if(parts.length > 0) {
-        parts.forEach((p,i) => {
+        parts.forEach((p) => {
             let multiplier = 0;
             if(p.length > 0) {
                 switch(p.charAt(p.length-1).toLowerCase()) {
@@ -45,9 +45,8 @@ const calculateString = (n : number) : string => {
 interface TimeProps extends ComponentProps<'input'> {
     value? : number; 
     onValueChange? : valueChangeFunction;
-    required? : boolean;
 }
-function TimeInput({ value, onValueChange, required, ...props } : TimeProps ) {
+function TimeInput({ value, onValueChange, ...props } : TimeProps ) {
     // const [remainingTime, setRemainingTime] = useState(1500);
     const inputRef = useRef<HTMLInputElement>(null);
     const [remainingTimeText, setRemainingTimeText] = useState('');
@@ -55,7 +54,7 @@ function TimeInput({ value, onValueChange, required, ...props } : TimeProps ) {
 
     const alertValueChange = (s : string) => {
         const v = calculateTime(s);
-        onValueChange && onValueChange(v);
+        if(onValueChange) onValueChange(v);
         const remainingText = calculateString(v);
         setRemainingTimeText(remainingText);
     }

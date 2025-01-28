@@ -15,7 +15,6 @@ interface TaskListProps {
 }
 interface StringTask extends Omit<Task, 'motivation' | 'necessity'> {
     motivation : string;
-    necessity : string;
 }
 export default function TaskList(props : TaskListProps) {
     const [lastTasks, setLastTasks] = useState<Array<Task>>();

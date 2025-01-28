@@ -12,17 +12,20 @@ import ErrorBox from './ErrorBox';
 import { LocationProvider } from './LocationHandler';
 
 import styles from './weather.module.css';
+import { Suspense } from 'react';
 
 /* COMPONENT */
 export default function Weather() {
     return <>
         <div className={styles.weather}>
             <ToastContainer/>
-            <LocationProvider>
-                <WeeklyWeather/>
-                <WeatherSettings autoOpen={true}/>
-                <ErrorBox/>
-            </LocationProvider>
+            <Suspense>
+                <LocationProvider>
+                    <WeeklyWeather/>
+                    <WeatherSettings autoOpen={true}/>
+                    <ErrorBox/>
+                </LocationProvider>
+            </Suspense>
         </div>
     </>;
 }

@@ -22,7 +22,7 @@ export default function WeeklyWeather() {
                 setCurrentDay(Object.keys(formatted)[0]);
                 setWeekWeatherData(formatted);
             }).catch(e => {
-                setLogs && setLogs(a => a.concat([{
+                if(setLogs) setLogs(a => a.concat([{
                     error: e.error,
                     string: e.string
                 }]));

@@ -18,14 +18,14 @@ export default function WeatherSettings({autoOpen=true} : WeatherSettingsTypes) 
 
     const _setLocation = (ld : LocationData) => {
         setLoading(true);
-        setLogs && setLogs(a => a.concat([{
+        if(setLogs) setLogs(a => a.concat([{
             string: `Loading full location for:
             zip:${ld.zip}
             coords:${ld.coords}
             autograb:${ld.auto || false}`
         }]));
-        setLocation && setLocation(ld).then(ldTwo => {
-            setLogs && setLogs(a => a.concat([{
+        if(setLocation) setLocation(ld).then(ldTwo => {
+            if(setLogs) setLogs(a => a.concat([{
                 string: `Loaded location:
                 zip:${ldTwo.zip}
                 coords:${ldTwo.coords}`
@@ -33,7 +33,7 @@ export default function WeatherSettings({autoOpen=true} : WeatherSettingsTypes) 
             setZipField(ldTwo.zip);
             setCoordsField(ldTwo.coords);
             setSettingsOpened(false);
-        }).catch(_ => {}).finally(() => setLoading(false));
+        }).catch(() => {}).finally(() => setLoading(false));
     };
 
     return <>

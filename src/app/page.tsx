@@ -23,13 +23,13 @@ export default function Home() {
                 A while ago, I took a sabbatical from work to focus on long-term mental health issues that made normal life difficult for me, such as agoraphobia.
                 <br/>
                 <br/>
-                I'm happy to say I was successful. I've grown a lot as a person, and I'm now ready to hop back into code.
+                I&apos;m happy to say I was successful. I've grown a lot as a person, and I&apos;m now ready to hop back into code.
                 <br/>
                 <br/>
-                I'll be using the rest of the website to throw useful tools in for me and misc stuff
+                I&apos;ll be using the rest of the website to throw useful tools in for me and misc stuff
                 <br/>
                 <br/>
-                Here's my <Link href='/resume.pdf' target='_blank' rel='noreferrer'>resume</Link>
+                Here&apos;s my <Link href='/resume.pdf' target='_blank' rel='noreferrer'>resume</Link>
             </p>
         </div>
     </>;

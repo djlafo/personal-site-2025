@@ -6,6 +6,7 @@ interface TaskSaverProps {
 }
 
 export const load = () => {
+    if(typeof window === 'undefined') return;
     const storage = localStorage.getItem('tasks');
     if(!storage) return;
     try {
@@ -43,6 +44,7 @@ export default function TaskSaver(props : TaskSaverProps) {
     };
 
     const save = () => {
+        if(typeof window === 'undefined') return;
         localStorage.setItem('tasks', JSON.stringify(props.tasks));
     };
 

@@ -4,7 +4,7 @@ import './modal.css';
 interface ModalProps {
     onClose: () => void;
     opened: boolean;
-    children: JSX.Element | Array<JSX.Element>;
+    children: React.ReactNode;
     styleOne?: boolean;
     doOnKey?: (e: KeyboardEvent) => void;
 }
@@ -26,7 +26,7 @@ export default function Modal({ opened, children, onClose, styleOne=false, doOnK
 
     useEffect(() => {
 		const onEsc = (e : KeyboardEvent) => {
-            doOnKey && doOnKey(e);
+            if(doOnKey) doOnKey(e);
             if(opened && e.key === "Escape") {
                 onClose();
             }

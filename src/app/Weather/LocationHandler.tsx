@@ -19,7 +19,8 @@ const grabOther = async ({zip, coords, auto} : LocationData) => {
     
             if(coords && !zip) {
                 getZipFromCoords(coords).then(z => {
-                    acc({zip: z, coords: coords});
+                    // Double null check for...... reasons?? blame the linter
+                    if(coords) acc({zip: z, coords: coords});
                 }).catch(e => rej(e));
             } else if (zip && !coords) {
                 getCoordsFromZip(zip).then(c => {
@@ -32,7 +33,6 @@ const grabOther = async ({zip, coords, auto} : LocationData) => {
     });
 };
 
-const urlParams = new URLSearchParams(window.location.search);
 const getParam = (s : string, params : URLSearchParams) => {
     return params.get(s) || localStorage.getItem(s) || undefined;
 }
