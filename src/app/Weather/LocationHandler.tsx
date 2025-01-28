@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createContext, useState } from "react";
 import { getCoordsFromZip, getZipFromCoords, getBrowserCoordinates } from "./location";
+
+import { useSearchParams, usePathname } from 'next/navigation';
 
 /* HELPERS */
 const grabOther = async ({zip, coords, auto} : LocationData) => {
@@ -31,8 +33,8 @@ const grabOther = async ({zip, coords, auto} : LocationData) => {
 };
 
 const urlParams = new URLSearchParams(window.location.search);
-const getParam = (s : string) => {
-    return urlParams.get(s) || localStorage.getItem(s) || undefined;
+const getParam = (s : string, params : URLSearchParams) => {
+    return params.get(s) || localStorage.getItem(s) || undefined;
 }
 
 export interface LocationData {
@@ -63,9 +65,14 @@ export const LocationContext = createContext(locationDefault);
 
 // a reducer wouldn't quite work here because this is always going into async for grabOther, so i'm not bothering with it
 export function LocationProvider({children} : {children:React.ReactNode}) {
-    const [zip, setZip] = useState(getParam('zip'));
-    const [coords, setCoords] = useState(getParam('coords'));
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const params = new URLSearchParams(searchParams);
+
+    const [zip, setZip] = useState(getParam('zip', params));
+    const [coords, setCoords] = useState(getParam('coords', params));
     const [logs, setLogs] = useState<Array<LogData>>([]);
+
 
     const setLocation = (ld : LocationData) : Promise<LocationDataReq> => {
         const prom = grabOther(ld).then(ldFull => {
@@ -85,7 +92,15 @@ export function LocationProvider({children} : {children:React.ReactNode}) {
     if(zip && coords) {
         localStorage.setItem('zip', zip);
         localStorage.setItem('coords', coords);
-        window.history.replaceState(null, '', `?coords=${coords}&zip=${zip}`);
+        if(params.get('zip') !== zip || params.get('coords') !== coords) {
+            params.set('zip', zip);
+            params.set('coords', coords);
+            // I have no idea how to do this properly for now, nextjs does not play nicely
+            // with changing params without doing anything else
+            setTimeout(() => {
+                window.history.pushState(null, '', `${pathname}?${params.toString()}`);
+            }, 2000);
+        }
     }
     return <LocationContext.Provider value={{
         zip: zip, 

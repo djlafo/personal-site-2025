@@ -1,5 +1,7 @@
 import { useCallback, useEffect } from "react";
 
+import styles from './weeklyweather.module.css';
+
 interface DaySwitcherProps {
     days: Array<string>;
     currentDay: string;
@@ -30,7 +32,7 @@ export default function DaySwitcher({days, currentDay, onDaySwitched} : DaySwitc
 		}
 	}, [switchDay])
 
-    return <div className='day-switcher'>
+    return <div className={styles.dayswitcher}>
         <input type='button' 
             onClick={() => switchDay(-1)}
             value='<'/>
