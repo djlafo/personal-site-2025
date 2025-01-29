@@ -3,6 +3,8 @@ import "./globals.css";
 
 import HeaderBar from '@/components/HeaderBar';
 
+import { UserProvider } from "@/components/Session";
+import { getUserInfo } from "@/actions/auth";
 
 export const metadata: Metadata = {
   title: {
@@ -12,19 +14,21 @@ export const metadata: Metadata = {
   description: "Personal website of Dylan Lafont",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
 
-
+  const user = await getUserInfo()
 
   return (
     <html lang="en">
       <body>
+        <UserProvider user={user}>
           <HeaderBar/>
           {children}
+        </UserProvider>
       </body>
     </html>
   );

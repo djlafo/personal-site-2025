@@ -1,8 +1,8 @@
 .headerbar {
     width: 100%;
-    padding: 15px 0px 5px 0px;
+    box-sizing: border-box;
+    padding: 15px;
     display: flex;
-    margin: 0 15px;
     justify-content: space-between;
 }
 

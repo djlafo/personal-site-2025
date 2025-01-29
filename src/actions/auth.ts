@@ -9,7 +9,7 @@ import bcrypt from 'bcrypt';
 
 import { cookies } from 'next/headers'
 
-import { UserInfo } from '@/components/Login';
+import { UserInfo } from '@/components/Session';
 
 type FormState = {
     error?: String;
@@ -34,14 +34,13 @@ export async function login(state: FormState, formData: FormData) {
         const correctPass = await bcrypt.compare(info.password, user.password);
         if(correctPass) {
             const jwt = await encrypt(user);
-            const expiresAt = getExpiration();
             const cookieStore = await cookies();
     
             cookieStore.set('session', jwt, {
                 httpOnly: true,
                 secure: true,
-                expires: expiresAt,
-                sameSite: 'strict',
+                // expires: getExpiration(),
+                sameSite: 'lax',
                 path: '/'
             });
             return userToUserInfo(user);
@@ -61,6 +60,6 @@ export async function logout() {
 export async function getUserInfo() {
     const user = await getUser();
     if(user) {
-        return await userToUserInfo(user);
+        return userToUserInfo(user);
     }
 }

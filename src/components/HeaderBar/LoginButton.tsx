@@ -4,21 +4,24 @@ import { useState } from 'react';
 
 import { logout } from '@/actions/auth';
 
-import Login, { UserInfo } from '@/components/Login';
+import Login from '@/components/Login';
 import Modal from '@/components/Modal';
+import { UserInfo, useUser } from '@/components/Session';
+import { redirect } from 'next/navigation';
 
 export default function LoginButton() {
     const [opened, setOpened] = useState(false);
-    const [user, setUser] = useState<UserInfo | null>();
+    const [user, setUser] = useUser();
 
-    const onUserChange = (u: UserInfo | null) => {
+    const onUserChange = (u?: UserInfo) => {
         setOpened(false);
         setUser(u);
     }
 
     const _logout = () => {
         logout().then(() => {
-            setUser(null);
+            setUser();
+            redirect('/');
         });
     }
 
@@ -28,7 +31,7 @@ export default function LoginButton() {
             (!user && <input type='button' value='Login' onClick={() => setOpened(true)}/>)
         }
         <Modal styleOne opened={opened} onClose={() => setOpened(false)}>
-            <Login onUserChange={onUserChange}/>
+            <Login user={user} onUserChange={onUserChange}/>
         </Modal>
     </div>
 }

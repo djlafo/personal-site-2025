@@ -31,7 +31,7 @@ export async function getUser() : Promise<typeof usersTable.$inferSelect | undef
     if(sessionHeader) {
         try {
             const decrypted = decrypt(sessionHeader);
-            return decrypted;
+            return decrypted.data as typeof usersTable.$inferSelect;
         } catch (e) { 
             // invalid header
         }
