@@ -1,18 +1,28 @@
-'use client'
+import { listPolls, SerializedPoll } from "@/actions/polls";
+import { Metadata } from "next";
 
-import { useState } from "react";
+import PollButton from './PollButton';
+import { Suspense } from "react";
 
-import { SerializedPoll } from "@/actions/polls";
+export const metadata: Metadata = {
+    title: "Polls"
+};
 
-import PollList from "./PollList";
-import Poll from './Poll';
+export default function Page() {
+    return <Suspense fallback='Loading polls...'>
+        <PollList/>
+    </Suspense>
+}
 
-export default function PollPage() {
-    const [selectedPoll, setSelectedPoll] = useState<SerializedPoll>();
-    return <>
-        <PollList onOpen={(p) => setSelectedPoll(p)}/>
+async function PollList() {
+    const polls = await listPolls();
+    return <div>
         {
-            selectedPoll && <Poll poll={selectedPoll}/> || <></>
+            polls && polls.map(p => {
+                return <div key={p.uuid}>
+                    {p.title} - {p.dateCreated} - <PollButton uuid={p.uuid}/>
+                </div>;
+            }) || <></>
         }
-    </>;
+    </div>;
 }

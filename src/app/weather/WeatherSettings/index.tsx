@@ -47,10 +47,10 @@ export default function WeatherSettings({autoOpen=true} : WeatherSettingsTypes) 
                 <PopupInfo/>
                 <div className='inputs'>
                     <div>
-                        ZIP: <input type='textbox' value={zipField} onChange={e => setZipField(e.target.value)}/>
+                        ZIP: <input type='textbox' value={zipField || ''} onChange={e => setZipField(e.target.value)}/>
                     </div>
                     <div>
-                        Coordinates: <input type='textbox' value={coordsField} onChange={e => setCoordsField(e.target.value)}/>
+                        Coordinates: <input type='textbox' value={coordsField || ''} onChange={e => setCoordsField(e.target.value)}/>
                     </div>
                     <br/>
                     <div className='buttons'>

@@ -13,7 +13,7 @@ import styles from './headerbar.module.css';
 
 export default function LoginButton() {
     const [opened, setOpened] = useState(false);
-    const [user, setUser] = useUser();
+    const [user, setUser, pending] = useUser();
 
     const onUserChange = (u?: UserInfo) => {
         setOpened(false);
@@ -29,8 +29,8 @@ export default function LoginButton() {
 
     return <div className={styles.loginbutton}>
         {
-            (!!user && <span>{user.username} <input type='button' value='Logout' onClick={() => _logout()}/></span>) ||
-            (!user && <input type='button' value='Login' onClick={() => setOpened(true)}/>)
+            (!pending && !!user && <span>{user.username} <input type='button' value='Logout' onClick={() => _logout()}/></span>) ||
+            (!pending && !user && <input type='button' value='Login' onClick={() => setOpened(true)}/>)
         }
         <Modal styleOne opened={opened} onClose={() => setOpened(false)}>
             <Login user={user} onUserChange={onUserChange}/>

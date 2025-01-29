@@ -105,7 +105,7 @@ export function LocationProvider({children} : {children:React.ReactNode}) {
             // with changing params without doing anything else
             setTimeout(() => {
                 window.history.pushState(null, '', `${pathname}?${params.toString()}`);
-            }, 2000);
+            }, 250);
         }
     }
     return <LocationContext.Provider value={{

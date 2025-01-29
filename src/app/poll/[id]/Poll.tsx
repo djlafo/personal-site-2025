@@ -1,29 +1,23 @@
-import { useEffect, useState } from "react";
+'use client'
+import { SerializedFullPoll, SerializedPollOption, voteFor } from "@/actions/polls"
+import Link from "next/link";
 
-import { readPoll, SerializedFullPoll, SerializedPoll, SerializedPollOption, voteFor } from "@/actions/polls"
 
 interface PollProps {
-    poll: SerializedPoll
+    poll: SerializedFullPoll
 }
 export default function Poll(props: PollProps) {
-    const [fullPoll, setFullPoll] = useState<SerializedFullPoll>();
-
-    useEffect(() => {
-        readPoll(props.poll.uuid).then(p => {
-            setFullPoll(p);
-        });
-    }, [props.poll]);
-
     const vote = async (p: SerializedPollOption) => {
         const v = await voteFor(p.id);
     }
 
     return <>
+        <Link href='/poll'>Back</Link>
         <h2>
             {props.poll.title} - {props.poll.dateCreated}
         </h2>
         {
-            fullPoll && fullPoll.options.map(p => {
+            props.poll.options.map(p => {
                 return <div key={p.id}>
                     {p.text} - {p.votes} votes - <input type='button' value='Vote' onClick={() => vote(p)}/>
                 </div>;
