@@ -128,3 +128,7 @@ img.large {
     transform: rotate(360deg);
   }
 }
+
+.fadechildren > * {
+  animation: fadein .4s ease-in;
+}

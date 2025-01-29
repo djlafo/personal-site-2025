@@ -6,6 +6,15 @@
     justify-content: space-between;
 }
 
+.headerbar > * {
+    flex: 1;
+}
+
+.loginbutton {
+    display: flex;
+    justify-content: end;
+}
+
 .linklist {
     display: flex;
     flex-direction: column;
@@ -22,6 +31,8 @@
 }
 
 .burgermenu {
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-direction: column;
     padding: 3px;

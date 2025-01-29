@@ -1,11 +1,3 @@
-.linux h2 {
-    animation: fadein .2s ease-in;
-}
-
-.linux p {
-    animation: fadein .4s ease-in;
-}
-
 .textsection {
     padding: 0 15px;
 }
@@ -16,7 +8,6 @@
     align-items:center;
     justify-content: space-between;
     margin-top: 50px;
-    animation: fadein .6s ease-in;
 }
 
 .imagedisplay > * {

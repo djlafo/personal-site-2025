@@ -5,7 +5,7 @@ export const pollsTable = pgTable("polls", {
   uuid: varchar({length: 255}).primaryKey().notNull(),
   userId: integer('user_id').references((): AnyPgColumn => usersTable.id).notNull(),
   title: varchar({length:255}).notNull(),
-  guestAddable: boolean('guest_addable').default(false),
+  guestAddable: boolean('guest_addable').default(false).notNull(),
   dateCreated: date('date_created').notNull().defaultNow(),
   active: boolean().default(true)
 });

@@ -9,6 +9,8 @@ import Modal from '@/components/Modal';
 import { UserInfo, useUser } from '@/components/Session';
 import { redirect } from 'next/navigation';
 
+import styles from './headerbar.module.css';
+
 export default function LoginButton() {
     const [opened, setOpened] = useState(false);
     const [user, setUser] = useUser();
@@ -25,7 +27,7 @@ export default function LoginButton() {
         });
     }
 
-    return <div>
+    return <div className={styles.loginbutton}>
         {
             (!!user && <span>{user.username} <input type='button' value='Logout' onClick={() => _logout()}/></span>) ||
             (!user && <input type='button' value='Login' onClick={() => setOpened(true)}/>)

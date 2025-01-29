@@ -50,6 +50,11 @@ export default function HamburgerMenu() {
 							Daily Planner
 						</Link>
 					</span>
+                    <span>
+						<Link href={'/poll'}>
+							Polls
+						</Link>
+					</span>
 					<div className={styles.linkdivider}/>
 					<span>
 						<Link href='mailto:djlafo@gmail.com'>djlafo@gmail.com</Link>

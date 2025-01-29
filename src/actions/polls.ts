@@ -1,3 +1,5 @@
+'use server'
+
 import { headers } from "next/headers";
 
 import db from "@/db";
@@ -5,7 +7,14 @@ import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls"
 import { getUser } from "@/lib/sessions";
 import { and, eq, or } from "drizzle-orm";
 
-function serializePoll(p: typeof pollsTable.$inferSelect) {
+export interface SerializedPoll {
+    uuid: string;
+    title: string;
+    guestAddable: boolean;
+    dateCreated: string;
+
+}
+function serializePoll(p: typeof pollsTable.$inferSelect): SerializedPoll {
     return {
         uuid: p.uuid,
         title: p.title,
@@ -16,33 +25,58 @@ function serializePoll(p: typeof pollsTable.$inferSelect) {
 
 export async function listPolls() {
     const user = await getUser();
-    if(!user) throw new Error('Not logged in');
-    const polls = await db.select().from(pollsTable).where(
-        and(
-            eq(pollsTable.userId, user.id),
-            eq(pollsTable.active, true)
+    let polls;
+    if(!user) {
+        polls = await db.select().from(pollsTable).where(
+            eq(pollsTable.uuid, 'example')
         )
-    )
+    } else {
+        polls = await db.select().from(pollsTable).where(
+            and(
+                eq(pollsTable.userId, user.id),
+                eq(pollsTable.active, true)
+            )
+        )
+    }
 
     return polls.map(p => serializePoll(p));
 }
 
+export interface SerializedFullPoll {
+    options: Array<SerializedPollOption>;
+    uuid: string;
+    title: string;
+    guestAddable: boolean;
+    dateCreated: string;
+}
+export interface SerializedPollOption {
+    id: number;
+    text: string;
+    votes: number;
+}
 export async function readPoll(uuid: string) {
     const poll = await db.select()
         .from(pollsTable)
-        .fullJoin(pollOptionsTable, eq(pollsTable.uuid, pollOptionsTable.pollUuid))
-        .leftJoin(pollVotesTable, eq(pollVotesTable.pollOptionId, pollOptionsTable.id))
-        .where(eq(pollsTable.uuid, uuid));
+        .innerJoin(pollOptionsTable, eq(pollsTable.uuid, pollOptionsTable.pollUuid))
+        .leftJoin(pollVotesTable, eq(pollOptionsTable.id, pollVotesTable.pollOptionId))
+        .where(and(
+            eq(pollsTable.uuid, uuid),
+            and(
+                eq(pollsTable.active, true),
+                eq(pollOptionsTable.active, true)
+            )
+        ));
 
     if(!poll[0].polls) throw new Error('fjklsafjlksdaj');
 
     const options = poll.map(p => {
         const votes = poll.filter(p2 => !!p2.poll_votes);
-        return {
-            id: p.poll_options?.id,
-            text: p.poll_options?.text,
+        const pollOption: SerializedPollOption = {
+            id: p.poll_options?.id || - 1,
+            text: p.poll_options?.text || 'Missing Text',
             votes: votes.length
         };
+        return pollOption;
     });
 
     return {

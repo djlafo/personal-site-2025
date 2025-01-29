@@ -1,4 +1,3 @@
-change title to reflect page
 add loading animations to new sections, or generalize somehow
 
 INTERVAL TIMER 
@@ -23,6 +22,8 @@ POLL CREATOR
     - ranked choice 
     - live refresh
     - Have an example that never expires
+    - Have it redirect to URL on picking a poll 
+    - Show when you've voted
 
 WEATHER 
     - Redo with SSR in mind, seems like it's a mess atm

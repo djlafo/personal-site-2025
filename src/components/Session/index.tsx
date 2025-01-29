@@ -1,7 +1,8 @@
 'use client'
 
-// import { getUserInfo } from "@/actions/auth";
 import { createContext, useContext, useState } from "react";
+
+import styles from './session.module.css';
 
 export interface UserInfo {
     username: string;
@@ -27,7 +28,9 @@ export function UserProvider(props: SessionProps) {
     ];
 
     return <SessionContext.Provider value={_value}>
-        {props.children}
+        <div className='fadechildren'>
+            {props.children}
+        </div>
     </SessionContext.Provider>
 }
 
