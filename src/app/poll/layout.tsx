@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Daily Planner"
+  title: "Poll" // maybe add poll data here
 };
 
 export default function RootLayout({

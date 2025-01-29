@@ -26,27 +26,27 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link href={'/Linux'}>
+						<Link href={'/linux'}>
 							Linux Stuff
 						</Link>
 					</span>
 					<span>
-						<Link href={'/Interval'}>
+						<Link href={'/interval'}>
 							Interval Timer
 						</Link>
 					</span>
 					<span>
-						<Link href={'/Weather'}>
+						<Link href={'/weather'}>
 							Weather
 						</Link>
 					</span>
 					<span>
-						<Link href={'/Visualizer'}>
+						<Link href={'/visualizer'}>
 							Music Visualizer
 						</Link>
 					</span>
 					<span>
-						<Link href={'/Planner'}>
+						<Link href={'/planner'}>
 							Daily Planner
 						</Link>
 					</span>

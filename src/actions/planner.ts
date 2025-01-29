@@ -1,0 +1,49 @@
+'use server'
+
+import db from '@/db';
+import { eq, isNotNull, and } from 'drizzle-orm';
+
+import { usersTable } from '@/db/schema/users';
+import { plannerTable } from '@/db/schema/planner';
+import { getUser } from '@/lib/sessions';
+
+import { PlannerData } from '@/app/planner/UsePlanner';
+
+// TODO SET TYPES
+
+export async function getPlannerData(): Promise<PlannerData | undefined>{
+    const user = await getUser();
+    if(user) {
+        const planner = await db.select()
+            .from(usersTable)
+            .rightJoin(plannerTable, eq(usersTable.plannerId, plannerTable.id))
+            .where(eq(usersTable.id, user.id))
+            .limit(1);
+        if(planner.length === 1) {
+            return planner[0].planner.data as PlannerData;
+        } else if (planner.length === 0) { // create a planner row for user automatically for later
+            const newPlanner = await db.insert(plannerTable).values({}).returning({ id: plannerTable.id});
+            await db.update(usersTable).set({plannerId: newPlanner[0].id}).where(eq(usersTable.id, user.id));
+        }
+    }
+}
+
+export async function savePlannerData(pd: PlannerData) {
+    const user = await getUser();
+    if(user) {
+        const planner = await db.select()
+            .from(usersTable)
+            .rightJoin(plannerTable, eq(usersTable.plannerId, plannerTable.id))
+            .where(and(
+                eq(usersTable.id, user.id), 
+                isNotNull(usersTable.plannerId)
+            ))
+            .limit(1);
+
+        if(planner.length === 1) {
+            await db.update(plannerTable).set({ data: pd }).where(eq(plannerTable.id, planner[0].planner.id));
+            return true;
+        }
+    }
+    return false;
+}

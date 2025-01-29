@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useState } from "react";
-import { Task } from "./Planner";
+import { PlannerData, Task } from "./UsePlanner";
 
 import TimeInput from '@/components/TimeInput';
 
@@ -8,10 +10,10 @@ import styles from './planner.module.css';
 const TEXTAREA_PADDING = 5;
 
 interface TaskListProps {
-    tasks : Array<Task>;
-    onRemove : (t : Task) => void;
-    onUpdate : (ta : Array<Task>) => void;
-    children : React.ReactNode;
+    plannerData: PlannerData
+    onRemove: (t : Task) => void;
+    onUpdate: (ta : Array<Task>) => void;
+    children: React.ReactNode;
 }
 interface StringTask extends Omit<Task, 'motivation' | 'necessity'> {
     motivation : string;
@@ -21,10 +23,10 @@ export default function TaskList(props : TaskListProps) {
     const [taskCopy, setTaskCopy] = useState<Array<StringTask>>();
     const [newID, setNewID] = useState(1);
 
-    if(lastTasks !== props.tasks) {
-        setLastTasks(props.tasks);
+    if(lastTasks !== props.plannerData.tasks) {
+        setLastTasks(props.plannerData.tasks);
         let counter = 1;
-        setTaskCopy(props.tasks.map(t => {
+        setTaskCopy(props.plannerData.tasks.map(t => {
             let deadline = t.deadline;
             if(deadline)  {
                 deadline -= Date.now();
@@ -45,7 +47,7 @@ export default function TaskList(props : TaskListProps) {
     }
 
     const addRow = () => {
-        props.onUpdate(props.tasks.concat([{
+        props.onUpdate(props.plannerData.tasks.concat([{
             UUID: newID,
             label: '',
             motivation: 0,
@@ -149,7 +151,7 @@ export default function TaskList(props : TaskListProps) {
                                     onChange={e => {
                                         updateRow(i, {done: !t.done}, true);
                                     }}/>
-                                <input type='button' value='x' onClick={() => props.onRemove(props.tasks[i])}/>
+                                <input type='button' value='x' onClick={() => props.onRemove(props.plannerData.tasks[i])}/>
                             </div>
                         </div>
                     </div>;

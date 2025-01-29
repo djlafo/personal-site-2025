@@ -10,7 +10,7 @@ const secretKey = process.env.AUTH_SECRET;
 
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
     const token = jwt.sign({
-        exp: getExpiration(),
+        exp: Math.floor(getExpiration()/1000),
         data: obj
     }, secretKey);
 
@@ -22,7 +22,7 @@ export function decrypt(s: string) {
 }
 
 export function getExpiration() {
-    return Math.floor(Date.now() / 1000) + (60 * 60 * 24);
+    return (Date.now() + (60 * 60 * 24 * 1000));
 }
 
 export async function getUser() : Promise<typeof usersTable.$inferSelect | undefined> {

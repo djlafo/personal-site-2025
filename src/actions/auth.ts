@@ -28,7 +28,7 @@ export async function login(state: FormState, formData: FormData) {
         password: formData.get('password') as string
     };
 
-    const users = await db.select().from(usersTable).where(eq(usersTable.username, info.username));
+    const users = await db.select().from(usersTable).where(eq(usersTable.username, info.username)).limit(1);
     if(users.length === 1) {
         const user = users[0];
         const correctPass = await bcrypt.compare(info.password, user.password);
@@ -39,7 +39,7 @@ export async function login(state: FormState, formData: FormData) {
             cookieStore.set('session', jwt, {
                 httpOnly: true,
                 secure: true,
-                // expires: getExpiration(),
+                expires: getExpiration(),
                 sameSite: 'lax',
                 path: '/'
             });
