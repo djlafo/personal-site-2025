@@ -33,3 +33,4 @@ NEXT STUFF
     sync planner on an account
     savable weather location
     file hosting
+    ignore case on routes
