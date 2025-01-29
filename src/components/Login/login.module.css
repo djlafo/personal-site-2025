@@ -1,0 +1,14 @@
+.login {
+    width: min(250px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 70px;   
+}
+
+.login input {
+    width: 100%;
+}
+
+.login div {
+    margin: 50px 0;
+}

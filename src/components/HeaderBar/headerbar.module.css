@@ -1,6 +1,9 @@
 .headerbar {
     width: 100%;
     padding: 15px 0px 5px 0px;
+    display: flex;
+    margin: 0 15px;
+    justify-content: space-between;
 }
 
 .linklist {
@@ -19,8 +22,6 @@
 }
 
 .burgermenu {
-    margin-left: auto;
-    margin-right: auto;
     display: flex;
     flex-direction: column;
     padding: 3px;
@@ -32,8 +33,4 @@
     height: 3px;
     background-color: white;
     margin: 2px 0;
-}
-
-.headerbar.opened .burger-bar {
-    background-color: rgb(200, 200, 200);
 }

@@ -6,7 +6,6 @@ import { usersTable } from '@/db/schema/users';
 const db = drizzle(process.env.DATABASE_URL!);
 
 async function main() {
-
     const user: typeof usersTable.$inferInsert = {
         username: 'user',
         password: 'hash'

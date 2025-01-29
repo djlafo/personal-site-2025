@@ -3,6 +3,7 @@ import "./globals.css";
 
 import HeaderBar from '@/components/HeaderBar';
 
+
 export const metadata: Metadata = {
   title: {
     template: "Dylan Lafont | %s",
@@ -16,11 +17,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
   return (
     <html lang="en">
       <body>
-        <HeaderBar/>
-        {children}
+          <HeaderBar/>
+          {children}
       </body>
     </html>
   );
