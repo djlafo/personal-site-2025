@@ -172,9 +172,9 @@ async function grabIp() {
     let ip = headerList.get('x-forwarded-for');
     if(!ip) {
         // if(!process.env.DEVELOPMENT) {
-            throw new Error('Couldnt grab IP');
+            // throw new Error('Couldnt grab IP');
         // } else {
-        //     ip = '127.0.0.1';
+            ip = '127.0.0.1';
         // }
     }
     return ip;
