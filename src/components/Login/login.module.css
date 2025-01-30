@@ -5,7 +5,7 @@
     text-align: center;
 }
 
-.login input {
+.login input, .login button {
     width: 100%;
 }
 

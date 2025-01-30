@@ -7,5 +7,5 @@ export const usersTable = pgTable("users", {
   username: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
   plannerId: integer('planner_id').references((): AnyPgColumn => plannerTable.id),
-  lastIp: varchar({length: 255})
+  lastIp: varchar('last_ip', {length: 255})
 });

@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from 'react';
 
-import { login } from '@/actions/auth';
+import { login, register } from '@/actions/auth';
 
 import styles from './login.module.css';
 
@@ -20,23 +20,28 @@ export interface LoginProps {
     user?: UserInfo;
 }
 export default function Login(props: LoginProps) {
-    const [state, action, pending] = useActionState(login, undefined);
+    const [loginState, _login] = useActionState(login, undefined);
+    const [registerState, _register] = useActionState(register, undefined);
 
     useEffect(() => {
-        if(isUser(state) && state.username) {
-            props.onUserChange(state);
+        if(isUser(loginState) && loginState.username) {
+            props.onUserChange(loginState);
+        } else if(isUser(registerState) && registerState.username) {
+            props.onUserChange(registerState);
         }
-    }, [state]);
+    }, [loginState, registerState]);
 
     return <div className={styles.login}>
-        <form action={action}>
+        <form>
             <input id='username' name='username' placeholder='username' type='text'/>
 
             <input id='password' name='password' placeholder='password' type='password'/>
             
-            <input type='submit' value='Login'/>
+            <button formAction={_login}>Login</button>
+            <button formAction={_register}>Register</button>
             <div>
-                {isError(state) && state.error}
+                {isError(loginState) && loginState.error}<br/>
+                {isError(registerState) && registerState.error}
             </div>
         </form>
     </div>;

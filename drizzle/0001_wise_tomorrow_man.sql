@@ -1,1 +1,1 @@
-ALTER TABLE "users" ADD COLUMN "lastIp" varchar(255);
+ALTER TABLE "users" ADD COLUMN "last_ip" varchar(255);
