@@ -26,6 +26,10 @@ textarea {
   border: 1px solid cyan;
 }
 
+input[disabled] {
+  opacity: 0.5;
+}
+
 a,
 input[type=button],
 input[type=submit] {

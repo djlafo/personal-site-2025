@@ -11,6 +11,7 @@ DAILY PLANNER
     - dont autofocus inactive rows (happens when switching to page)
     - Keyboard shortcuts
     - Scrolling on type in mobile 
+    - set max rows allowed to save
 
 VISUALIZER
     - Stylize
@@ -19,10 +20,11 @@ VISUALIZER
 POLL CREATOR
     - ranked choice 
     - live refresh
-    - Have an example that never expires
-    - Have it redirect to URL on picking a poll 
-    - Show when you've voted
-    - Fix guest voting error
+    - let poll name change 
+    - poll expiration
+    - set max amount of polls/options allowed
+    - guest addable
+    - gracefully handle unavailable poll
 
 WEATHER 
     - Redo with SSR in mind, seems like it's a mess atm
@@ -36,7 +38,9 @@ NOTES
 
 NEXT STUFF 
     create accounts 
+        add ipbans to registration
     savable weather location
     file hosting
     Websocket events ex: notify when poll updates  
+    some redirects should probably be history pushes
 

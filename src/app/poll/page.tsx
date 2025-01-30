@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
 
-import { listPolls } from "@/actions/polls";
+import { listPolls, SerializedPoll } from "@/actions/polls";
 
 import { PollButton, CreateButton } from './PollButtons';
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    return <div className={styles.polllist}>
+    return <div className={styles.pollListContainer}>
         <Suspense fallback='Loading polls...'>
             <PollList/>
         </Suspense>
@@ -23,12 +23,22 @@ async function PollList() {
     const polls = await listPolls();
     return <div>
         <CreateButton/>
-        {
-            polls && polls.map(p => {
-                return <div key={p.uuid}>
-                    {p.title} - {p.dateCreated} - <PollButton uuid={p.uuid}/>
-                </div>;
-            }) || <></>
-        }
+        <div className={styles.pollList}>
+            {
+                polls && polls.map(p => {
+                    return <PollListCard poll={p}/>;
+                }) || <></>
+            }
+        </div>
+    </div>;
+}
+
+function PollListCard(props: {poll: SerializedPoll}) {
+    const poll = props.poll;
+
+    return <div key={poll.uuid} className={styles.pollListCard}>
+        <PollButton uuid={poll.uuid} title={poll.title}/>
+        <br/>
+        <span>{poll.dateCreated}</span>
     </div>;
 }

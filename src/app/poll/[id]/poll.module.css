@@ -1,3 +1,30 @@
 .poll {
     text-align: center;
 }
+
+.pollHeader {
+    margin-bottom: 25px;
+}
+
+.pollHeader input[type=text] {
+    width: min(500px, 90vw);
+}
+
+.pollOption {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px;
+    background-color: #333333;
+}
+
+.pollOption > * {
+    margin: 10px 0;
+}
+
+.pollOptions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 25px;
+}

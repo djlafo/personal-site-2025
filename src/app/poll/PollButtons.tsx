@@ -1,18 +1,21 @@
 'use client'
 
 import { useUser } from "@/components/Session";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface PollButtonOptions {
     uuid: string
+    title: string;
 }
 export function PollButton(props: PollButtonOptions) {
-    return <input type='button' value='Go' onClick={() => redirect(`/poll/${props.uuid}`)}/>;
+    const router = useRouter();
+    return <input type='button' onClick={() => router.push(`/poll/${props.uuid}`)} value={props.title}/>;
 }
 
 export function CreateButton() {
     const [user] = useUser();
+    const router = useRouter();
     if(user) {
-        return <input type='button' value='Create' onClick={() => redirect('/poll/create')}/>
+        return <input type='button' value='Create' onClick={() => router.push('/poll/create')}/>
     }
 }

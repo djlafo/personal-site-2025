@@ -114,11 +114,16 @@ export async function addPoll(formData: FormData) {
     if(newRow.length === 1) return newRow[0].uuid;
 }
 
-export async function inactivatePoll(uuid: string) {
+interface UpdatePollProps {
+    title?: string;
+    guestAddable?: boolean;
+    active?: boolean;
+}
+export async function updatePoll(uuid: string, props: UpdatePollProps) {
     const user = await getUser();
     if(!user) throw new Error('Unauthorized');
     const updated = await db.update(pollsTable)
-        .set({active: false})
+        .set(props)
         .where(
             and(
                 eq(pollsTable.uuid, uuid), 
@@ -127,6 +132,7 @@ export async function inactivatePoll(uuid: string) {
         ).returning({uuid: pollsTable.uuid});
     if(updated.length === 1) return true;
     return false;
+
 }
 
 export async function addOption(uuid: string, text: string) {
