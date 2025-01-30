@@ -5,9 +5,8 @@ import styles from './headerbar.module.css';
 
 export default function HeaderBar() {
 	return <div className={styles.headerbar}>
-		<div>
-		</div>
 		<HamburgerMenu/>
+		<span>Dylan Lafont</span>
 		<LoginButton/>
 	</div>;
 }

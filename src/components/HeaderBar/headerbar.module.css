@@ -10,6 +10,16 @@
     flex: 1;
 }
 
+.headerbar > span {
+    text-align: center;
+}
+
+@media screen and (max-width: 720px) {
+    .headerbar > span {
+        display: none;
+    }
+}
+
 .loginbutton {
     display: flex;
     justify-content: flex-end;
@@ -31,7 +41,6 @@
 }
 
 .burgermenu {
-    margin-left: auto;
     margin-right: auto;
     display: flex;
     flex-direction: column;

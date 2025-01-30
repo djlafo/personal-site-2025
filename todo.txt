@@ -1,4 +1,5 @@
 add loading animations to new sections, or generalize somehow
+Visitor counter?
 
 INTERVAL TIMER 
     -Timer animations
@@ -8,11 +9,9 @@ DAILY PLANNER
     - Use space better
     - Fix mobile flexing
     - Have timers enable to actively count down
-    - all checkbox vertical alignment
-    - Save/copy button feedback
-    - Indicator if not saved
     - dont autofocus inactive rows (happens when switching to page)
     - Keyboard shortcuts
+    - Scrolling on type in mobile 
 
 VISUALIZER
     - Stylize
@@ -24,6 +23,7 @@ POLL CREATOR
     - Have an example that never expires
     - Have it redirect to URL on picking a poll 
     - Show when you've voted
+    - Fix guest voting error
 
 WEATHER 
     - Redo with SSR in mind, seems like it's a mess atm
@@ -35,3 +35,4 @@ NEXT STUFF
     create accounts 
     savable weather location
     file hosting
+    Websocket events ex: notify when poll updates  

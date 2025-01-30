@@ -1,4 +1,5 @@
 'use client'
+import { useState } from "react";
 
 import { getPlannerData, savePlannerData } from "@/actions/planner";
 import { getEmptyPlanner, PlannerData } from "./UsePlanner";
@@ -20,7 +21,8 @@ export const load = () => {
 }
 
 export default function TaskSaver(props : TaskSaverProps) {
-    const [user, setUser] = useUser();
+    const [lastSaved, setLastSaved] = useState(props.plannerData);
+    const [user] = useUser();
 
     const checkClipboard = () => {
         if(!navigator.clipboard) {
@@ -32,6 +34,7 @@ export default function TaskSaver(props : TaskSaverProps) {
     const copy = () => {
         if(!checkClipboard()) return;
         navigator.clipboard.writeText(JSON.stringify(props.plannerData));
+        alert('Copied to clipboard');
     };
 
     const paste = () => {
@@ -53,6 +56,7 @@ export default function TaskSaver(props : TaskSaverProps) {
     const saveToBrowser = () => {
         if(typeof window === 'undefined') return;
         localStorage.setItem('tasks', JSON.stringify(props.plannerData));
+        setLastSaved(props.plannerData);
     };
 
     const loadBrowser = () => {
@@ -65,7 +69,9 @@ export default function TaskSaver(props : TaskSaverProps) {
     };
 
     const saveToServer = () => {
-        savePlannerData(props.plannerData);
+        savePlannerData(props.plannerData).then(r => {
+            if(r) setLastSaved(props.plannerData);
+        });
     }
 
     const loadServer = () => {
@@ -117,5 +123,10 @@ export default function TaskSaver(props : TaskSaverProps) {
             }
             <input type='button' value='Paste' onClick={() => paste()}/>
         </span>
+        <label>
+            {
+                JSON.stringify(lastSaved)===JSON.stringify(props.plannerData) ? 'Last change saved' : 'Last change unsaved'
+            }
+        </label>
     </>
 }
