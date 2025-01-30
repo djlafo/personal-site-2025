@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 import { usersTable } from '@/db/schema/users';
 
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 const secretKey = process.env.AUTH_SECRET;
 
@@ -37,4 +37,9 @@ export async function getUser() : Promise<typeof usersTable.$inferSelect | undef
         }
     }
     // no header at all
+}
+
+export async function getIp() {
+    const headerList = await headers();
+    return headerList.get('x-forwarded-for') || '';
 }

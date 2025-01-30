@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { encrypt, getExpiration, getUser } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers';
 
 import { UserInfo } from '@/components/Session';
 
@@ -35,7 +35,6 @@ export async function login(state: FormState, formData: FormData) {
         if(correctPass) {
             const jwt = await encrypt(user);
             const cookieStore = await cookies();
-            const headList = await headers();
 
             cookieStore.set('session', jwt, {
                 httpOnly: true,
@@ -44,13 +43,6 @@ export async function login(state: FormState, formData: FormData) {
                 sameSite: 'lax',
                 path: '/'
             });
-            // cookieStore.set('ip', headList.get('X-Forwarded-For') || '', {
-            //     httpOnly: true,
-            //     secure: true,
-            //     expires: getExpiration(),
-            //     sameSite: 'lax',
-            //     path: '/'
-            // });
             return userToUserInfo(user);
         }
 

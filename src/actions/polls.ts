@@ -1,10 +1,10 @@
 'use server'
 
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
-import { getUser } from "@/lib/sessions";
+import { getIp, getUser } from "@/lib/sessions";
 import { and, eq } from "drizzle-orm";
 
 export interface SerializedPoll {
@@ -78,7 +78,7 @@ export async function readPoll(uuid: string) {
         seen[p.poll_options.id] = true;
         return !added;
     });
-    const ip = await grabIp();
+    const ip = await getIp();
     const serializedOptions = options.map(p => {
         const votes = poll.filter(p2 => p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
@@ -167,14 +167,9 @@ export async function updateOption(uuid: string, optionId: number, text: string,
     return (query.length !== 1);
 }
 
-async function grabIp() {
-    const headerList = await headers();
-    return headerList.get('X-Forwarded-For') || '';
-}
-
 export async function voteFor(pollOptionId: number) {
     const user = await getUser();
-    let ip = await grabIp();
+    let ip = await getIp();
     if(!ip) return false;
 
     // delete any current votes
@@ -184,7 +179,6 @@ export async function voteFor(pollOptionId: number) {
         pollOptionId: pollOptionId,
         userId: user?.id,
         ip: ip
-        // ip: '127.0.0.1'
     }).returning({id: pollVotesTable.id});
 
     return vote.length === 1;
