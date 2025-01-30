@@ -1,6 +1,6 @@
 'use server'
 
-import { cookies } from 'next/headers'
+import { headers } from "next/headers";
 
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
@@ -168,8 +168,8 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 }
 
 async function grabIp() {
-    const cookieStore = await cookies();
-    return cookieStore.get('ip')?.value || '';
+    const headerList = await headers();
+    return headerList.get('X-Forwarded-For') || '';
 }
 
 export async function voteFor(pollOptionId: number) {

@@ -7,11 +7,9 @@ import { eq } from 'drizzle-orm';
 import { encrypt, getExpiration, getUser } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 import { UserInfo } from '@/components/Session';
-
-import { headers } from "next/headers";
 
 type FormState = {
     error?: String;
@@ -46,13 +44,13 @@ export async function login(state: FormState, formData: FormData) {
                 sameSite: 'lax',
                 path: '/'
             });
-            cookieStore.set('ip', headList.get('x-forwarded-for') || '', {
-                httpOnly: true,
-                secure: true,
-                expires: getExpiration(),
-                sameSite: 'lax',
-                path: '/'
-            });
+            // cookieStore.set('ip', headList.get('X-Forwarded-For') || '', {
+            //     httpOnly: true,
+            //     secure: true,
+            //     expires: getExpiration(),
+            //     sameSite: 'lax',
+            //     path: '/'
+            // });
             return userToUserInfo(user);
         }
 
