@@ -103,6 +103,14 @@ export async function readPoll(uuid: string) {
 export async function addPoll(formData: FormData) {
     const user = await getUser();
     if(!user) throw new Error('Unauthorized');
+    const currentPolls = await db.select()
+        .from(pollsTable)
+        .where(and(
+                eq(pollsTable.userId, user.id),
+                eq(pollsTable.active, true)
+            )
+        );
+    if(currentPolls.length > 20) throw new Error('Poll limit reached');
     const newRow = await db.insert(pollsTable).values({
         uuid: crypto.randomUUID(),
         userId: user.id,
@@ -137,9 +145,13 @@ export async function updatePoll(uuid: string, props: UpdatePollProps) {
 
 export async function addOption(uuid: string, text: string) {
     const user = await getUser();
-    const poll = await db.select().from(pollsTable).where(eq(pollsTable.uuid, uuid)).limit(1);
-    if(poll.length !== 1 || !poll[0].active) throw new Error('Poll does not exist');
-    if(!poll[0].guestAddable && (user && user.id !== poll[0].userId || !user)) throw new Error('You do not own this poll');
+    const poll = await db.select()
+        .from(pollsTable)
+        .leftJoin(pollOptionsTable, eq(pollsTable.uuid, pollOptionsTable.pollUuid))
+        .where(eq(pollsTable.uuid, uuid));
+    if(poll.length === 0 || !poll[0].polls.active) throw new Error('Poll does not exist');
+    if(poll.length > 25) throw new Error('Option limit reached');
+    if(!poll[0].polls.guestAddable && (user && user.id !== poll[0].polls.userId || !user)) throw new Error('You do not own this poll');
 
     const newRow = await db.insert(pollOptionsTable).values({
         pollUuid: uuid,

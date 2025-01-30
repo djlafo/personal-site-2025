@@ -32,7 +32,11 @@ export default function Poll(props: PollProps) {
             return;
         }
         const res = await addOption(props.poll.uuid, newOptionText);
-        if(res) redirect(pathname);
+        if(res) {
+            redirect(pathname);
+        } else {
+            alert('Add failed. You may have reached the option limit');
+        }
     }
 
     const mine = props.poll.yours;

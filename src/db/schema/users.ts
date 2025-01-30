@@ -6,5 +6,6 @@ export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   username: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
-  plannerId: integer('planner_id').references((): AnyPgColumn => plannerTable.id)
+  plannerId: integer('planner_id').references((): AnyPgColumn => plannerTable.id),
+  lastIp: varchar({length: 255})
 });
