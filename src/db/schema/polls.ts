@@ -22,5 +22,5 @@ export const pollVotesTable = pgTable('poll_votes', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   pollOptionId: integer('poll_option_id').references((): AnyPgColumn => pollOptionsTable.id).notNull(),
   userId: integer('user_id').references((): AnyPgColumn => usersTable.id),
-  ip: varchar({length:15}).notNull()
+  ip: varchar({length:255}).notNull()
 });

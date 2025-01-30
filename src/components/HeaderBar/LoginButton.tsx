@@ -18,6 +18,7 @@ export default function LoginButton() {
     const onUserChange = (u?: UserInfo) => {
         setOpened(false);
         setUser(u);
+        redirect('/');
     }
 
     const _logout = () => {

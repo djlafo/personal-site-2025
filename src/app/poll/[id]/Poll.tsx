@@ -18,8 +18,9 @@ export default function Poll(props: PollProps) {
         </h2>
         {
             props.poll.options.map(p => {
+                const mine = (p.votes.find(v => v.yours));
                 return <div key={p.id}>
-                    {p.text} - {p.votes} votes - <input type='button' value='Vote' onClick={() => vote(p)}/>
+                    {p.text} - {p.votes.length} votes - {!mine && <input type='button' value='Vote' onClick={() => vote(p)}/> || 'Voted!'}
                 </div>;
             }) || <></>
         }

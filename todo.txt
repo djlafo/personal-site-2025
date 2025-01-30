@@ -1,5 +1,4 @@
 add loading animations to new sections, or generalize somehow
-Visitor counter?
 
 INTERVAL TIMER 
     -Timer animations
@@ -31,8 +30,13 @@ WEATHER
 LINUX
     - Fix lag again
 
+FILE HOSTING/
+
+NOTES
+
 NEXT STUFF 
     create accounts 
     savable weather location
     file hosting
     Websocket events ex: notify when poll updates  
+

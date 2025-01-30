@@ -125,7 +125,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         </span>
         <label>
             {
-                JSON.stringify(lastSaved)===JSON.stringify(props.plannerData) ? 'Last change saved' : 'Last change unsaved'
+                (props.plannerData.tasks.length && (JSON.stringify(lastSaved)===JSON.stringify(props.plannerData) ? 'Last change saved' : 'Last change unsaved')) || ''
             }
         </label>
     </>

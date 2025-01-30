@@ -12,7 +12,6 @@ export interface SerializedPoll {
     title: string;
     guestAddable: boolean;
     dateCreated: string;
-
 }
 function serializePoll(p: typeof pollsTable.$inferSelect): SerializedPoll {
     return {
@@ -52,7 +51,11 @@ export interface SerializedFullPoll {
 export interface SerializedPollOption {
     id: number;
     text: string;
-    votes: number;
+    votes: Array<SerializedPollVotes>;
+}
+export interface SerializedPollVotes {
+    id: number;
+    yours: boolean;
 }
 export async function readPoll(uuid: string) {
     const poll = await db.select()
@@ -69,19 +72,32 @@ export async function readPoll(uuid: string) {
 
     if(!poll[0].polls) throw new Error('fjklsafjlksdaj');
 
-    const options = poll.map(p => {
-        const votes = poll.filter(p2 => !!p2.poll_votes);
+    const seen: {[key:number]: boolean} = {};
+    let options = poll.filter(p => {
+        const added = Object.hasOwn(seen, p.poll_options.id);
+        seen[p.poll_options.id] = true;
+        return !added;
+    });
+    const ip = await grabIp();
+    const serializedOptions = options.map(p => {
+        const votes = poll.filter(p2 => p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
+        const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
+            return {
+                id: v.poll_votes?.id || -1,
+                yours: v.poll_votes?.ip === ip
+            };
+        });
         const pollOption: SerializedPollOption = {
-            id: p.poll_options?.id || - 1,
+            id: p.poll_options?.id || -1,
             text: p.poll_options?.text || 'Missing Text',
-            votes: votes.length
+            votes: serializedVotes
         };
         return pollOption;
     });
 
     return {
         ...serializePoll(poll[0].polls),
-        options: options
+        options: serializedOptions
     }
 }
 
@@ -151,10 +167,9 @@ export async function updateOption(uuid: string, optionId: number, text: string,
     return (query.length !== 1);
 }
 
-export async function voteFor(pollOptionId: number) {
-    const user = await getUser();
+async function grabIp() {
     const headersList = await headers();
-    let ip = headersList.get('x-forwarded-for')?.split(',')[0];
+    let ip = headersList.get('x-forwarded-for');
     if(!ip) {
         if(!process.env.DEVELOPMENT) {
             throw new Error('Couldnt grab IP');
@@ -162,6 +177,12 @@ export async function voteFor(pollOptionId: number) {
             ip = '127.0.0.1';
         }
     }
+    return ip;
+}
+
+export async function voteFor(pollOptionId: number) {
+    const user = await getUser();
+    const ip = await grabIp();
 
     // delete any current votes
     await db.delete(pollVotesTable).where(eq(pollVotesTable.ip, ip));
