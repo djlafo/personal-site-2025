@@ -168,7 +168,7 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 }
 
 async function grabIp() {
-    const headerList = await headers();
+    // const headerList = await headers();
     // let ip = headerList.get('x-forwarded-for');
     // if(!ip) {
         // if(!process.env.DEVELOPMENT) {
