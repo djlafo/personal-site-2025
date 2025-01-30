@@ -11,6 +11,8 @@ import { cookies } from 'next/headers'
 
 import { UserInfo } from '@/components/Session';
 
+import { headers } from "next/headers";
+
 type FormState = {
     error?: String;
     username?: String;
@@ -35,8 +37,16 @@ export async function login(state: FormState, formData: FormData) {
         if(correctPass) {
             const jwt = await encrypt(user);
             const cookieStore = await cookies();
-    
+            const headList = await headers();
+
             cookieStore.set('session', jwt, {
+                httpOnly: true,
+                secure: true,
+                expires: getExpiration(),
+                sameSite: 'lax',
+                path: '/'
+            });
+            cookieStore.set('ip', headList.get('x-forwarded-for') || '', {
                 httpOnly: true,
                 secure: true,
                 expires: getExpiration(),
