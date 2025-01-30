@@ -5,7 +5,8 @@ import { headers } from "next/headers";
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
 import { getUser } from "@/lib/sessions";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 
 export interface SerializedPoll {
     uuid: string;
@@ -78,7 +79,8 @@ export async function readPoll(uuid: string) {
         seen[p.poll_options.id] = true;
         return !added;
     });
-    const ip = await grabIp();
+    const headersList = await headers();
+    const ip = await grabIp(headersList);
     const serializedOptions = options.map(p => {
         const votes = poll.filter(p2 => p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
@@ -167,9 +169,8 @@ export async function updateOption(uuid: string, optionId: number, text: string,
     return (query.length !== 1);
 }
 
-async function grabIp() {
-    const headersList = await headers();
-    let ip = headersList.get('x-forwarded-for');
+function grabIp(h: ReadonlyHeaders) {
+    let ip = h.get('x-forwarded-for');
     if(!ip) {
         if(!process.env.DEVELOPMENT) {
             throw new Error('Couldnt grab IP');
@@ -182,7 +183,8 @@ async function grabIp() {
 
 export async function voteFor(pollOptionId: number) {
     const user = await getUser();
-    const ip = await grabIp();
+    const headersList = await headers();
+    const ip = await grabIp(headersList);
 
     // delete any current votes
     await db.delete(pollVotesTable).where(eq(pollVotesTable.ip, ip));
