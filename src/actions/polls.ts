@@ -169,14 +169,14 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 
 async function grabIp() {
     const headerList = await headers();
-    let ip = headerList.get('x-forwarded-for');
-    if(!ip) {
+    // let ip = headerList.get('x-forwarded-for');
+    // if(!ip) {
         // if(!process.env.DEVELOPMENT) {
             // throw new Error('Couldnt grab IP');
         // } else {
-            ip = '127.0.0.1';
+            const ip = '127.0.0.1';
         // }
-    }
+    // }
     return ip;
 }
 
