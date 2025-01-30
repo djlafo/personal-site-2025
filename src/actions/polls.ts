@@ -84,7 +84,7 @@ export async function readPoll(uuid: string) {
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
             return {
                 id: v.poll_votes?.id || -1,
-                yours: v.poll_votes?.ip === ip
+                yours: !!v.poll_votes?.ip && v.poll_votes?.ip === ip
             };
         });
         const pollOption: SerializedPollOption = {
@@ -169,25 +169,13 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 
 async function grabIp() {
     const headerList = await headers();
-    let ip = headerList.get('x-forwarded-for');
-    if(!ip) {
-        if(!process.env.DEVELOPMENT) {
-            throw new Error('Couldnt grab IP');
-        } else {
-            const ip = '127.0.0.1';
-        }
-    }
-    return ip || '';
+    return headerList.get('x-forwarded-for');
 }
 
 export async function voteFor(pollOptionId: number) {
     const user = await getUser();
-    let ip = '';
-    try {
-        ip = await grabIp();
-    } catch {
-        return false;
-    }
+    let ip = await grabIp();
+    if(!ip) return false;
 
     // delete any current votes
     await db.delete(pollVotesTable).where(eq(pollVotesTable.ip, ip));
