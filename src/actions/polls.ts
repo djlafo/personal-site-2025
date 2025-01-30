@@ -4,21 +4,24 @@ import { cookies } from "next/headers";
 
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
+import { usersTable } from '@/db/schema/users';
 import { getIp, getUser } from "@/lib/sessions";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull, or } from "drizzle-orm";
 
 export interface SerializedPoll {
     uuid: string;
     title: string;
     guestAddable: boolean;
     dateCreated: string;
+    yours: boolean;
 }
-function serializePoll(p: typeof pollsTable.$inferSelect): SerializedPoll {
+function serializePoll(p: typeof pollsTable.$inferSelect, yours=false): SerializedPoll {
     return {
         uuid: p.uuid,
         title: p.title,
         guestAddable: p.guestAddable,
-        dateCreated: p.dateCreated
+        dateCreated: p.dateCreated,
+        yours: yours
     };
 }
 
@@ -38,15 +41,11 @@ export async function listPolls() {
         )
     }
 
-    return polls.map(p => serializePoll(p));
+    return polls.map(p => serializePoll(p, true));
 }
 
-export interface SerializedFullPoll {
+export interface SerializedFullPoll extends SerializedPoll {
     options: Array<SerializedPollOption>;
-    uuid: string;
-    title: string;
-    guestAddable: boolean;
-    dateCreated: string;
 }
 export interface SerializedPollOption {
     id: number;
@@ -60,27 +59,25 @@ export interface SerializedPollVotes {
 export async function readPoll(uuid: string) {
     const poll = await db.select()
         .from(pollsTable)
-        .innerJoin(pollOptionsTable, eq(pollsTable.uuid, pollOptionsTable.pollUuid))
+        .leftJoin(pollOptionsTable, eq(pollsTable.uuid, pollOptionsTable.pollUuid))
         .leftJoin(pollVotesTable, eq(pollOptionsTable.id, pollVotesTable.pollOptionId))
         .where(and(
             eq(pollsTable.uuid, uuid),
-            and(
-                eq(pollsTable.active, true),
-                eq(pollOptionsTable.active, true)
-            )
+            eq(pollsTable.active, true)
         ));
 
     if(!poll[0].polls) throw new Error('fjklsafjlksdaj');
 
     const seen: {[key:number]: boolean} = {};
     let options = poll.filter(p => {
+        if(!p.poll_options || !p.poll_options.active) return false;
         const added = Object.hasOwn(seen, p.poll_options.id);
         seen[p.poll_options.id] = true;
         return !added;
     });
     const ip = await getIp();
     const serializedOptions = options.map(p => {
-        const votes = poll.filter(p2 => p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
+        const votes = poll.filter(p2 => p.poll_options && p2.poll_options && p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
             return {
                 id: v.poll_votes?.id || -1,
@@ -95,20 +92,26 @@ export async function readPoll(uuid: string) {
         return pollOption;
     });
 
+    const user = await getUser();
+
     return {
-        ...serializePoll(poll[0].polls),
+        ...serializePoll(poll[0].polls, poll[0].polls.userId === user?.id),
         options: serializedOptions
     }
 }
 
-export async function addPoll(title: string) {
+export async function addPoll(formData: FormData) {
     const user = await getUser();
     if(!user) throw new Error('Unauthorized');
-    await db.insert(pollsTable).values({
+    const newRow = await db.insert(pollsTable).values({
         uuid: crypto.randomUUID(),
         userId: user.id,
-        title: title
+        title: formData.get('title')?.toString() || 'Error getting title'
+    }).returning({
+        uuid: pollsTable.uuid
     });
+
+    if(newRow.length === 1) return newRow[0].uuid;
 }
 
 export async function inactivatePoll(uuid: string) {
@@ -132,11 +135,13 @@ export async function addOption(uuid: string, text: string) {
     if(poll.length !== 1 || !poll[0].active) throw new Error('Poll does not exist');
     if(!poll[0].guestAddable && (user && user.id !== poll[0].userId || !user)) throw new Error('You do not own this poll');
 
-    await db.insert(pollOptionsTable).values({
+    const newRow = await db.insert(pollOptionsTable).values({
         pollUuid: uuid,
         text: text,
         userId: user && user.id || null
-    });
+    }).returning({id: pollOptionsTable.id});
+
+    return newRow.length === 1;
 }
 
 export async function updateOption(uuid: string, optionId: number, text: string, active: boolean) {
@@ -144,7 +149,7 @@ export async function updateOption(uuid: string, optionId: number, text: string,
     if(!user) throw new Error('You dont have an account');
 
     const poll = await db.select().from(pollsTable).where(eq(pollsTable.uuid, uuid)).limit(1);
-    if(poll.length !== -1 || !poll[0].active) throw new Error('Poll does not exist');
+    if(poll.length !== 1 || !poll[0].active) throw new Error('Poll does not exist');
 
     let query;
     if(poll[0].userId === user.id) {
@@ -164,7 +169,7 @@ export async function updateOption(uuid: string, optionId: number, text: string,
             ).returning({id: pollOptionsTable.id});
     }
 
-    return (query.length !== 1);
+    return (query.length === 1);
 }
 
 export async function voteFor(pollOptionId: number) {

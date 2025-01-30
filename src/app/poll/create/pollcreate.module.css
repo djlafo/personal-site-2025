@@ -1,0 +1,22 @@
+.pollcreate {
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form > * {
+    margin-top: 25px;
+}
+
+.form span {
+    display: flex;
+    width: min(500px, 90vw);
+}
+
+.form input[type=text] {
+    flex: 1;
+}

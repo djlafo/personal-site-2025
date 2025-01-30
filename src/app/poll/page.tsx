@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 import { listPolls } from "@/actions/polls";
 
-import PollButton from './PollButton';
+import { PollButton, CreateButton } from './PollButtons';
 
 import styles from './polllist.module.css';
 
@@ -22,7 +22,7 @@ export default function Page() {
 async function PollList() {
     const polls = await listPolls();
     return <div>
-        This section is WIP!
+        <CreateButton/>
         {
             polls && polls.map(p => {
                 return <div key={p.uuid}>
