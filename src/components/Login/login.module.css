@@ -1,5 +1,5 @@
 .login {
-    width: 100%;
+    width: min(80vw, 250px);
     display: flex;
     flex-direction: column;
     text-align: center;
