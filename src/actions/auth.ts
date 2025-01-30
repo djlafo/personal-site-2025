@@ -25,7 +25,7 @@ function userToUserInfo(u: typeof usersTable.$inferSelect) : UserInfo {
 export async function login(state: FormState, formData: FormData) {
     const info = {
         username: formData.get('username')?.toString().toLowerCase(),
-        password: formData.get('password')?.toString().toLowerCase()
+        password: formData.get('password')?.toString()
     };
 
     if(!info.username || !info.password) return {
@@ -68,7 +68,7 @@ export async function logout() {
 export async function register(state: FormState, formData: FormData) {
     const info = {
         username: formData.get('username')?.toString().toLowerCase(),
-        password: formData.get('password')?.toString().toLowerCase()
+        password: formData.get('password')?.toString()
     };
     if(!info.username || !info.password) return {
         error: 'Username and password required'
