@@ -168,22 +168,26 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 }
 
 async function grabIp() {
-    // const headerList = await headers();
-    // let ip = headerList.get('x-forwarded-for');
-    // if(!ip) {
-        // if(!process.env.DEVELOPMENT) {
-            // throw new Error('Couldnt grab IP');
-        // } else {
+    const headerList = await headers();
+    let ip = headerList.get('x-forwarded-for');
+    if(!ip) {
+        if(!process.env.DEVELOPMENT) {
+            throw new Error('Couldnt grab IP');
+        } else {
             const ip = '127.0.0.1';
-        // }
-    // }
-    return ip;
+        }
+    }
+    return ip || '';
 }
 
 export async function voteFor(pollOptionId: number) {
     const user = await getUser();
-    const headersList = await headers();
-    const ip = await grabIp();
+    let ip = '';
+    try {
+        ip = await grabIp();
+    } catch {
+        return false;
+    }
 
     // delete any current votes
     await db.delete(pollVotesTable).where(eq(pollVotesTable.ip, ip));
@@ -192,6 +196,7 @@ export async function voteFor(pollOptionId: number) {
         pollOptionId: pollOptionId,
         userId: user?.id,
         ip: ip
+        // ip: '127.0.0.1'
     }).returning({id: pollVotesTable.id});
 
     return vote.length === 1;
