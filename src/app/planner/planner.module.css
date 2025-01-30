@@ -45,14 +45,17 @@
     opacity: 0.4;
 }
 
+.taskcell.overdue {
+    border: 3px solid red;
+}
+
 .taskdetails {
     display: flex;
     flex: 1;
     min-width: 180px;
     padding-top: 15px;
     padding-bottom: 5px;
-    border: 1px 
-    solid cyan;
+    border: 1px solid cyan;
     flex-wrap: wrap-reverse;
 }
 

@@ -11,6 +11,7 @@ export interface Task {
     UUID: number;
     done: boolean;
     deadline: number;
+    overdue: boolean;
 }
 
 interface UsePlannerReturn {

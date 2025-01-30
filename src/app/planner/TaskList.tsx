@@ -27,18 +27,23 @@ export default function TaskList(props : TaskListProps) {
         setLastTasks(props.plannerData.tasks);
         let counter = 1;
         setTaskCopy(props.plannerData.tasks.map(t => {
+            let overdue = t.overdue || false;
             let deadline = t.deadline;
             if(deadline)  {
                 deadline -= Date.now();
                 deadline = Math.floor(deadline/1000);
-                if(deadline < 0) deadline = 0;
+                if(deadline < 0) {
+                    deadline = 0;
+                    overdue = true;
+                }
             }
             const translated : StringTask = {
                 label: t.label || '',
                 motivation: t.motivation.toString() || '0',
                 UUID: counter,
                 done: t.done || false,
-                deadline: deadline
+                deadline: deadline,
+                overdue: overdue
             };
             counter++;
             return translated;
@@ -52,7 +57,8 @@ export default function TaskList(props : TaskListProps) {
             label: '',
             motivation: 0,
             done: false,
-            deadline: 0
+            deadline: 0,
+            overdue: false
         }]));
         setNewID(n => n + 1);
     }
@@ -91,7 +97,8 @@ export default function TaskList(props : TaskListProps) {
                 motivation: Number(t.motivation),
                 UUID: t.UUID,
                 done: t.done,
-                deadline: t.deadline ? Date.now() + (t.deadline * 1000) : 0
+                deadline: t.deadline ? Date.now() + (t.deadline * 1000) : 0,
+                overdue: t.overdue
             }
             return translated;
         }));
@@ -123,7 +130,7 @@ export default function TaskList(props : TaskListProps) {
         {(taskCopy && taskCopy.length && 
             <div>
                 {taskCopy.map((t, i)=> {
-                    return <div key={t.UUID} className={`${styles.taskcell} ${t.done ? styles.done : ''}`}>        
+                    return <div key={t.UUID} className={`${styles.taskcell} ${t.done ? styles.done : ''} ${t.overdue ? styles.overdue : ''}`}>        
                         <textarea rows={1}
                             autoFocus={i === taskCopy.length - 1}
                             value={t.label} 
