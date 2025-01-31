@@ -7,7 +7,7 @@ export async function getBrowserCoordinates() : Promise<string> {
             navigator.geolocation.getCurrentPosition(p => {
                 acc(`${p.coords.latitude},${p.coords.longitude}`);
             }, e => {
-                rej(e.message);
+                rej(e);
             }, {
                 maximumAge: 60000,
                 timeout: 5000,

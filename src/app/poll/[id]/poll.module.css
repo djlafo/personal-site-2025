@@ -10,7 +10,7 @@
     width: min(500px, 90vw);
 }
 
-.pollOption {
+.pollOption, .rankedPollOption {
     display: inline-block;
     padding: 15px;
     border-radius: 5px;
@@ -18,7 +18,7 @@
     background-color: #333333;
 }
 
-.pollOption > * {
+.pollOption > *, .rankedPollOption > * {
     margin: 10px 0;
 }
 

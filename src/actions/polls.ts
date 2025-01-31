@@ -6,7 +6,7 @@ import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
 import { usersTable } from '@/db/schema/users';
 import { getIp, getUser } from "@/lib/sessions";
-import { and, eq, isNull, or } from "drizzle-orm";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
 
 export interface SerializedPoll {
     uuid: string;
@@ -14,6 +14,7 @@ export interface SerializedPoll {
     guestAddable: boolean;
     dateCreated: string;
     yours: boolean;
+    rankedChoice: boolean;
 }
 function serializePoll(p: typeof pollsTable.$inferSelect, yours=false): SerializedPoll {
     return {
@@ -21,7 +22,8 @@ function serializePoll(p: typeof pollsTable.$inferSelect, yours=false): Serializ
         title: p.title,
         guestAddable: p.guestAddable,
         dateCreated: p.dateCreated,
-        yours: yours
+        yours: yours,
+        rankedChoice: p.rankedChoice
     };
 }
 
@@ -29,15 +31,20 @@ export async function listPolls() {
     const user = await getUser();
     let polls;
     if(!user) {
-        polls = await db.select().from(pollsTable).where(
-            eq(pollsTable.uuid, 'example')
+        polls = await db.select().from(pollsTable).where(or(
+                eq(pollsTable.uuid, 'example'),
+                eq(pollsTable.uuid, 'example2')
+            )
         )
     } else if(user.username === 'dylan') {
         polls = await db.select().from(pollsTable).where(eq(pollsTable.active, true));
     } else {
         polls = await db.select().from(pollsTable).where(
             or(
-                eq(pollsTable.uuid, 'example'),
+                or(
+                    eq(pollsTable.uuid, 'example'),
+                    eq(pollsTable.uuid, 'example2')
+                ),
                 and(
                     eq(pollsTable.userId, user.id),
                     eq(pollsTable.active, true)
@@ -60,6 +67,7 @@ export interface SerializedPollOption {
 export interface SerializedPollVotes {
     id: number;
     yours: boolean;
+    rank: number;
 }
 export async function readPoll(uuid: string) {
     const poll = await db.select()
@@ -86,7 +94,8 @@ export async function readPoll(uuid: string) {
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
             return {
                 id: v.poll_votes?.id || -1,
-                yours: !!v.poll_votes?.ip && v.poll_votes?.ip === ip
+                yours: !!v.poll_votes?.ip && v.poll_votes?.ip === ip,
+                rank: v.poll_votes?.rank || 0
             };
         });
         const pollOption: SerializedPollOption = {
@@ -127,10 +136,11 @@ export async function addPoll(formData: FormData) {
     if(newRow.length === 1) return newRow[0].uuid;
 }
 
-interface UpdatePollProps {
+export interface UpdatePollProps {
     title?: string;
     guestAddable?: boolean;
     active?: boolean;
+    rankedChoice?: boolean;
 }
 export async function updatePoll(uuid: string, props: UpdatePollProps) {
     const user = await getUser();
@@ -143,8 +153,15 @@ export async function updatePoll(uuid: string, props: UpdatePollProps) {
                 eq(pollsTable.userId, user.id)
             )
         ).returning({uuid: pollsTable.uuid});
-    if(updated.length === 1) return true;
-    return false;
+    if(updated.length !== 1) return false;
+    
+    // clear all votes attached to poll
+    if(Object.keys(props).includes('rankedChoice')) {
+        const sq = await db.select({id: pollOptionsTable.id}).from(pollOptionsTable).where(eq(pollOptionsTable.pollUuid, uuid));
+        await db.delete(pollVotesTable).where(inArray(pollVotesTable.pollOptionId, sq.map(s => s.id))); // for now will have to do 2 queries, with and as dont seem to work
+    }
+    
+    return true;
 
 }
 
@@ -201,7 +218,10 @@ export async function voteFor(pollOptionId: number) {
     if(!ip) return false;
 
     // delete any current votes
-    await db.delete(pollVotesTable).where(eq(pollVotesTable.ip, ip));
+    await db.delete(pollVotesTable).where(and(
+        eq(pollVotesTable.ip, ip),
+        eq(pollVotesTable.pollOptionId, pollOptionId)
+    ));
 
     const vote = await db.insert(pollVotesTable).values({
         pollOptionId: pollOptionId,
@@ -210,4 +230,63 @@ export async function voteFor(pollOptionId: number) {
     }).returning({id: pollVotesTable.id});
 
     return vote.length === 1;
+}
+
+export async function setVoteRank(uuid: string, pollOptionId: number, rank: number) {
+    const user = await getUser();
+    let ip = await getIp();
+    if(!ip) return false;
+
+    const currentVotes = await db.select()
+        .from(pollOptionsTable)
+        .leftJoin(pollVotesTable, eq(pollOptionsTable.id, pollVotesTable.pollOptionId))
+        .where(and(
+            or(
+                eq(pollVotesTable.ip, ip),
+                isNull(pollVotesTable.id)
+            ),
+            and( 
+                eq(pollOptionsTable.pollUuid, uuid),
+                eq(pollOptionsTable.active, true)
+            )
+        ));
+
+    const sorted = currentVotes.sort((a, b) => {
+        if(!a.poll_votes?.rank || !b.poll_votes?.rank) return 0;
+        return a.poll_votes.rank - b.poll_votes.rank;
+    });
+    const opInd = sorted.findIndex(s => {
+        return s.poll_options.id === pollOptionId;
+    });
+    const op = sorted[opInd];
+    const newOrder: Array<typeof op> = [];
+    sorted.forEach((s,i) => {
+        if(i !== opInd) {
+            newOrder.push(s);
+        }
+    });
+    newOrder.splice(rank, 0, op);
+
+    const updates: any = []; // way too lazy to find out whatever the type of that update is
+    newOrder.forEach((o, i)=> {
+        if(!o.poll_votes?.id) return;
+        updates.push(db.update(pollVotesTable).set({rank: i}).where(eq(pollVotesTable.id, o.poll_votes.id)));
+    });
+    await Promise.all(updates);
+
+    const adds: any = [];
+    newOrder.forEach((o, i) => {
+        if(o.poll_votes?.id) return;
+        const t = db.insert(pollVotesTable).values({
+            pollOptionId: o.poll_options.id,
+            userId: user?.id,
+            ip: ip,
+            rank: i
+        });
+        adds.push(t);
+    });
+
+    await Promise.all(adds);
+
+    return true;
 }

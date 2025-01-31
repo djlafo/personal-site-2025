@@ -37,6 +37,8 @@ FILE HOSTING/
 
 NOTES
 
+MINESWEEPER
+
 NEXT STUFF 
     create accounts 
         add ipbans to registration
