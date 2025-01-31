@@ -18,7 +18,7 @@ export default function Page() {
     });
     const [coordsField, setCoordsField] = useState(() => {
         if(typeof window !== 'undefined') {
-            return localStorage.getItem('zip') || undefined;
+            return localStorage.getItem('coords') || undefined;
         }
     });
 
@@ -35,7 +35,7 @@ export default function Page() {
             }
             router.push(`/weather/${ldFull.zip}/${ldFull.coords}`);
         }).catch(e => {
-            toast(e.message);
+            toast(e.message || e);
             setLoading(false);
         });
     };
