@@ -112,7 +112,7 @@ export default function Poll(props: PollProps) {
         }
         <br/>
         <br/>
-        {mine && props.poll.rankedChoice && changedValues.length &&
+        {props.poll.rankedChoice && changedValues.length &&
             <input type='button'
                 onClick={() => sendRankedVote()}
                 value='Send Vote'/>
