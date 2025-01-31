@@ -10,12 +10,13 @@ interface MetaProps {
     params: Promise<{ zip: string, coords: string}>
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
-export async function generateMetadata({ params }: MetaProps, parent: ResolvingMetadata) {
+export async function generateMetadata({ params, searchParams }: MetaProps, parent: ResolvingMetadata) {
     const par = await params;
+    const search = await searchParams;
     const city = await getCityFromZip(par.zip);
     return {
         title: city || par.zip,
-        description: 'Weather'
+        description: `Weather${search.day ? ` on ${search.day}` : ''}`
     }
 }
 
