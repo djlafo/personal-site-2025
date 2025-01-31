@@ -25,6 +25,7 @@ export default function Poll(props: PollProps) {
     const _updatePoll = async(updateProps: UpdatePollProps) => {
         const res = await updatePoll(props.poll.uuid, updateProps);
         if(res) {
+            if(updateProps.title) setNewOptionText('');
             redirect(pathname);
         } else {
             toast('Update failed');
@@ -165,7 +166,7 @@ function RankedPollOption(props: RankedPollOptionProps) {
 
     const getAverage = () => {
         if(props.option.votes.length === 0) return 0;
-        const ranks = props.option.votes.map(v => v.rank ? v.rank + 1 : 0 );
+        const ranks = props.option.votes.map(v => (v.rank || v.rank === 0) ? props.options.length + 1 - (v.rank + 1) : 0 );
         const total = ranks.reduce((acc, current) => {
             return acc + current;
         }, 0) 

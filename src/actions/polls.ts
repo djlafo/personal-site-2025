@@ -237,26 +237,47 @@ export async function setVoteRank(uuid: string, pollOptionId: number, rank: numb
     let ip = await getIp();
     if(!ip) return false;
 
-    const currentVotes = await db.select()
-        .from(pollOptionsTable)
-        .leftJoin(pollVotesTable, eq(pollOptionsTable.id, pollVotesTable.pollOptionId))
-        .where(and(
-            or(
-                eq(pollVotesTable.ip, ip),
-                isNull(pollVotesTable.id)
-            ),
-            and( 
-                eq(pollOptionsTable.pollUuid, uuid),
-                eq(pollOptionsTable.active, true)
-            )
-        ));
+    const options = await db.select().from(pollOptionsTable).where(and(
+        eq(pollOptionsTable.pollUuid, uuid),
+        eq(pollOptionsTable.active, true)
+    ));
 
-    const sorted = currentVotes.sort((a, b) => {
-        if(!a.poll_votes?.rank || !b.poll_votes?.rank) return 0;
-        return a.poll_votes.rank - b.poll_votes.rank;
+    const currentVotes = await db.select()
+        .from(pollVotesTable)
+        .fullJoin(pollOptionsTable, eq(pollVotesTable.pollOptionId, pollOptionsTable.id))
+        .where(
+            and( 
+                eq(pollVotesTable.ip, ip),
+                and(
+                    eq(pollOptionsTable.pollUuid, uuid),
+                    eq(pollOptionsTable.active, true)
+                )
+            )
+        );
+
+    // insert any votes that dont exist yet
+    const newRows: Array<any> = [];
+    options.forEach(o => {
+        const ind = currentVotes.findIndex(cv => cv.poll_options?.id === o.id);
+        if(ind === -1) {
+            newRows.push(db.insert(pollVotesTable).values({
+                pollOptionId: o.id,
+                userId: user?.id,
+                ip: ip,
+                rank: 0
+            }).returning());
+        }
+    });
+    const all = currentVotes.map(cv => cv.poll_votes);
+    const done = await Promise.all(newRows);
+    const combined = done.map(d => d[0]).concat(all);
+
+    const sorted = combined.sort((a, b) => {
+        if((!a?.rank && a?.rank!==0) || (!b?.rank && b?.rank!==0)) return 0;
+        return a.rank - b.rank;
     });
     const opInd = sorted.findIndex(s => {
-        return s.poll_options.id === pollOptionId;
+        return s?.pollOptionId === pollOptionId;
     });
     const op = sorted[opInd];
     const newOrder: Array<typeof op> = [];
@@ -269,24 +290,10 @@ export async function setVoteRank(uuid: string, pollOptionId: number, rank: numb
 
     const updates: any = []; // way too lazy to find out whatever the type of that update is
     newOrder.forEach((o, i)=> {
-        if(!o.poll_votes?.id) return;
-        updates.push(db.update(pollVotesTable).set({rank: i}).where(eq(pollVotesTable.id, o.poll_votes.id)));
+        if(!o?.id) return;
+        updates.push(db.update(pollVotesTable).set({rank: i}).where(eq(pollVotesTable.id, o.id)));
     });
     await Promise.all(updates);
-
-    const adds: any = [];
-    newOrder.forEach((o, i) => {
-        if(o.poll_votes?.id) return;
-        const t = db.insert(pollVotesTable).values({
-            pollOptionId: o.poll_options.id,
-            userId: user?.id,
-            ip: ip,
-            rank: i
-        });
-        adds.push(t);
-    });
-
-    await Promise.all(adds);
 
     return true;
 }
