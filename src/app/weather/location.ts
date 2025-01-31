@@ -34,7 +34,7 @@ async function getCsv(): Promise<Papa.ParseResult<CsvRow>> {
     return new Promise((acc, rej) => {
         (async() => {
             try {
-                const csvRead = await fetch(`${process.env.BASEPATH}/uszips.csv`);
+                const csvRead = await fetch(`${process?.env?.BASEPATH || window.location.origin}/uszips.csv`);
                 const csvText = await csvRead.text();
                 acc(Papa.parse(csvText, {header: true}));
             } catch (e) {
