@@ -4,10 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ToastContainer } from 'react-toastify';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './weather.module.css';
-import { getCoordsFromZip } from './location';
 
 export default function Page() {
     const [zipField, setZipField] = useState(() => {
@@ -21,12 +19,7 @@ export default function Page() {
 
     const _setLocation = async (zip?: string) => {
         if(!zip) return;
-        setLoading(true);
-        if(typeof window !== 'undefined') {
-            localStorage.setItem('zip', zip);
-        }
-        const coords = await getCoordsFromZip(zip);
-        router.push(`/weather/${zip}/${coords}`);
+        router.push(`/weather/${zip}`);
     };
 
     return <div className={styles.weather}>
