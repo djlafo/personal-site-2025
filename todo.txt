@@ -18,16 +18,13 @@ VISUALIZER
     - enable PiP somehow?
 
 POLL CREATOR
-    - ranked choice 
     - live refresh
-    - let poll name change 
     - poll expiration
-    - set max amount of polls/options allowed
-    - guest addable
     - gracefully handle unavailable poll
+    - refactor
+    - possibly change rank voice to save button instead
 
 WEATHER 
-    - Redo with SSR in mind, seems like it's a mess atm
     - move zips to DB
 
 LINUX
@@ -40,10 +37,7 @@ NOTES
 MINESWEEPER
 
 NEXT STUFF 
-    create accounts 
         add ipbans to registration
-    savable weather location
     file hosting
-    Websocket events ex: notify when poll updates  
-    some redirects should probably be history pushes
+    Websocket events ex: notify when poll updates 
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { ToastContainer } from 'react-toastify';
 
-import { addOption, SerializedFullPoll, SerializedPollOption, setVoteRank, updateOption, updatePoll, UpdatePollProps, voteFor } from "@/actions/polls";
+import { addOption, RankValueType, SerializedFullPoll, SerializedPollOption, setVoteRanks, updateOption, updatePoll, UpdatePollProps, voteFor } from "@/actions/polls";
 
 import styles from './poll.module.css';
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ interface PollProps {
 export default function Poll(props: PollProps) {
     const router = useRouter();
     const [newOptionText, setNewOptionText] = useState('');
+    const [changedValues, setChangedValues] = useState<Array<RankValueType>>([]);
     const pathname = usePathname();
 
     const _inactivatePoll = async() => {
@@ -42,6 +43,22 @@ export default function Poll(props: PollProps) {
             redirect(pathname);
         } else {
             toast('Add failed. You may have reached the option limit');
+        }
+    }
+
+    const _setChangedValues = (rv: RankValueType) => {
+        setChangedValues(cv => {
+            return cv.concat([rv]);
+        });
+    }
+
+    const sendRankedVote = async () => {
+        const res = await setVoteRanks(props.poll.uuid, changedValues);
+        if(res) {
+            setChangedValues([]);
+            redirect(pathname);
+        } else {
+            toast('Failed to send');
         }
     }
 
@@ -93,6 +110,14 @@ export default function Poll(props: PollProps) {
                 <input type='button' value='Add option' onClick={() => _addOption()}/>
             </>
         }
+        <br/>
+        <br/>
+        {mine && props.poll.rankedChoice && changedValues.length &&
+            <input type='button'
+                onClick={() => sendRankedVote()}
+                value='Send Vote'/>
+            || <></>
+        }
         <div className={styles.pollOptions}>
             {
                 props.poll.options.map((p,i)=> {
@@ -101,6 +126,8 @@ export default function Poll(props: PollProps) {
                             key={p.id} 
                             option={p} 
                             uuid={props.poll.uuid} 
+                            emptyChanges={changedValues.length===0}
+                            onChange={_setChangedValues}
                             options={props.poll.options}
                             myPoll={mine}/> 
                             :
@@ -120,9 +147,23 @@ interface RankedPollOptionProps {
     uuid: string;
     myPoll: boolean;
     options: Array<SerializedPollOption>;
+    onChange: (rv: RankValueType) => void;
+    emptyChanges: boolean;
 }
 function RankedPollOption(props: RankedPollOptionProps) {
     const pathname = usePathname();
+    const propRank = (() => {
+        const r = props.option.votes.find(v => v.yours)?.rank;
+        if(!r && r !== 0) {
+            return props.options.length;
+        }
+        return r+1;
+    })();
+    const [rank, setRank] = useState<number>(propRank);
+    
+    if(props.emptyChanges && rank!==propRank) {
+        setRank(propRank);
+    }
 
     const deleteOption = async(optionId: number, text: string) => {
         const res = await updateOption(props.uuid, optionId, text, false);
@@ -145,23 +186,14 @@ function RankedPollOption(props: RankedPollOptionProps) {
             };
         });
     }
-
-    const myRank = () => {
-        const rank = props.option.votes.find(v => v.yours)?.rank;
-        if(!rank && rank !== 0) {
-            return;
-        }
-        return rank+1;
-    }
-
     const changeVoteOrder = async (position: string) => {
         if(!position) return;
-        const res = await setVoteRank(props.uuid, props.option.id, Number(position)-1);
-        if(res) {
-            redirect(pathname);
-        } else {
-            toast('Update failed');
-        }
+        const toNum = Number(position) - 1;
+        setRank(toNum + 1);
+        props.onChange({
+            rank: toNum,
+            pollOptionId: props.option.id
+        });
     }
 
     const getAverage = () => {
@@ -182,7 +214,7 @@ function RankedPollOption(props: RankedPollOptionProps) {
             || <span>{props.option.text}</span>
         }
         <br/>
-        <select value={myRank()} onChange={e => changeVoteOrder(e.target.value)}>
+        <select value={rank} onChange={e => changeVoteOrder(e.target.value)}>
             {
                 getOptionRanks().map(o => <option key={o.id} value={o.index}>{o.index}</option>)
             }

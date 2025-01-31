@@ -6,7 +6,7 @@ import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
 import { usersTable } from '@/db/schema/users';
 import { getIp, getUser } from "@/lib/sessions";
-import { and, eq, inArray, isNull, or } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, or } from "drizzle-orm";
 
 export interface SerializedPoll {
     uuid: string;
@@ -35,9 +35,9 @@ export async function listPolls() {
                 eq(pollsTable.uuid, 'example'),
                 eq(pollsTable.uuid, 'example2')
             )
-        )
+        ).orderBy(desc(pollsTable.dateCreated))
     } else if(user.username === 'dylan') {
-        polls = await db.select().from(pollsTable).where(eq(pollsTable.active, true));
+        polls = await db.select().from(pollsTable).where(eq(pollsTable.active, true)).orderBy(desc(pollsTable.dateCreated));
     } else {
         polls = await db.select().from(pollsTable).where(
             or(
@@ -50,7 +50,7 @@ export async function listPolls() {
                     eq(pollsTable.active, true)
                 )
             )
-        )
+        ).orderBy(desc(pollsTable.dateCreated))
     }
 
     return polls.map(p => serializePoll(p, true));
@@ -232,7 +232,11 @@ export async function voteFor(pollOptionId: number) {
     return vote.length === 1;
 }
 
-export async function setVoteRank(uuid: string, pollOptionId: number, rank: number) {
+export interface RankValueType {
+    rank: number;
+    pollOptionId: number;
+}
+export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
     const user = await getUser();
     let ip = await getIp();
     if(!ip) return false;
@@ -269,27 +273,21 @@ export async function setVoteRank(uuid: string, pollOptionId: number, rank: numb
         }
     });
     const all = currentVotes.map(cv => cv.poll_votes);
-    const done = await Promise.all(newRows);
+    const done: Array<typeof all> = await Promise.all(newRows);
     const combined = done.map(d => d[0]).concat(all);
 
+    combined.forEach(c => {
+        if(!c)return;
+        const value = values.find(v => v.pollOptionId === c?.pollOptionId);
+        if(value) c.rank = value.rank;
+    });
     const sorted = combined.sort((a, b) => {
         if((!a?.rank && a?.rank!==0) || (!b?.rank && b?.rank!==0)) return 0;
         return a.rank - b.rank;
     });
-    const opInd = sorted.findIndex(s => {
-        return s?.pollOptionId === pollOptionId;
-    });
-    const op = sorted[opInd];
-    const newOrder: Array<typeof op> = [];
-    sorted.forEach((s,i) => {
-        if(i !== opInd) {
-            newOrder.push(s);
-        }
-    });
-    newOrder.splice(rank, 0, op);
 
     const updates: any = []; // way too lazy to find out whatever the type of that update is
-    newOrder.forEach((o, i)=> {
+    sorted.forEach((o, i)=> {
         if(!o?.id) return;
         updates.push(db.update(pollVotesTable).set({rank: i}).where(eq(pollVotesTable.id, o.id)));
     });
