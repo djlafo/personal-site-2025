@@ -82,9 +82,9 @@ export async function register(state: FormState, formData: FormData) {
                 eq(usersTable.username, info.username)
             )
         );
-        if(otherAccounts.length) {
+        if(otherAccounts.length > 5) {
             return {
-                error: 'You already have an account'
+                error: 'You already have enough accounts'
             };
         }
     }

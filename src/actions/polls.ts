@@ -32,11 +32,16 @@ export async function listPolls() {
         polls = await db.select().from(pollsTable).where(
             eq(pollsTable.uuid, 'example')
         )
+    } else if(user.username === 'dylan') {
+        polls = await db.select().from(pollsTable).where(eq(pollsTable.active, true));
     } else {
         polls = await db.select().from(pollsTable).where(
-            and(
-                eq(pollsTable.userId, user.id),
-                eq(pollsTable.active, true)
+            or(
+                eq(pollsTable.uuid, 'example'),
+                and(
+                    eq(pollsTable.userId, user.id),
+                    eq(pollsTable.active, true)
+                )
             )
         )
     }

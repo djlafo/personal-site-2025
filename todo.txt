@@ -28,6 +28,7 @@ POLL CREATOR
 
 WEATHER 
     - Redo with SSR in mind, seems like it's a mess atm
+    - move zips to DB
 
 LINUX
     - Fix lag again
