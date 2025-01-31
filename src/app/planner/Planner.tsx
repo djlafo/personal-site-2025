@@ -1,4 +1,5 @@
 'use client'
+import { ToastContainer } from 'react-toastify';
 
 import usePlanner, { PlannerData } from './UsePlanner';
 import TaskList from './TaskList';
@@ -15,6 +16,7 @@ export default function Planner({initPlannerData} : {initPlannerData?: PlannerDa
 
     return <>
         <div className={styles.planner}>
+            <ToastContainer/>
             <h2>Daily Planner</h2>
             <TaskList plannerData={plannerData} onRemove={removeTask} onUpdate={setTasks}>
                 {

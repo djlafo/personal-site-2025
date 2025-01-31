@@ -1,5 +1,3 @@
-"use client"
-
 import { UVAPIData, WeatherAPIData, WeatherPeriods, WeatherData } from "./types";
 
 const coordinateURL = (coord : string) => `https://api.weather.gov/points/${coord}`;

@@ -97,3 +97,35 @@ function getDistance(lat1 : number, lon1 : number, lat2 : number, lon2 : number)
     const d = R * c;
     return d;
 }
+
+
+export interface LocationData {
+    zip: string;
+    coords: string;
+}
+export const grabOther = async ({zip, coords} : Partial<LocationData>, auto=false) => {
+    return new Promise<LocationData>((acc, rej) => {
+        (async() => {
+            if(auto) {
+                try {
+                    const autoCoords = await getBrowserCoordinates();
+                    coords = autoCoords;
+                } catch (e) {
+                    rej(e);
+                }
+            }
+            if(coords && !zip) {
+                getZipFromCoords(coords).then(z => {
+                    if(coords) acc({zip: z, coords: coords});
+                }).catch(e => rej(e));
+            } else if (zip && !coords) {
+                getCoordsFromZip(zip).then(c => {
+                    acc({zip: zip, coords: c});
+                }).catch(e => rej(e));
+            } else {
+                rej(new Error('Invalid parameters'));
+            }
+        })();
+    });
+};
+

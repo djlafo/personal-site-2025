@@ -1,12 +1,13 @@
 'use client'
-
 import { useState } from "react";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
+import { ToastContainer } from 'react-toastify';
 
 import { addOption, SerializedFullPoll, SerializedPollOption, updateOption, updatePoll, voteFor } from "@/actions/polls";
 
 import styles from './poll.module.css';
+import { toast } from "react-toastify";
 
 interface PollProps {
     poll: SerializedFullPoll
@@ -23,25 +24,26 @@ export default function Poll(props: PollProps) {
 
     const _updatePoll = async(title: string, guestAddable: boolean) => {
         const res = await updatePoll(props.poll.uuid, {title: title, guestAddable: guestAddable});
-        if(!res) alert('Update failed');
+        if(!res) toast('Update failed');
     }
 
     const _addOption = async() => {
         if(!newOptionText) {
-            alert('Type it first');
+            toast('Type it first');
             return;
         }
         const res = await addOption(props.poll.uuid, newOptionText);
         if(res) {
             redirect(pathname);
         } else {
-            alert('Add failed. You may have reached the option limit');
+            toast('Add failed. You may have reached the option limit');
         }
     }
 
     const mine = props.poll.yours;
 
     return <>
+        <ToastContainer/>
         <Link href='/poll'>Back</Link>
         <div className={styles.pollHeader}>
             <h2>

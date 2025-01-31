@@ -1,14 +1,12 @@
-.weather > input {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
+.weather {
+    text-align: center;
+    line-height: 1.5;
 }
 
-.weather textarea {
-    width: 100%;
-    background-color: #000000;
-    color: #FFFFFF;
-    margin-top: 15px;
-    resize: vertical;
+.weather input[type=button] {
+    margin: 0 5px;
+}
+
+.weather input[type=text] {
+    margin: 10px 0;
 }

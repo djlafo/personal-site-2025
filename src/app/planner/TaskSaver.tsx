@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getPlannerData, savePlannerData } from "@/actions/planner";
 import { getEmptyPlanner, PlannerData } from "./UsePlanner";
 import { useUser } from "@/components/Session";
+import { toast } from "react-toastify";
 
 
 interface TaskSaverProps {
@@ -26,7 +27,7 @@ export default function TaskSaver(props : TaskSaverProps) {
 
     const checkClipboard = () => {
         if(!navigator.clipboard) {
-            alert('Cant access the clipboard');
+            toast('Cant access the clipboard');
             return false;
         }
         return true;
@@ -34,7 +35,7 @@ export default function TaskSaver(props : TaskSaverProps) {
     const copy = () => {
         if(!checkClipboard()) return;
         navigator.clipboard.writeText(JSON.stringify(props.plannerData));
-        alert('Copied to clipboard');
+        toast('Copied to clipboard');
     };
 
     const paste = () => {
@@ -48,7 +49,7 @@ export default function TaskSaver(props : TaskSaverProps) {
                     throw new Error('Invalid tasks format');
                 }
             } catch (e) {
-                alert('This doesn\'t seem to be the right data');
+                toast('This doesn\'t seem to be the right data');
             }
         });
     };
@@ -64,7 +65,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         if(loaded) {
             props.onLoad(loaded);
         } else {
-            alert('Nothing saved');
+            toast('Nothing saved');
         }
     };
 
@@ -79,7 +80,7 @@ export default function TaskSaver(props : TaskSaverProps) {
             if(pd) {
                 props.onLoad(pd);
             } else {
-                alert('Nothing saved');
+                toast('Nothing saved');
             }
         });
     }

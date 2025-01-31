@@ -1,4 +1,4 @@
-import { WeatherData } from '../WeatherApi/types';
+import { WeatherData } from '../[zip]/[coords]/WeatherApi/types';
 
 export interface Point {
     x: string;

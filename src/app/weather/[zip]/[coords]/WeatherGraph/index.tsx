@@ -1,13 +1,8 @@
-/* 3rd party components */
 import { ResponsiveLine, LineSvgProps } from '@nivo/line';
 
-/* components */
 import Tooltip from './Tooltip';
-
-/* Types */
 import { WeatherDataPoint } from './helpersAndTypes';
 
-/* css */
 import styles from './weathergraph.module.css';
 
 const graphProps : (data : Array<WeatherDataPoint>) => LineSvgProps = (data) => {
