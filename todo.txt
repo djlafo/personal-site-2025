@@ -22,10 +22,6 @@ POLL CREATOR
     - poll expiration
     - gracefully handle unavailable poll
     - refactor
-    - possibly change rank voice to save button instead
-
-WEATHER 
-    - move zips to DB
 
 LINUX
     - Fix lag again

@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './weather.module.css';
-
-import { grabOther, LocationData } from './location';
+import { getCoordsFromZip } from './location';
 
 export default function Page() {
     const [zipField, setZipField] = useState(() => {
@@ -16,28 +15,18 @@ export default function Page() {
             return localStorage.getItem('zip') || undefined;
         }
     });
-    const [coordsField, setCoordsField] = useState(() => {
-        if(typeof window !== 'undefined') {
-            return localStorage.getItem('coords') || undefined;
-        }
-    });
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
-    const [loading, setLoading] = useState(false);
-
-    const _setLocation = (ld: Partial<LocationData>, auto?: boolean) => {
+    const _setLocation = async (zip?: string) => {
+        if(!zip) return;
         setLoading(true);
-        grabOther(ld, auto).then(ldFull => {
-            if(typeof window !== 'undefined') {
-                localStorage.setItem('zip', ldFull.zip);
-                localStorage.setItem('coords', ldFull.coords);
-            }
-            router.push(`/weather/${ldFull.zip}/${ldFull.coords}`);
-        }).catch(e => {
-            toast(e.message || e);
-            setLoading(false);
-        });
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('zip', zip);
+        }
+        const coords = await getCoordsFromZip(zip);
+        router.push(`/weather/${zip}/${coords}`);
     };
 
     return <div className={styles.weather}>
@@ -47,23 +36,12 @@ export default function Page() {
             <div>
                 ZIP: <input type='text' value={zipField || ''} onChange={e => setZipField(e.target.value)}/>
             </div>
-            <div>
-                Coordinates: <input type='text' value={coordsField || ''} onChange={e => setCoordsField(e.target.value)}/>
-            </div>
             <br/>
             <div>
                 <input type='button' 
                     value='Get by ZIP' 
-                    onClick={() => _setLocation({zip: zipField})}
-                    readOnly={loading}/>
-                <input type='button' 
-                    value='Get by Coordinates' 
-                    onClick={() => _setLocation({coords: coordsField})}
-                    readOnly={loading}/>
-                <input type='button' 
-                    value={'Autoget Coordinates'} 
-                    onClick={() => _setLocation({}, true)} 
-                    readOnly={loading}/>
+                    onClick={() => _setLocation(zipField)}
+                        disabled={loading}/>
             </div>
         </div>
     </div>
