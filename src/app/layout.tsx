@@ -6,10 +6,7 @@ import HeaderBar from '@/components/HeaderBar';
 import { UserProvider } from "@/components/Session";
 
 export const metadata: Metadata = {
-  title: {
-    template: "Dylan Lafont | %s",
-    default: "Dylan Lafont"
-  },
+  title: "Dylan Lafont | Home",
   description: "Personal website of Dylan Lafont",
 };
 

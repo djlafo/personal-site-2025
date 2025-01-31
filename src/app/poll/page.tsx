@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-
 import { listPolls, SerializedPoll } from "@/actions/polls";
 
 import { PollButton, CreateButton } from './PollButtons';
@@ -10,6 +9,7 @@ import styles from './polllist.module.css';
 export const metadata: Metadata = {
     title: "Polls"
 };
+  
 
 export default function Page() {
     return <div className={styles.pollListContainer}>
@@ -26,7 +26,7 @@ async function PollList() {
         <div className={styles.pollList}>
             {
                 polls && polls.map(p => {
-                    return <PollListCard poll={p}/>;
+                    return <PollListCard key={p.uuid} poll={p}/>;
                 }) || <></>
             }
         </div>
