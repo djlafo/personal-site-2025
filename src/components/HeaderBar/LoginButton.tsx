@@ -7,13 +7,14 @@ import { logout } from '@/actions/auth';
 import Login from '@/components/Login';
 import Modal from '@/components/Modal';
 import { UserInfo, useUser } from '@/components/Session';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 
 import styles from './headerbar.module.css';
 
 export default function LoginButton() {
     const [opened, setOpened] = useState(false);
     const [user, setUser, pending] = useUser();
+    const router = useRouter();
 
     const onUserChange = (u?: UserInfo) => {
         setOpened(false);
@@ -23,7 +24,7 @@ export default function LoginButton() {
     const _logout = () => {
         logout().then(() => {
             setUser();
-            redirect('/');
+            router.push('/');
         });
     }
 

@@ -30,10 +30,13 @@ FILE HOSTING/
 
 NOTES
 
+FILE HOSTING
+
 MINESWEEPER
 
-NEXT STUFF 
-        add ipbans to registration
-    file hosting
-    Websocket events ex: notify when poll updates 
 
+add ipbans to registration
+Websocket events ex: notify when poll updates 
+
+fix jittery UI when logging out 
+make the poll styling better
