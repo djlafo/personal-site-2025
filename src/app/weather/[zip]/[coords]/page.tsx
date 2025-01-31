@@ -2,6 +2,22 @@ import { Suspense } from "react";
 import { getWeather } from "./WeatherApi";
 import WeatherContainer from "./WeatherContainer";
 import { formatWeatherData } from "./WeatherGraph/helpersAndTypes";
+import { ResolvingMetadata } from "next";
+import { getCityFromZip } from "../../location";
+
+
+interface MetaProps {
+    params: Promise<{ zip: string, coords: string}>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+export async function generateMetadata({ params }: MetaProps, parent: ResolvingMetadata) {
+    const par = await params;
+    const city = await getCityFromZip(par.zip);
+    return {
+        title: city || par.zip,
+        description: 'Weather'
+    }
+}
 
 interface PageProps {
     params : Promise<{ zip: string, coords: string}>

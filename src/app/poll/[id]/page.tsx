@@ -9,7 +9,6 @@ interface MetaProps {
     params: Promise<{ id: string }>
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
-  
 export async function generateMetadata({ params }: MetaProps, parent: ResolvingMetadata) {
     const par = await params;
     const fullPoll = await readPoll(par.id);

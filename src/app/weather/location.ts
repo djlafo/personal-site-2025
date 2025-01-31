@@ -24,14 +24,17 @@ interface CsvRow {
     zip: string;
     lat: string;
     lng: string;
+    city: string;
+    state_id: string;
+    state_name: string;
     [key: string]: any;
 }
 
-async function getCsv() : Promise<Papa.ParseResult<CsvRow>> {
+async function getCsv(): Promise<Papa.ParseResult<CsvRow>> {
     return new Promise((acc, rej) => {
         (async() => {
             try {
-                const csvRead = await fetch ('/uszips.csv');
+                const csvRead = await fetch(`${process.env.BASEPATH}/uszips.csv`);
                 const csvText = await csvRead.text();
                 acc(Papa.parse(csvText, {header: true}));
             } catch (e) {
@@ -41,7 +44,13 @@ async function getCsv() : Promise<Papa.ParseResult<CsvRow>> {
     });
 }
 
-export async function getZipFromCoords(coords : string) : Promise<string> {
+export async function getCityFromZip(zip: string) {
+    const csv = await getCsv();
+    const row = csv.data.find(d => d.zip === zip);
+    if(row) return `${row.city}, ${row.state_name}`;
+}
+
+export async function getZipFromCoords(coords: string): Promise<string> {
     return new Promise((acc, rej) => {
         (async() => {
             try {
