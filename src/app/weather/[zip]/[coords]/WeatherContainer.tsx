@@ -7,8 +7,6 @@ import DaySwitcher from "./DaySwitcher";
 
 import { FormattedWeatherData } from "./WeatherGraph/helpersAndTypes";
 
-import styles from './weeklyweather.module.css';
-
 interface WeeklyWeatherProps {
     weatherData: FormattedWeatherData;
 }

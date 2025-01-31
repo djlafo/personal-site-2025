@@ -21,8 +21,10 @@ export default function Page() {
     const _setLocation = (ld: Partial<LocationData>, auto?: boolean) => {
         setLoading(true);
         grabOther(ld, auto).then(ldFull => {
-            localStorage.setItem('zip', ldFull.zip);
-            localStorage.setItem('coords', ldFull.coords);
+            if(typeof window !== 'undefined') {
+                localStorage.setItem('zip', ldFull.zip);
+                localStorage.setItem('coords', ldFull.coords);
+            }
             router.push(`/weather/${ldFull.zip}/${ldFull.coords}`);
         }).catch(e => {
             toast(e.message);
