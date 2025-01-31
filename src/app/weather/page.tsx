@@ -11,8 +11,16 @@ import styles from './weather.module.css';
 import { grabOther, LocationData } from './location';
 
 export default function Page() {
-    const [zipField, setZipField] = useState(localStorage.getItem('zip') || undefined);
-    const [coordsField, setCoordsField] = useState(localStorage.getItem('coords') || undefined);
+    const [zipField, setZipField] = useState(() => {
+        if(typeof window !== 'undefined') {
+            return localStorage.getItem('zip') || undefined;
+        }
+    });
+    const [coordsField, setCoordsField] = useState(() => {
+        if(typeof window !== 'undefined') {
+            return localStorage.getItem('zip') || undefined;
+        }
+    });
 
     const router = useRouter();
 
