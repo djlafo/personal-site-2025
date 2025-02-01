@@ -161,7 +161,7 @@ export async function updatePoll(uuid: string, props: UpdatePollProps) {
         await db.delete(pollVotesTable).where(inArray(pollVotesTable.pollOptionId, sq.map(s => s.id))); // for now will have to do 2 queries, with and as dont seem to work
     }
     
-    return true;
+    return readPoll(uuid);
 
 }
 
@@ -181,7 +181,7 @@ export async function addOption(uuid: string, text: string) {
         userId: user && user.id || null
     }).returning({id: pollOptionsTable.id});
 
-    return newRow.length === 1;
+    return newRow.length === 1 && readPoll(uuid);
 }
 
 export async function updateOption(uuid: string, optionId: number, text: string, active: boolean) {
@@ -209,10 +209,10 @@ export async function updateOption(uuid: string, optionId: number, text: string,
             ).returning({id: pollOptionsTable.id});
     }
 
-    return (query.length === 1);
+    return (query.length === 1) && readPoll(uuid);
 }
 
-export async function voteFor(pollOptionId: number) {
+export async function voteFor(uuid: string, pollOptionId: number) {
     const user = await getUser();
     let ip = await getIp();
     if(!ip) return false;
@@ -229,7 +229,7 @@ export async function voteFor(pollOptionId: number) {
         ip: ip
     }).returning({id: pollVotesTable.id});
 
-    return vote.length === 1;
+    return vote.length === 1 && readPoll(uuid);
 }
 
 export interface RankValueType {
@@ -293,5 +293,5 @@ export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
     });
     await Promise.all(updates);
 
-    return true;
+    return readPoll(uuid);
 }

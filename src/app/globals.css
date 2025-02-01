@@ -83,8 +83,7 @@ input:active {
 }
 
 input[readOnly], input[disabled] {
-  opacity: 0.5;
-  color: gray;
+  color: #888888;
 }
 
 .big-button {

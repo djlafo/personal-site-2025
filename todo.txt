@@ -4,7 +4,6 @@ INTERVAL TIMER
     -Timer animations
 
 DAILY PLANNER
-    - If has a timer, highlight red or something
     - Use space better
     - Fix mobile flexing
     - Have timers enable to actively count down
@@ -12,6 +11,7 @@ DAILY PLANNER
     - Keyboard shortcuts
     - Scrolling on type in mobile 
     - set max rows allowed to save
+    - Add the trigger on window resize
 
 VISUALIZER
     - Stylize
@@ -22,21 +22,18 @@ POLL CREATOR
     - poll expiration
     - gracefully handle unavailable poll
     - refactor
+    - change examples to allow public polls though only by me
 
 LINUX
     - Fix lag again
 
-FILE HOSTING/
-
 NOTES
 
 FILE HOSTING
-
+ 
 MINESWEEPER
 
 
 add ipbans to registration
-Websocket events ex: notify when poll updates 
-
-fix jittery UI when logging out 
-make the poll styling better
+allow inactivation of accounts
+Websocket events ex: notify when poll updates

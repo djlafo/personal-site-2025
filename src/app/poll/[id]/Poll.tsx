@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ToastContainer } from 'react-toastify';
 
 import { addOption, RankValueType, SerializedFullPoll, SerializedPollOption, setVoteRanks, updateOption, updatePoll, UpdatePollProps, voteFor } from "@/actions/polls";
@@ -14,20 +14,20 @@ interface PollProps {
 }
 export default function Poll(props: PollProps) {
     const router = useRouter();
+    const [poll, setPoll] = useState(props.poll);
     const [newOptionText, setNewOptionText] = useState('');
     const [changedValues, setChangedValues] = useState<Array<RankValueType>>([]);
     const pathname = usePathname();
 
     const _inactivatePoll = async() => {
-        const res = await updatePoll(props.poll.uuid, {active: false});
-        if(res) router.push('/poll');
+        const res = await updatePoll(poll.uuid, {active: false});
+        if(res) router.replace('/poll');
     }
 
     const _updatePoll = async(updateProps: UpdatePollProps) => {
-        const res = await updatePoll(props.poll.uuid, updateProps);
+        const res = await updatePoll(poll.uuid, updateProps);
         if(res) {
-            if(updateProps.title) setNewOptionText('');
-            redirect(pathname);
+            setPoll(res);
         } else {
             toast('Update failed');
         }
@@ -38,9 +38,10 @@ export default function Poll(props: PollProps) {
             toast('Type it first');
             return;
         }
-        const res = await addOption(props.poll.uuid, newOptionText);
+        const res = await addOption(poll.uuid, newOptionText);
         if(res) {
-            redirect(pathname);
+            setNewOptionText('');
+            setPoll(res);
         } else {
             toast('Add failed. You may have reached the option limit');
         }
@@ -53,16 +54,16 @@ export default function Poll(props: PollProps) {
     }
 
     const sendRankedVote = async () => {
-        const res = await setVoteRanks(props.poll.uuid, changedValues);
+        const res = await setVoteRanks(poll.uuid, changedValues);
         if(res) {
             setChangedValues([]);
-            redirect(pathname);
+            setPoll(res);
         } else {
             toast('Failed to send');
         }
     }
 
-    const mine = props.poll.yours;
+    const mine = poll.yours;
 
     return <>
         <ToastContainer/>
@@ -71,13 +72,13 @@ export default function Poll(props: PollProps) {
             <h2>
                 {mine && 
                     <input type='text' 
-                        defaultValue={props.poll.title} 
-                        onBlur={e => _updatePoll({title: props.poll.title})}/>
-                    || props.poll.title
+                        defaultValue={poll.title} 
+                        onBlur={e => _updatePoll({title: poll.title})}/>
+                    || poll.title
                 }
             </h2>
             <h4>
-                {props.poll.dateCreated}
+                {poll.dateCreated}
             </h4>
             {mine && <input type='button' 
                 value='Delete' 
@@ -87,7 +88,7 @@ export default function Poll(props: PollProps) {
         {mine && <span>
             <label htmlFor=''>Allow guests to add options</label>
             <input type='checkbox' 
-                defaultChecked={props.poll.guestAddable} 
+                defaultChecked={poll.guestAddable} 
                 onChange={e => _updatePoll({guestAddable: e.target.checked})}/>
             </span> || <></>
         }
@@ -95,14 +96,14 @@ export default function Poll(props: PollProps) {
         {mine && <span>
             <label htmlFor=''>Ranked Choice</label>
             <input type='checkbox' 
-                defaultChecked={props.poll.rankedChoice} 
+                defaultChecked={poll.rankedChoice} 
                 onChange={e => _updatePoll({rankedChoice: e.target.checked})}/>
             </span> || <></>
         }
         <br/>
         <br/>
         {
-            (mine || props.poll.guestAddable) && <>
+            (mine || poll.guestAddable) && <>
                 <input type='text' 
                     placeholder='New Option' 
                     value={newOptionText}
@@ -112,7 +113,7 @@ export default function Poll(props: PollProps) {
         }
         <br/>
         <br/>
-        {props.poll.rankedChoice && changedValues.length &&
+        {poll.rankedChoice && changedValues.length &&
             <input type='button'
                 onClick={() => sendRankedVote()}
                 value='Send Vote'/>
@@ -120,21 +121,23 @@ export default function Poll(props: PollProps) {
         }
         <div className={styles.pollOptions}>
             {
-                props.poll.options.map((p,i)=> {
-                    return props.poll.rankedChoice ? 
+                poll.options.map((p,i)=> {
+                    return poll.rankedChoice ? 
                         <RankedPollOption 
                             key={p.id} 
                             option={p} 
-                            uuid={props.poll.uuid} 
+                            uuid={poll.uuid} 
+                            onPollChange={p => setPoll(p)}
                             emptyChanges={changedValues.length===0}
                             onChange={_setChangedValues}
-                            options={props.poll.options}
+                            options={poll.options}
                             myPoll={mine}/> 
                             :
                         <PollOption 
                             key={p.id} 
                             option={p} 
-                            uuid={props.poll.uuid} 
+                            onPollChange={p => setPoll(p)}
+                            uuid={poll.uuid} 
                             myPoll={mine}/>;
                 }) || <></>
             }
@@ -148,6 +151,7 @@ interface RankedPollOptionProps {
     myPoll: boolean;
     options: Array<SerializedPollOption>;
     onChange: (rv: RankValueType) => void;
+    onPollChange: (p: SerializedFullPoll) => void;
     emptyChanges: boolean;
 }
 function RankedPollOption(props: RankedPollOptionProps) {
@@ -168,7 +172,7 @@ function RankedPollOption(props: RankedPollOptionProps) {
     const deleteOption = async(optionId: number, text: string) => {
         const res = await updateOption(props.uuid, optionId, text, false);
         if(res) {
-            redirect(pathname);
+            props.onPollChange(res);
         } else {
             toast('Delete failed');
         }
@@ -237,6 +241,7 @@ interface PollOptionProps {
     option: SerializedPollOption;
     uuid: string;
     myPoll: boolean;
+    onPollChange: (p: SerializedFullPoll) => void;
 }
 function PollOption(props: PollOptionProps) {
     const myVote = !!(props.option.votes.find(v => v.yours));
@@ -245,7 +250,7 @@ function PollOption(props: PollOptionProps) {
     const deleteOption = async(optionId: number, text: string) => {
         const res = await updateOption(props.uuid, optionId, text, false);
         if(res) {
-            redirect(pathname);
+            props.onPollChange(res);
         } else {
             toast('Delete failed');
         }
@@ -256,9 +261,9 @@ function PollOption(props: PollOptionProps) {
     }
 
     const vote = async (p: SerializedPollOption) => {
-        const v = await voteFor(p.id);
-        if(v) {
-            redirect(pathname); // for now i will reload the page every action to stay semi up to date
+        const res = await voteFor(props.uuid, p.id);
+        if(res) {
+            props.onPollChange(res);
         } else {
             toast('Vote failed');
         }
