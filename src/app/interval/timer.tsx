@@ -1,9 +1,10 @@
-import { useState } from 'react';
+'use client'
+
+import { useEffect, useState } from 'react';
 
 type timerReturn = [
     {
         times: Array<number>;
-        savedTimes: Array<number>;
         round: number;
         active: boolean;
     },
@@ -11,7 +12,6 @@ type timerReturn = [
         nextRound: () => void;
         setTimeAt: (n: number, amount: number) => void;
         setTimeAtN: (start: number, num: number, time: number) => void;
-        setSavedTimes: React.Dispatch<React.SetStateAction<number[]>>;
         setRounds: (n: number) => void;
         setRound: (n: number) => void;
         setTimes: React.Dispatch<React.SetStateAction<number[]>>;
@@ -22,11 +22,38 @@ type timerReturn = [
 
 export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerReturn {
     const [times, _setTimes] = useState([25*60, 5*60, 25*60, 5*60, 25*60, 5*60, 25*60, 25*60]);
-    const [savedTimes, setSavedTimes] = useState<Array<number>>([]);
     const [round, _setRound] = useState(0);
     const [currentTimer, setCurrentTimer] = useState<number | undefined>();
-    const [timerDate, setTimerDate] = useState(() => new Date());
+    const [timerDate, setTimerDate] = useState(() => {
+        if(typeof window !== 'undefined') {
+            const td = localStorage.getItem('timerDate');
+            if(td) return new Date(td);
+        }
+        return new Date();
+    });
     const [, setTimerFlipper] = useState(true);
+
+    useEffect(() => {
+        if(typeof window !== 'undefined') {
+            const t = localStorage.getItem('times');
+            const r = localStorage.getItem('round');
+            const td = localStorage.getItem('timerDate');
+            const s = localStorage.getItem('stopTime');
+            if(t && r) {
+                const ti = JSON.parse(t);
+                const ro = Number(r);
+                if(s) {
+                    ti[ro] = Number(s);
+                }
+                setTimes(ti);
+                setRound(ro);
+                if(!s && td) {
+                    setTimerDate(new Date(td));
+                    setCurrentTimer(ti[ro]);
+                }
+            }
+        }
+    }, []);
 
     const setRounds = (n : number) => {
         setTimes(new Array(n).fill(1500));
@@ -64,6 +91,11 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
     }
 
     const stopTimer = () => {
+        if(!currentTimer) return;
+        const currentDate = new Date();
+        const dateDiff = Math.floor((currentDate.getTime() - timerDate.getTime()) / 1000);
+        const time = currentTimer - dateDiff;
+        if(typeof window !== 'undefined') localStorage.setItem('stopTime', time.toString());
         setCurrentTimer(undefined);
     };
 
@@ -79,7 +111,14 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
     };
 
     const startTimer = () => {
-        setTimerDate(new Date());
+        const td = new Date();
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('timerDate', td.toString());
+            localStorage.setItem('times', JSON.stringify(times));
+            localStorage.setItem('round', round.toString());
+            localStorage.setItem('stopTime', '');
+        }
+        setTimerDate(td);
         setCurrentTimer(times[round]);
         setTimeout(() => {
             setTimerFlipper(f => !f);
@@ -104,7 +143,6 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
     return [
         {
             times,
-            savedTimes,
             round,
             active : !!currentTimer
         }, 
@@ -112,7 +150,6 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
             nextRound,
             setTimeAt,
             setTimeAtN,
-            setSavedTimes,
             setRounds,
             setRound,
             startTimer,

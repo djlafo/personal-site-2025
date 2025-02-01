@@ -23,7 +23,8 @@ export default function TaskList(props : TaskListProps) {
     const [taskCopy, setTaskCopy] = useState<Array<StringTask>>();
     const [newID, setNewID] = useState(1);
 
-    const onTimerOver = () => {
+    const onTimerOver = (done: boolean) => {
+        if(done) return;
         const a = new Audio('/timer-alert.mp3');
         a.play();
         alert('Deadline reached!');
@@ -158,8 +159,8 @@ export default function TaskList(props : TaskListProps) {
                                 <br/>
                                 <TimeInput value={t.deadline} 
                                     countdownOnSet
-                                    onZero={onTimerOver}
-                                    onValueChange={n => updateRow(i, {deadline: n}, true)}/>
+                                    onZero={() => onTimerOver(t.done)}
+                                    onValueChange={n => updateRow(i, {deadline: n, overdue: false}, true)}/>
                             </div>
                             <div>
                                 <input type='checkbox'

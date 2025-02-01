@@ -49,12 +49,6 @@ function Interval() {
                 { 
                     (!timerData.active && timerData.times.length > 0 && <span>
                         <input className='big-button' type='button' 
-                            value='Save' 
-                            onClick={() => setTimerData.setSavedTimes(timerData.times)}/>
-                        <input className='big-button' type='button' 
-                            value={`Load${timerData.savedTimes.length ? `(${timerData.savedTimes.length})` : '(empty)'}`} 
-                            onClick={() => setTimerData.setTimes(timerData.savedTimes)}/>
-                        <input className='big-button' type='button' 
                             value='Start' 
                             onClick={() => setTimerData.startTimer()}/>
                     </span>)
