@@ -11,7 +11,7 @@ import useVisualizerCore from './VisualizerCore';
 import styles from './visualizer.module.css';
 
 export default function Visualizer() {
-    const {shuffle, create, setLock} = useVisualizerCore();
+    const {shuffle, create, setLock, stop} = useVisualizerCore();
     const [fullScreen, setFullScreen] = useState(false);
     const [isSupported, setIsSupported] = useState<boolean>();
     const [mediaDevices, setMediaDevices] = useState<boolean>();
@@ -32,10 +32,7 @@ export default function Visualizer() {
                 (isSupported === false && <>Browser not supported</>) ||
                 (!mediaDevices && <>Cannot get media source</>) ||
                 <>
-                    <h2>
-                        Added using <a href="https://github.com/jberg/butterchurn" target="_blank" rel="noreferrer">Butterchurn</a>
-                    </h2>
-                    <VisualizerOptions onLock={setLock} onShuffle={shuffle} onStart={o => start(o)}/>
+                    <VisualizerOptions onLock={setLock} onShuffle={shuffle} onStart={o => start(o)} onStop={stop}/>
                     <canvas ref={canvasRef} onClick={() => setFullScreen(fs => !fs)} className={fullScreen ? styles.full : ''}/>
                 </>    
             }

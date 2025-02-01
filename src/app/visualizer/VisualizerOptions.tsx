@@ -15,6 +15,7 @@ interface VisualizerOptionsOptions { // lol
     onStart: (o: VisualizerOptionsType) => void;
     onShuffle: () => void;
     onLock: (b: boolean) => void;
+    onStop: () => void;
 }
 
 export default function VisualizerOptions(o : VisualizerOptionsOptions) {
@@ -43,19 +44,24 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
     }
 
     return <div className={styles.options}>
-        <div>
-            <label htmlFor='widthInput'>Render width: </label>
-            <input type='text' id="widthInput" value={width} onChange={e => setWidth(e.target.value)}/><br/>
+        {!started && 
+            <div>
+                <h2>
+                    Added using <a href="https://github.com/jberg/butterchurn" target="_blank" rel="noreferrer">Butterchurn</a>
+                </h2>
+                <label htmlFor='widthInput'>Render width: </label>
+                <input type='text' id="widthInput" value={width} onChange={e => setWidth(e.target.value)}/><br/>
 
-            <label htmlFor='heightInput'>Render height: </label>
-            <input type='text' id="heightInput" value={height} onChange={e => setHeight(e.target.value)}/><br/>
+                <label htmlFor='heightInput'>Render height: </label>
+                <input type='text' id="heightInput" value={height} onChange={e => setHeight(e.target.value)}/><br/>
 
-            <label htmlFor='fpsInput'>FPS: </label>
-            <input type='text' id="fpsInput" value={fps} onChange={e => setFps(e.target.value)}/><br/>
-            
-            <label htmlFor='shuffleInput'>Shuffle Timer: </label>
-            <input type='text' id="shuffleInput" value={shuffleTimer} onChange={e => setShuffleTimer(e.target.value)}/><br/>
-        </div>
+                <label htmlFor='fpsInput'>FPS: </label>
+                <input type='text' id="fpsInput" value={fps} onChange={e => setFps(e.target.value)}/><br/>
+                
+                <label htmlFor='shuffleInput'>Shuffle Timer: </label>
+                <input type='text' id="shuffleInput" value={shuffleTimer} onChange={e => setShuffleTimer(e.target.value)}/><br/>
+            </div> || <></>
+        }
         <div>
             <label htmlFor='lockInput'>Lock: </label>
             <input type='checkbox' id="lockInput" onChange={e => {
@@ -64,10 +70,15 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
             }}/>
         </div>
         <div>
-            <input type='button' value={started ? 'Restart' : 'Start'} onClick={() => start()}/>
-            {started && <input type='button' value='Shuffle' onClick={() => o.onShuffle()}/>}
-            <br/><br/>
-            {started && <>Click canvas to take up browser content</>}
+            {!started && <input type='button' value='Start' onClick={() => start()}/> || <></>}
+            {started && <>
+                <input type='button' value='Stop' onClick={() => {
+                    o.onStop();
+                    setStarted(false);
+                }}/> 
+                <input type='button' value='Shuffle' onClick={() => o.onShuffle()}/>
+            </>}
+            <br/>
         </div>
     </div>;
 }

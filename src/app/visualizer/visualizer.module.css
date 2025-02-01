@@ -1,3 +1,7 @@
+.visualizer {
+    text-align: center;
+}
+
 .visualizer canvas {
     width: 100%;
     height: calc(100vw/16*9);

@@ -48,5 +48,16 @@ export default function useVisualizerCore() {
         }
         _setLock(b);
     }
-    return {shuffle, create, setLock};
+    const stop = () => {
+        if(vRenderer) {
+            clearInterval(vRenderer);
+            setVRenderer(null);
+        }
+        if(presetSwitcher) {
+            clearInterval(presetSwitcher);
+            setPresetSwitcher(null);
+        }
+        setVisualizer(null);
+    }
+    return {shuffle, create, setLock, stop};
 }
