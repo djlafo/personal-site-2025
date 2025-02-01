@@ -49,6 +49,10 @@
     border: 3px solid red;
 }
 
+.taskcell.timed {
+    border: 3px solid white;
+}
+
 .taskdetails {
     display: flex;
     flex: 1;

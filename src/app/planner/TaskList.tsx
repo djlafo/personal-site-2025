@@ -130,7 +130,8 @@ export default function TaskList(props : TaskListProps) {
         {(taskCopy && taskCopy.length && 
             <div>
                 {taskCopy.map((t, i)=> {
-                    return <div key={t.UUID} className={`${styles.taskcell} ${t.done ? styles.done : ''} ${t.overdue ? styles.overdue : ''}`}>        
+                    return <div key={t.UUID} 
+                        className={`${styles.taskcell} ${t.done ? styles.done : ''} ${t.overdue ? styles.overdue : ''} ${t.deadline && !t.overdue ? styles.timed : ''}`}>        
                         <textarea rows={1}
                             autoFocus={i === taskCopy.length - 1}
                             value={t.label} 
