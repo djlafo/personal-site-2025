@@ -43,34 +43,81 @@ const calculateString = (n : number) : string => {
 };
 
 interface TimeProps extends ComponentProps<'input'> {
-    value? : number; 
-    onValueChange? : valueChangeFunction;
+    value?: number; 
+    onValueChange?: valueChangeFunction;
+    countdownOnSet?: boolean;
+    onZero?: () => void;
 }
-function TimeInput({ value, onValueChange, ...props } : TimeProps ) {
+function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: TimeProps ) {
     // const [remainingTime, setRemainingTime] = useState(1500);
     const inputRef = useRef<HTMLInputElement>(null);
     const [remainingTimeText, setRemainingTimeText] = useState('');
-    const [lastValue, setLastValue] = useState<number>();
+    const [internalValue, setInternalValue] = useState<number | null>();
 
-    const alertValueChange = (s : string) => {
+    const [ticker, setTicker] = useState<number | null>();
+    const [tickerFlag, setTickerFlag] = useState(false);
+    const [editing, setEditing] = useState(false);
+
+    const alertValueChange = (s: string) => {
+        setEditing(false);
         const v = calculateTime(s);
         if(onValueChange) onValueChange(v);
-        const remainingText = calculateString(v);
-        setRemainingTimeText(remainingText);
+        if(countdownOnSet) startCountdown(v);
+    }
+    const startCountdown = (v : number) => {
+        if(!v) return;
+        const now = Number(new Date());
+        const handler: TimerHandler = () => {
+            console.log('hit');
+            setInternalValue(Math.floor(((v*1000) - (Number(new Date()) - now))/1000));
+            setTickerFlag(t => !t);
+        }
+        setTicker(setInterval(handler, 1000));
+    }
+    const stopCountdown = () => {
+        if(!countdownOnSet || !ticker) return;
+        clearInterval(ticker);
+        setTicker(null);
+        setInternalValue(null);
     }
 
-    if((value || value === 0) && value >= 0 && value !== lastValue) {
-        setLastValue(value);
-        const remainingText = calculateString(value);
-        setRemainingTimeText(remainingText);
+    if(!editing) {
+        if(internalValue || internalValue === 0) {
+            if(internalValue < 0) {
+                setEditing(true);
+                stopCountdown();
+                setRemainingTimeText(calculateString(0));
+                if(onZero) onZero();
+            } else {
+                const internalRemaining = calculateString(internalValue);
+                if(internalRemaining!==remainingTimeText) {
+                    setRemainingTimeText(internalRemaining);
+                }
+            }
+        } else if (value || value === 0) {
+            if(!ticker && value && countdownOnSet) {
+                startCountdown(value);
+            } else {
+                const valueRemaining = calculateString(value);
+                if(valueRemaining!==remainingTimeText) {
+                    setRemainingTimeText(valueRemaining);
+                }
+            }
+        }
     }
 
     return <span className='time-input'>
-        <input type="text" value={remainingTimeText} onChange={e => setRemainingTimeText(e.target.value)} onBlur={e => alertValueChange(e.target.value)} ref={inputRef} {...props}/>
-        {
-            <span className='help-text'>Format 8h 4m 2s</span>
-            // (invalid && <span className='error-text'>Invalid unit</span>)
-        }
+        <input type="text" 
+            value={remainingTimeText} 
+            onChange={e => setRemainingTimeText(e.target.value)} 
+            onFocus={() => {
+                setEditing(true);
+                stopCountdown();
+            }}
+            onBlur={e => alertValueChange(e.target.value)} 
+            ref={inputRef} 
+            {...props}/>
+        <span className='help-text'>Format 8h 4m 2s</span>
     </span>;
 
 }

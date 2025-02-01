@@ -23,6 +23,12 @@ export default function TaskList(props : TaskListProps) {
     const [taskCopy, setTaskCopy] = useState<Array<StringTask>>();
     const [newID, setNewID] = useState(1);
 
+    const onTimerOver = () => {
+        const a = new Audio('/timer-alert.mp3');
+        a.play();
+        alert('Deadline reached!');
+    }
+
     if(lastTasks !== props.plannerData.tasks) {
         setLastTasks(props.plannerData.tasks);
         let counter = 1;
@@ -151,6 +157,8 @@ export default function TaskList(props : TaskListProps) {
                                     onBlur={() => updateTasks()}/>
                                 <br/>
                                 <TimeInput value={t.deadline} 
+                                    countdownOnSet
+                                    onZero={onTimerOver}
                                     onValueChange={n => updateRow(i, {deadline: n}, true)}/>
                             </div>
                             <div>

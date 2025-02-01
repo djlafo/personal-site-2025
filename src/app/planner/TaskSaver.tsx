@@ -89,7 +89,6 @@ export default function TaskSaver(props : TaskSaverProps) {
         {
             (props.plannerData.tasks.length !== 0 && <>
                 <span>
-                    <input type='button' value='Refresh' onClick={() => props.onLoad(JSON.parse(JSON.stringify(props.plannerData)))}/>
                     <input type='button' value='Clear' onClick={() => props.onLoad(getEmptyPlanner())}/>
                 </span>
             </>) || <></>
