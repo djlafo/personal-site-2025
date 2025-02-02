@@ -67,6 +67,7 @@ select {
   background-color: black;
   color: white;
   border: 1px solid cyan;
+  font-size: 18px;
 }
 
 input[type=button],
