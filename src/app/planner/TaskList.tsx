@@ -114,10 +114,12 @@ export default function TaskList(props : TaskListProps) {
     // hack to resize on initial load, i apologize for this
     useEffect(() => {
         setTimeout(() => {
-            document.querySelectorAll("textarea").forEach(textarea => {
+            const resize = () => document.querySelectorAll("textarea").forEach(textarea => {
                 textarea.style.height = 'auto'
                 textarea.style.height = textarea.scrollHeight + TEXTAREA_PADDING + "px";
             });
+            window.onresize = resize;
+            resize();
         }, 50);
     }, [taskCopy]);
 
