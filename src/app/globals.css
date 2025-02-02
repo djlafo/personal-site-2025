@@ -63,6 +63,12 @@ input:focus {
   font-size: 22px;
 }
 
+select {
+  background-color: black;
+  color: white;
+  border: 1px solid cyan;
+}
+
 input[type=button],
 button,
 input[type=submit] {
