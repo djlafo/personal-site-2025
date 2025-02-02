@@ -8,7 +8,7 @@ export interface PlannerData {
 export interface Task {
     label : string;
     motivation: number;
-    UUID: number;
+    UUID: string;
     done: boolean;
     deadline: number;
     overdue: boolean;
