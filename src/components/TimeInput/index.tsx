@@ -68,7 +68,6 @@ function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: T
         if(!v) return;
         const now = Number(new Date());
         const handler: TimerHandler = () => {
-            console.log('hit');
             setInternalValue(Math.floor(((v*1000) - (Number(new Date()) - now))/1000));
             setTickerFlag(t => !t);
         }

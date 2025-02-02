@@ -21,7 +21,6 @@ interface StringTask extends Omit<Task, 'motivation' | 'necessity'> {
 export default function TaskList(props : TaskListProps) {
     const [lastTasks, setLastTasks] = useState<Array<Task>>();
     const [taskCopy, setTaskCopy] = useState<Array<StringTask>>();
-    const [newID, setNewID] = useState(1);
 
     const onTimerOver = (done: boolean) => {
         if(done) return;
@@ -32,7 +31,6 @@ export default function TaskList(props : TaskListProps) {
 
     if(lastTasks !== props.plannerData.tasks) {
         setLastTasks(props.plannerData.tasks);
-        let counter = 1;
         setTaskCopy(props.plannerData.tasks.map(t => {
             let overdue = t.overdue || false;
             let deadline = t.deadline;
@@ -47,27 +45,24 @@ export default function TaskList(props : TaskListProps) {
             const translated : StringTask = {
                 label: t.label || '',
                 motivation: t.motivation.toString() || '0',
-                UUID: counter,
+                UUID: t.UUID,
                 done: t.done || false,
                 deadline: deadline,
                 overdue: overdue
             };
-            counter++;
             return translated;
         }));
-        setNewID(counter);
     }
 
     const addRow = () => {
         props.onUpdate(props.plannerData.tasks.concat([{
-            UUID: newID,
+            UUID: crypto.randomUUID(),
             label: '',
             motivation: 0,
             done: false,
             deadline: 0,
             overdue: false
         }]));
-        setNewID(n => n + 1);
     }
 
     const updateRow = (ind : number, pt : Partial<StringTask>, immediate=false) => {

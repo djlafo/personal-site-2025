@@ -12,6 +12,7 @@ DAILY PLANNER
     - Scrolling on type in mobile 
     - set max rows allowed to save
     - Add the trigger on window resize
+    - Look at keys, the timers are messing up in the rows
 
 VISUALIZER
     - Stylize
