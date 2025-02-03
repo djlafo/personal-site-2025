@@ -43,3 +43,13 @@ export async function getIp() {
     const headerList = await headers();
     return headerList.get('x-forwarded-for') || '';
 }
+
+export async function getClientIdentifier() {
+    const headerList = await headers();
+    const ip = headerList.get('x-forwarded-for') || '';
+    const userAgent = headerList.get('user-agent') || '';
+    let client = '';
+    if(ip) client += `${ip}-`;
+    if(userAgent) client += userAgent;
+    return client;
+}

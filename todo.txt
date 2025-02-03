@@ -1,21 +1,13 @@
-add loading animations to new sections, or generalize somehow
-
 INTERVAL TIMER 
     -Timer animations
 
 DAILY PLANNER
     - Use space better
-    - Fix mobile flexing
-    - Have timers enable to actively count down
     - dont autofocus inactive rows (happens when switching to page)
     - Keyboard shortcuts
-    - Scrolling on type in mobile 
     - set max rows allowed to save
-    - Add the trigger on window resize
-    - Look at keys, the timers are messing up in the rows
 
 VISUALIZER
-    - Stylize
     - enable PiP somehow?
 
 POLL CREATOR

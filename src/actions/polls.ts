@@ -4,8 +4,7 @@ import { cookies } from "next/headers";
 
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
-import { usersTable } from '@/db/schema/users';
-import { getIp, getUser } from "@/lib/sessions";
+import { getClientIdentifier, getUser } from "@/lib/sessions";
 import { and, desc, eq, inArray, isNull, or } from "drizzle-orm";
 
 export interface SerializedPoll {
@@ -88,7 +87,7 @@ export async function readPoll(uuid: string) {
         seen[p.poll_options.id] = true;
         return !added;
     });
-    const ip = await getIp();
+    const ip = await getClientIdentifier();
     const serializedOptions = options.map(p => {
         const votes = poll.filter(p2 => p.poll_options && p2.poll_options && p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
         const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
@@ -214,7 +213,7 @@ export async function updateOption(uuid: string, optionId: number, text: string,
 
 export async function voteFor(uuid: string, pollOptionId: number) {
     const user = await getUser();
-    let ip = await getIp();
+    let ip = await getClientIdentifier();
     if(!ip) return false;
 
     // delete any current votes
@@ -238,7 +237,7 @@ export interface RankValueType {
 }
 export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
     const user = await getUser();
-    let ip = await getIp();
+    let ip = await getClientIdentifier();
     if(!ip) return false;
 
     const options = await db.select().from(pollOptionsTable).where(and(
