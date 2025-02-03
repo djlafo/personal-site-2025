@@ -11,7 +11,7 @@ export default function Home() {
         <GlowBackdrop id='selfie-glow' deviation='7'/>
         <div className={styles.home}>
             <h1>
-                Hello, I'm Dylan Lafont
+                Hey, I'm Dylan Lafont
             </h1>
             <Image src='/selfie.jpg' 
                 style={{filter: 'url(#selfie-glow)'}}
@@ -20,16 +20,16 @@ export default function Home() {
                 className={styles.selfie} 
                 alt='selfie'/>
             <p>
-                A while ago, I took a sabbatical from work to focus on long-term mental health issues that made normal life difficult for me, such as agoraphobia.
+                Welcome to the site!<br/>
                 <br/>
+                If you're a recruiter, <Link href='/resume.pdf' target='_blank' rel='noreferrer'>here</Link> is a link to my resume.<br/>
                 <br/>
-                I&apos;m happy to say I was successful. I've grown a lot as a person, and I&apos;m now ready to hop back into code.
+                Feel free to look at the <Link href='https://github.com/djlafo/personal-site-2025' target='_blank' rel='noreferrer'>source code</Link> of this site or look around.
+                I've kept responsive design in mind, and it's hosted manually on an EC2 Debian instance.  
+                Just don't look at the commit history, which consists of embarassing commit messages and commits 1000 lines long or 1 line long.  My standards are much higher for production sites I swear.  
+                I mainly add things here that I use on a daily basis without regard to rollbacks or other maintainers.  Of course security is always a must so don't try to SQL inject me (or do).<br/>
                 <br/>
-                <br/>
-                I&apos;ll be using the rest of the website to throw useful tools in for me and misc stuff
-                <br/>
-                <br/>
-                Here&apos;s my <Link href='/resume.pdf' target='_blank' rel='noreferrer'>resume</Link>
+                You can use ESC as a quick way to reach the menu.
             </p>
         </div>
     </>;

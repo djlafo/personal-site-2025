@@ -41,7 +41,7 @@ export default function Linux() {
                     Themes
                 </h2>
                 <p>
-                    Check out my custom desktop themes (Debian btw)<br/>
+                    Check out my custom desktop themes (Arch btw)<br/>
                     <br/>
                     I wrote a script and a SCSS template to generate a basic theme on the fly for the wallpaper, then add tweaks from there
                 </p>

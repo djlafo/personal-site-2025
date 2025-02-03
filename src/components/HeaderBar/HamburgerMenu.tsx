@@ -26,18 +26,13 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link href={'/linux'}>
-							Linux Stuff
-						</Link>
-					</span>
-					<span>
-						<Link href={'/interval'}>
-							Interval Timer
-						</Link>
-					</span>
-					<span>
 						<Link href={'/weather'}>
 							Weather
+						</Link>
+					</span>
+					<span>
+						<Link href={'/planner'}>
+							Daily Planner
 						</Link>
 					</span>
 					<span>
@@ -46,13 +41,18 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link href={'/planner'}>
-							Daily Planner
-						</Link>
-					</span>
-                    <span>
 						<Link href={'/poll'}>
 							Polls
+						</Link>
+					</span>
+					<span>
+						<Link href={'/interval'}>
+							Interval Timer
+						</Link>
+					</span>
+					<span>
+						<Link href={'/linux'}>
+							Linux Stuff
 						</Link>
 					</span>
 					<div className={styles.linkdivider}/>
