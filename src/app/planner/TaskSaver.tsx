@@ -85,11 +85,23 @@ export default function TaskSaver(props : TaskSaverProps) {
         });
     }
 
+    const clearValues = () => {
+        const copy: PlannerData = JSON.parse(JSON.stringify(props.plannerData));
+        copy.tasks.forEach(t => {
+            t.deadline = 0;
+            t.overdue = false;
+            t.motivation = 0;
+        });
+        props.onLoad(copy);
+    }
+
     return <>
         {
             (props.plannerData.tasks.length !== 0 && <>
                 <span>
-                    <input type='button' value='Clear' onClick={() => props.onLoad(getEmptyPlanner())}/>
+                    <label>Clear</label>
+                    <input type='button' value='Rows' onClick={() => props.onLoad(getEmptyPlanner())}/>
+                    <input type='button' value='Times&Values' onClick={() => clearValues()}/>
                 </span>
             </>) || <></>
         }

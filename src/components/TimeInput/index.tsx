@@ -53,9 +53,10 @@ function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: T
     const inputRef = useRef<HTMLInputElement>(null);
     const [remainingTimeText, setRemainingTimeText] = useState('');
     const [internalValue, setInternalValue] = useState<number | null>();
+    const [lastValue, setLastValue] = useState<number | undefined>();
 
     const [ticker, setTicker] = useState<number | null>();
-    const [tickerFlag, setTickerFlag] = useState(false);
+    const [, setTickerFlag] = useState(false);
     const [editing, setEditing] = useState(false);
 
     const alertValueChange = (s: string) => {
@@ -80,26 +81,22 @@ function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: T
         setInternalValue(null);
     }
 
-    if(!editing) {
-        if(internalValue || internalValue === 0) {
-            if(internalValue < 0) {
-                setEditing(true);
-                stopCountdown();
+    if(lastValue !== value) {
+        if(!value && ticker) stopCountdown();
+        setLastValue(value);
+        setInternalValue(value);
+        setRemainingTimeText(calculateString(value || 0));
+        if(!ticker && value && countdownOnSet) startCountdown(value);
+    } else if(!editing) {
+        if(countdownOnSet && ticker) {
+            if(internalValue && (internalValue < 0 || internalValue === 0)) {
                 setRemainingTimeText(calculateString(0));
-                if(onZero) onZero();
-            } else {
+                stopCountdown();
+                if(onZero && value !== 0) onZero();
+            } else if(internalValue) {
                 const internalRemaining = calculateString(internalValue);
                 if(internalRemaining!==remainingTimeText) {
                     setRemainingTimeText(internalRemaining);
-                }
-            }
-        } else if (value || value === 0) {
-            if(!ticker && value && countdownOnSet) {
-                startCountdown(value);
-            } else {
-                const valueRemaining = calculateString(value);
-                if(valueRemaining!==remainingTimeText) {
-                    setRemainingTimeText(valueRemaining);
                 }
             }
         }
