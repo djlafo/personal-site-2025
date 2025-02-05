@@ -51,6 +51,11 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
+						<Link href={'/tts'}>
+							TTS
+						</Link>
+					</span>
+					<span>
 						<Link href={'/linux'}>
 							Linux Stuff
 						</Link>

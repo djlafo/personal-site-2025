@@ -1,7 +1,5 @@
 'use server'
 
-import { cookies } from "next/headers";
-
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
 import { getClientIdentifier, getUser } from "@/lib/sessions";
