@@ -30,7 +30,7 @@ export async function getTTS(str: string) {
     } catch (e) {
         return {
             stdout: '',
-            stderr: e
+            stderr: String(e)
         }
     }
 }
