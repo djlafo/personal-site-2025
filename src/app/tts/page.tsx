@@ -82,6 +82,7 @@ export default function Page() {
 
     const playFrom = (n: number) => {
         if(!playing || !splitText) return;
+        if(audioRef.current) audioRef.current.pause();
         setCurrentReading(n);
         playTTS(splitText, n);
     }
