@@ -1,0 +1,25 @@
+.tts textarea {
+    width: 100%;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.tts {
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+
+.tts audio, .tts input {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+.currentReading {
+    background-color: rgba(255, 255, 0, 0.4);
+}
+
+.readingText {
+    margin: 15px 0;
+}
