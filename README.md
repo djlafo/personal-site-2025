@@ -20,6 +20,16 @@ Unfortunately due to nivo line not being updated, you have to --force the npm in
 ### Running
 First, run the development server:
 
+### Database
+This project uses Drizzle orm, after setting the DATABASE_URL you can run 
+```bash
+npx drizzle-kit migrate
+```
+to migrate the db.  There is also important seed data containing ZIP codes for the weather section. Run
+```bash
+npx tsx src/db/seeds/zips.ts
+```
+
 ```bash
 npm run dev
 # or
