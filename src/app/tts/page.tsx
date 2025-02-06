@@ -33,6 +33,7 @@ export default function Page() {
 
     const playTTS = async (arr: Array<ReadingType>, ind: number) => {
         const audio = await loadTTS(arr, ind);
+        if(!audio) return;
         if(audioRef.current !== null) {
             audioRef.current.src = "data:audio/wav;base64," + audio;
             audioRef.current.play();

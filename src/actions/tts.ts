@@ -21,16 +21,6 @@ export async function getTTS(str: string) {
         stderr: 'Sorry you cant use this'
     };
     const cleanedString = str.replaceAll("'", "’")
-    const cleanedIP = ip.replaceAll(/[^a-zA-Z0-9]/g, ' ');
-    console.log(cleanedString);
-    await promiseExec(`echo '${cleanedString}' | ./piper/piper --model "./piper/en_US-joe-medium.onnx" --config "./piper/en_US-joe-medium.onnx.json" -q --output_file './sounds/${cleanedIP}.wav'`);
-    try {
-        const data = await fs.readFileSync(`./sounds/${cleanedIP}.wav`, { encoding: 'base64' }); 
-        return data;
-    } catch (e) {
-        return {
-            stdout: '',
-            stderr: String(e)
-        }
-    }
+    const res = await promiseExec(`echo '${cleanedString}' | ./piper/piper --model "./piper/en_US-joe-medium.onnx" --config "./piper/en_US-joe-medium.onnx.json" --output-raw | ffmpeg -f s16le -ar 22050 -ac 1 -i pipe: -ar 44100 -f wav pipe:`, { encoding: 'base64' });
+    return res.stdout;
 }
