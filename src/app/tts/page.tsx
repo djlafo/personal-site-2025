@@ -19,82 +19,70 @@ export default function Page() {
     const [currentReading, setCurrentReading] = useState(0);
 
     const startTTS = async () => {
-        if(!textContent) return;
-        const split = textContent.split('\n').filter(s => !!s).map(s => {
-            return {
-                text: s
-            };
-        });
-        setSplitText(split);
-        setCurrentReading(0);
+        if(!splitText) return;
+        const audio = await loadTTS(splitText, 0);
+        if(audio) playTTS(audio);
 
-        playTTS(split, 0);
+        setCurrentReading(0);
     }
 
-    const playTTS = async (arr: Array<ReadingType>, ind: number) => {
-        const audio = await loadTTS(arr, ind);
-        if(!audio) return;
+    const playTTS = (audio: string) => {
         if(audioRef.current !== null) {
             audioRef.current.src = "data:audio/mpeg;base64," + audio;
             audioRef.current.play();
         }
-        if(ind + 1 !== arr.length && !arr[ind+1].audio) {
-            loadTTS(arr, ind+1);
-        }
     }
 
-    const loadTTS = async (arr: Array<ReadingType>, ind: number) => {
+    const loadTTS = async (arr: Array<ReadingType>, ind: number, preload=2) => {
+        if(ind>=arr.length) return;
+        let ret;
         if(!arr[ind].audio) {
-            const res = await getTTS(arr[ind].text);
-            if(typeof res !== 'string') {
-                if(res.stderr) {
-                    toast(res.stderr);
-                }
-                return;
-            } else {
-                setSplitText(st => {
-                    return st?.map((s,i) => {
-                        if(i===ind) {
-                            return {
-                                text: s.text,
-                                audio: res
-                            }
-                        } else {
-                            return s;
-                        }
-                    });
-                });
-                return res;
-            }
+            ret = await getTTS(arr[ind].text);
+            storeAudio(ret, ind);
         } else {
-            return arr[ind].audio;
+            ret = arr[ind].audio;
         }
+        if(preload > 0) loadTTS(arr, ind+1, preload-1);
+        return ret;
     }
 
-    const nextParagraph = () => {
+    const storeAudio = (audio: string, ind: number) => {
+        if(!splitText || splitText[ind].audio === audio) return;
+        splitText[ind].audio = audio;
+    };
+
+    const nextParagraph = async () => {
         if(!playing || !splitText) return;
         if(currentReading+1 !== splitText.length) {
             const div = document.querySelector(`#readingRow${currentReading+1}`);
             if(div) div.scrollIntoView({
                 behavior: 'smooth'
             });
+            const audio = await loadTTS(splitText, currentReading+1);
+            if(audio) playTTS(audio);
+            
             setCurrentReading(currentReading+1);
-            playTTS(splitText, currentReading+1);
         }
     }
 
-    const playFrom = (n: number) => {
+    const playFrom = async (n: number) => {
         if(!playing || !splitText) return;
         if(audioRef.current) audioRef.current.pause();
+        
+        const audio = await loadTTS(splitText, n);
+        if(audio) playTTS(audio);
+        
         setCurrentReading(n);
-        playTTS(splitText, n);
     }
 
     return <div className={styles.tts}>
         <ToastContainer/>
         {!playing ? 
-            <textarea value={textContent} 
-                onChange={e => setTextContent(e.target.value)}
+            <textarea onChange={e => setSplitText(e.target.value.split('\n').filter(s => !!s).map(s => {
+                    return {
+                        text: s
+                    };
+                }))}
                 rows={10}/>
             :
             <div>
