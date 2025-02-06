@@ -74,6 +74,10 @@ export default function Page() {
     const nextParagraph = () => {
         if(!playing || !splitText) return;
         if(currentReading+1 !== splitText.length) {
+            const div = document.querySelector(`#readingRow${currentReading+1}`);
+            if(div) div.scrollIntoView({
+                behavior: 'smooth'
+            });
             setCurrentReading(currentReading+1);
             playTTS(splitText, currentReading+1);
         }
@@ -95,7 +99,7 @@ export default function Page() {
             :
             <div>
                 {splitText && splitText.map((t,i) => {
-                    return <div key={i}
+                    return <div key={i} id={`readingRow${i}`}
                         className={`${styles.readingText} ${i===currentReading ? styles.currentReading : ''}`}
                         onClick={() => playFrom(i)}>
                         {t.text}
@@ -103,10 +107,6 @@ export default function Page() {
                 })}
             </div>
         }
-        <audio ref={audioRef} 
-            controls
-            onPlaying={() => setPlaying(true)}
-            onEnded={() => nextParagraph()}/>
         {playing && 
 
             <input type='button' 
@@ -119,5 +119,10 @@ export default function Page() {
 
             <input type='button' 
                 value="Generate Audio" onClick={() => startTTS()}/>}
+
+        <audio ref={audioRef} 
+            controls
+            onPlaying={() => setPlaying(true)}
+            onEnded={() => nextParagraph()}/>
     </div>;
 }

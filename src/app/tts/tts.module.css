@@ -9,11 +9,12 @@
     margin-right: 2.5%;
 }
 
-.tts audio, .tts input {
+.tts input {
     display: block;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+    margin-bottom: 60px;
 }
 
 .currentReading {
@@ -22,4 +23,12 @@
 
 .readingText {
     margin: 15px 0;
+}
+
+.tts audio {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: cyan;
 }
