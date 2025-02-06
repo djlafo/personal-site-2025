@@ -14,12 +14,6 @@ You will also need ffmpeg.
 ### .ENV File
 You will need a AUTH_SECRET and postgres DATABASE_URL
 
-### Weather
-Unfortunately due to nivo line not being updated, you have to --force the npm install
-
-### Running
-First, run the development server:
-
 ### Database
 This project uses Drizzle orm, after setting the DATABASE_URL you can run 
 ```bash
@@ -30,6 +24,11 @@ to migrate the db.  There is also important seed data containing ZIP codes for t
 npx tsx src/db/seeds/zips.ts
 ```
 
+### Weather
+Unfortunately due to nivo line not being updated, you have to --force the npm install
+
+### Running
+First, run the development server:
 ```bash
 npm run dev
 # or
