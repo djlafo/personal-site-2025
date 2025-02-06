@@ -35,7 +35,7 @@ export default function Page() {
         const audio = await loadTTS(arr, ind);
         if(!audio) return;
         if(audioRef.current !== null) {
-            audioRef.current.src = "data:audio/wav;base64," + audio;
+            audioRef.current.src = "data:audio/mpeg;base64," + audio;
             audioRef.current.play();
         }
         if(ind + 1 !== arr.length && !arr[ind+1].audio) {
@@ -73,9 +73,7 @@ export default function Page() {
 
     const nextParagraph = () => {
         if(!playing || !splitText) return;
-        if(currentReading+1 === splitText.length) {
-            setPlaying(false);
-        } else {
+        if(currentReading+1 !== splitText.length) {
             setCurrentReading(currentReading+1);
             playTTS(splitText, currentReading+1);
         }
