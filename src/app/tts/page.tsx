@@ -89,7 +89,7 @@ export default function Page() {
                 {splitText && splitText.map((t,i) => {
                     return <div key={i} id={`readingRow${i}`}
                         className={`${styles.readingText} ${i===currentReading ? styles.currentReading : ''}`}
-                        onClick={() => playFrom(i)}>
+                        onDoubleClick={() => playFrom(i)}>
                         {t.text}
                     </div>;
                 })}
