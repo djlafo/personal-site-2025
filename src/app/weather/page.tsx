@@ -12,12 +12,14 @@ export default function Page() {
             return localStorage.getItem('zip') || undefined;
         }
     });
-    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
     const _setLocation = async (zip?: string) => {
         if(!zip) return;
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('zip', zip);
+        }
         router.push(`/weather/${zip}`);
     };
 
@@ -31,8 +33,7 @@ export default function Page() {
             <div>
                 <input type='button' 
                     value='Get by ZIP' 
-                    onClick={() => _setLocation(zipField)}
-                        disabled={loading}/>
+                    onClick={() => _setLocation(zipField)}/>
             </div>
         </div>
     </div>
