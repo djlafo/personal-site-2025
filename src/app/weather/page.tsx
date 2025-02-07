@@ -15,10 +15,15 @@ export default function Page() {
 
     const router = useRouter();
 
-    const _setLocation = async (zip?: string) => {
+    const _setLocation = (zip?: string) => {
         if(!zip) return;
         if(typeof window !== 'undefined') {
-            localStorage.setItem('zip', zip);
+            const zLocal = localStorage.getItem('zip');
+            const cLocal = localStorage.getItem('coords');
+            if(zip === zLocal && cLocal) {
+                router.push(`/weather/${zLocal}/${cLocal}`);
+                return;
+            }
         }
         router.push(`/weather/${zip}`);
     };

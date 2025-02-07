@@ -10,8 +10,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface WeeklyWeatherProps {
     weatherData: FormattedWeatherData;
+    coords: string;
+    zip: string;
 }
-export default function WeeklyWeather({weatherData}: WeeklyWeatherProps) {
+export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -24,6 +26,10 @@ export default function WeeklyWeather({weatherData}: WeeklyWeatherProps) {
 
     useEffect(() => {
         router.replace(`${pathname}?day=${currentDay}`);
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('zip', zip);
+            localStorage.setItem('coords', coords);
+        }
     }, []);
 
     return <div>

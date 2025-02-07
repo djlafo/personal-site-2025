@@ -38,5 +38,5 @@ interface WeatherContainerContainerProps {
 async function WeatherContainerContainer({zip, coords}: WeatherContainerContainerProps) {
     const weatherData = await getWeather(zip, coords, true);
     const formatted = formatWeatherData(weatherData);
-    return <WeatherContainer weatherData={formatted}/>
+    return <WeatherContainer zip={zip} coords={coords} weatherData={formatted}/>
 }
