@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ToastContainer } from 'react-toastify';
 
 import { addOption, RankValueType, SerializedFullPoll, SerializedPollOption, setVoteRanks, updateOption, updatePoll, UpdatePollProps, voteFor } from "@/actions/polls";
 
@@ -66,7 +65,6 @@ export default function Poll(props: PollProps) {
     const mine = poll.yours;
 
     return <>
-        <ToastContainer/>
         <Link href='/poll'>Back</Link>
         <div className={styles.pollHeader}>
             <h2>

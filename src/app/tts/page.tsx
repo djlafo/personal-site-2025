@@ -3,20 +3,24 @@
 import { useRef, useState } from "react";
 
 import { getTTS } from "@/actions/tts";
-import { toast, ToastContainer } from "react-toastify";
 
 import styles from "./tts.module.css"; 
+import OCR from "@/components/OCR";
+import { toast } from "react-toastify";
+import { useLoadingScreen } from "@/components/LoadingScreen";
 
 interface ReadingType {
     text: string;
     audio?: string;
 }
 export default function Page() {
-    const [textContent, setTextContent] = useState('');
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [textContent, setTextContent] = useState('');
     const [playing, setPlaying] = useState(false);
     const [splitText, setSplitText] = useState<Array<ReadingType>>();
     const [currentReading, setCurrentReading] = useState(0);
+
+    const [loading, setLoading] = useLoadingScreen();
 
     const startTTS = async () => {
         if(!splitText) return;
@@ -28,6 +32,7 @@ export default function Page() {
 
     const playTTS = (audio: string) => {
         if(audioRef.current !== null) {
+            setLoading(false);
             audioRef.current.src = "data:audio/mpeg;base64," + audio;
             audioRef.current.play();
         }
@@ -37,7 +42,13 @@ export default function Page() {
         if(ind>=arr.length) return;
         let ret;
         if(!arr[ind].audio) {
-            ret = await getTTS(arr[ind].text);
+            try {
+                if(audioRef.current && audioRef.current.paused && preload === 2) setLoading(true);
+                ret = await getTTS(arr[ind].text);
+            } catch (e) {
+                if(e instanceof Error) toast(e.message);
+                return;
+            }
             storeAudio(ret, ind);
         } else {
             ret = arr[ind].audio;
@@ -76,13 +87,16 @@ export default function Page() {
     }
 
     return <div className={styles.tts}>
-        <ToastContainer/>
         {!playing ? 
-            <textarea onChange={e => setSplitText(e.target.value.split('\n').filter(s => !!s).map(s => {
-                    return {
-                        text: s
-                    };
-                }))}
+            <textarea onChange={e => {
+                    setTextContent(e.target.value);
+                    setSplitText(e.target.value.split('\n').filter(s => !!s).map(s => {
+                        return {
+                            text: s
+                        };
+                    }));
+                }}
+                value={textContent}
                 rows={10}/>
             :
             <div>
@@ -95,18 +109,24 @@ export default function Page() {
                 })}
             </div>
         }
-        {playing && 
+        <div className={styles.buttons}>
+            {playing && 
 
-            <input type='button' 
-                value="Edit Text" onClick={() => {
-                setPlaying(false);
-                if(audioRef.current) audioRef.current.pause();
-            }}/>
+                <input type='button'
+                    value="Edit Text" onClick={() => {
+                    setPlaying(false);
+                    if(audioRef.current) audioRef.current.pause();
+                }}/>
 
-            ||
-
-            <input type='button' 
-                value="Generate Audio" onClick={() => startTTS()}/>}
+                ||
+                
+                <>
+                    <OCR onText={s => setTextContent(tc => tc + s)}
+                        className={styles.ocr}/>
+                    <input type='button' 
+                        value="Generate Audio" onClick={() => startTTS()}/>
+                </>}
+        </div>
 
         <audio ref={audioRef} 
             controls

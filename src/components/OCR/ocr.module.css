@@ -1,0 +1,20 @@
+.ocr {
+    display: inline-flex;
+    border: 1px solid cyan;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.ocr > * {
+    padding: 10px;
+    font-size: 18px;
+}
+
+.ocr input[type=file] {
+    flex: 3;
+    max-width: 66%;
+}
+
+.ocr input:not([type=file]) {
+    flex: 1;
+}

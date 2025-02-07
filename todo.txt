@@ -9,6 +9,8 @@ DAILY PLANNER
 
 VISUALIZER
     - enable PiP somehow?
+    - swap out presets 
+        https://github.com/projectM-visualizer/presets-cream-of-the-crop
 
 POLL CREATOR
     - live refresh
@@ -19,6 +21,9 @@ POLL CREATOR
 
 LINUX
     - Fix lag again
+
+TTS 
+    - notes integration
 
 NOTES
 

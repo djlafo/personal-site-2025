@@ -4,6 +4,7 @@ import Poll from './Poll';
 import { Suspense } from "react";
 
 import styles from './poll.module.css';
+import { LoadingScreenOnly } from "@/components/LoadingScreen";
 
 interface MetaProps {
     params: Promise<{ id: string }>
@@ -23,7 +24,7 @@ interface PageProps {
 }
 export default function Page(props: PageProps) {
     return <div className={styles.poll}>
-        <Suspense fallback='Loading poll...'>
+        <Suspense fallback={<LoadingScreenOnly/>}>
             <PollLoader params={props.params}/>
         </Suspense>
     </div>;

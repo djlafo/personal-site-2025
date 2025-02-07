@@ -9,12 +9,18 @@
     margin-right: 2.5%;
 }
 
-.tts input {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
+.buttons {
     margin-bottom: 60px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.buttons > * {
+    margin: 10px;
+}
+
+.ocr {
+    max-width: calc(100% - 20px);
 }
 
 .currentReading {

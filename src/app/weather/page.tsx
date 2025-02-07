@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './weather.module.css';
 
@@ -23,7 +22,6 @@ export default function Page() {
     };
 
     return <div className={styles.weather}>
-        <ToastContainer/>
         <Info/>
         <div>
             <div>
