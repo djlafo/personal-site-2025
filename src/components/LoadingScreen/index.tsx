@@ -39,3 +39,9 @@ export function LoadingScreenOnly() {
         <div className={styles.ldsRing}><div></div><div></div><div></div><div></div></div>
     </div>;
 }
+
+export function LoadingScreenFallBack() {
+    return <div className={styles.fallback}>
+        <div className={styles.ldsRing}><div></div><div></div><div></div><div></div></div>
+    </div>
+}

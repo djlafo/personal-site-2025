@@ -4,7 +4,7 @@ import WeatherContainer from "./WeatherContainer";
 import { formatWeatherData } from "./WeatherGraph/helpersAndTypes";
 import { ResolvingMetadata } from "next";
 import { getCityFromZip } from "../../location";
-import { LoadingScreenOnly } from "@/components/LoadingScreen";
+import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 
 
 interface MetaProps {
@@ -26,7 +26,7 @@ interface PageProps {
 }
 export default async function Page({params} : PageProps) {
     const p = await params;
-    return <Suspense fallback={<LoadingScreenOnly/>}>
+    return <Suspense fallback={<LoadingScreenFallBack/>}>
         <WeatherContainerContainer zip={p.zip} coords={p.coords}/>
     </Suspense>;
 }

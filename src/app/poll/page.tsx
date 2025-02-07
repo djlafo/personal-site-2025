@@ -5,7 +5,7 @@ import { listPolls, SerializedPoll } from "@/actions/polls";
 import { PollButton, CreateButton } from './PollButtons';
 
 import styles from './polllist.module.css';
-import { LoadingScreenOnly } from "@/components/LoadingScreen";
+import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 
 export const metadata: Metadata = {
     title: "Polls"
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
     return <div className={styles.pollListContainer}>
-        <Suspense fallback={<LoadingScreenOnly/>}>
+        <Suspense fallback={<LoadingScreenFallBack/>}>
             <PollList/>
         </Suspense>
     </div>;
