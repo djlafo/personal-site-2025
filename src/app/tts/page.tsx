@@ -9,92 +9,138 @@ import OCR from "@/components/OCR";
 import { toast } from "react-toastify";
 import { useLoadingScreen } from "@/components/LoadingScreen";
 
-interface ReadingType {
-    text: string;
-    audio?: string;
-}
+
 export default function Page() {
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const [textContent, setTextContent] = useState('');
-    const [playing, setPlaying] = useState(false);
-    const [splitText, setSplitText] = useState<Array<ReadingType>>();
+    const [paragraphs, setParagraphs] = useState<string[]>([]);
     const [currentReading, setCurrentReading] = useState(0);
+    const {currentAudio, setAudioFor} = useAudioLoader();
 
     const [loading, setLoading] = useLoadingScreen();
 
-    const startTTS = async () => {
-        if(!splitText) return;
-        const audio = await loadTTS(splitText, 0);
-        if(audio) playTTS(audio);
-
-        setCurrentReading(0);
-    }
-
-    const playTTS = (audio: string) => {
-        if(audioRef.current !== null) {
-            setLoading(false);
-            audioRef.current.src = "data:audio/mpeg;base64," + audio;
-            audioRef.current.play();
-        }
-    }
-
-    const loadTTS = async (arr: Array<ReadingType>, ind: number, preload=2) => {
-        if(ind>=arr.length) return;
-        let ret;
-        if(!arr[ind].audio) {
-            try {
-                if(audioRef.current && audioRef.current.paused && preload === 2) setLoading(true);
-                ret = await getTTS(arr[ind].text);
-            } catch (e) {
-                if(e instanceof Error) toast(e.message);
-                return;
-            }
-            storeAudio(ret, ind);
-        } else {
-            ret = arr[ind].audio;
-        }
-        if(preload > 0) loadTTS(arr, ind+1, preload-1);
-        return ret;
-    }
-
-    const storeAudio = (audio: string, ind: number) => {
-        if(!splitText || splitText[ind].audio === audio) return;
-        splitText[ind].audio = audio;
+    const getAudioAndLoad = async (text: string) => {
+        const ind = paragraphs.findIndex(p => p === text);
+        if(ind === -1) return;
+        setCurrentReading(ind);
+        setLoading(true);
+        setAudioFor();
+        await setAudioFor(text);
+        setLoading(false);
     };
 
     const nextParagraph = async () => {
-        if(!playing || !splitText) return;
-        if(currentReading+1 !== splitText.length) {
-            const div = document.querySelector(`#readingRow${currentReading+1}`);
-            if(div) div.scrollIntoView({
-                behavior: 'smooth'
-            });
-            const audio = await loadTTS(splitText, currentReading+1);
-            if(audio) playTTS(audio);
-            
-            setCurrentReading(currentReading+1);
+        if(currentReading+1 !== paragraphs.length) {
+            getAudioAndLoad(paragraphs[currentReading+1]);
         }
     }
 
-    const playFrom = async (n: number) => {
-        if(!playing || !splitText) return;
-        if(n < 0 || n >= splitText.length) return;
-        if(audioRef.current) audioRef.current.pause();
-        
-        const audio = await loadTTS(splitText, n);
-        if(audio) playTTS(audio);
-        
-        setCurrentReading(n);
+    useEffect(() => {
+        if(paragraphs && paragraphs.length) getAudioAndLoad(paragraphs[0]);
+    }, [paragraphs]);
+
+    return <div className={styles.tts}>
+        {
+            !currentAudio ? 
+            <TTSTextEditor paragraphs={paragraphs}
+                onStart={pg => setParagraphs(pg)}/>
+            :
+            <TTSTextDisplay paragraphs={paragraphs}
+                onClickParagraph={pg => getAudioAndLoad(pg)}
+                activeRow={currentReading}
+                onEditRequest={setAudioFor}/>
+        }
+        <BottomAudioPlayer onEnd={nextParagraph}
+            audio={currentAudio}
+            autoplay/>
+    </div>;
+}
+
+interface AudioLog {
+    text: string;
+    audio: string;
+}
+function useAudioLoader() {
+    const [audioLogs, setAudioLogs] = useState<AudioLog[]>([]);
+    const [currentAudio, setCurrentAudio] = useState<string | undefined>();
+
+    const setAudioFor = async (text?: string) => {
+        if(!text) {
+            setCurrentAudio(undefined);
+            return;
+        }
+        const match = audioLogs.find(al => al.text === text);
+        if(!match) {
+            const audio = await loadTTS(text);
+            if(audio) {
+                setAudioLogs(al => al.concat([{
+                    text: text,
+                    audio: audio
+                }]));
+                setCurrentAudio(audio);
+                return audio;
+            } else {
+                toast('Failed to load TTS audio');
+            }
+        } else {
+            setCurrentAudio(match.audio);
+            return match.audio;
+        }
     }
 
+    const loadTTS = async (text: string) => {
+        try {
+            const ret = await getTTS(text);
+            audioLogs.push({
+                text: text, 
+                audio: ret
+            });
+            return ret;
+        } catch (e) {
+            if(e instanceof Error) toast(e.message);
+            return;
+        }
+    }
+
+    return {
+        setAudioFor,
+        currentAudio
+    };
+}
+
+
+interface TTSTextEditorProps {
+    paragraphs: string[];
+    onStart: (paragraphs: string[]) => void;
+}
+function TTSTextEditor({onStart, paragraphs}: TTSTextEditorProps) {
+    const [textContent, setTextContent] = useState(paragraphs.join('\n\n'));
+    return <>
+        <textarea onChange={e => setTextContent(e.target.value)}
+            value={textContent}
+            rows={10}/>
+
+        <div className={styles.buttons}>
+            <OCR onText={s => setTextContent(tc => tc + s)}
+                className={styles.ocr}/>
+            <input type='button' 
+                value="Generate Audio" 
+                onClick={() => onStart(textContent.split('\n\n').filter(p => !!p))}/>
+        </div>
+    </>;
+}
+
+interface TTSTextDisplayProps {
+    paragraphs: string[];
+    onClickParagraph: (paragraph: string) => void;
+    activeRow: number;
+    onEditRequest: () => void;
+}
+function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}:TTSTextDisplayProps) {
     useEffect(() => {
         const detectMediaKeys = (e : KeyboardEvent) => {
             if(e.key === 'ArrowDown') {
-                nextParagraph();
+                onClickParagraph(paragraphs[activeRow + 1]);
             } else if (e.key === 'ArrowUp') {
-                playFrom(currentReading - 1);
-            } else if (e.key === ' ' && audioRef.current) {
-                audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+                onClickParagraph(paragraphs[activeRow - 1]);
             }
         };
 
@@ -102,53 +148,63 @@ export default function Page() {
         return () => {
             window.removeEventListener('keydown', detectMediaKeys);
         }
-    }, [])
+    }, [activeRow, onClickParagraph, paragraphs])
 
-    return <div className={styles.tts}>
-        {!playing ? 
-            <textarea onChange={e => {
-                    setTextContent(e.target.value);
-                    setSplitText(e.target.value.split('\n').filter(s => !!s).map(s => {
-                        return {
-                            text: s
-                        };
-                    }));
-                }}
-                value={textContent}
-                rows={10}/>
-            :
-            <div>
-                {splitText && splitText.map((t,i) => {
-                    return <div key={i} id={`readingRow${i}`}
-                        className={`${styles.readingText} ${i===currentReading ? styles.currentReading : ''}`}
-                        onDoubleClick={() => playFrom(i)}>
-                        {t.text}
-                    </div>;
-                })}
-            </div>
-        }
-        <div className={styles.buttons}>
-            {playing && 
+    useEffect(() => {
+        if(!activeRow && activeRow !== 0) return;
+        const div = document.querySelector(`#readingRow${activeRow+1}`);
+        if(div) div.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }, [activeRow])
 
-                <input type='button'
-                    value="Edit Text" onClick={() => {
-                    setPlaying(false);
-                    if(audioRef.current) audioRef.current.pause();
-                }}/>
-
-                ||
-                
-                <>
-                    <OCR onText={s => setTextContent(tc => tc + s)}
-                        className={styles.ocr}/>
-                    <input type='button' 
-                        value="Generate Audio" onClick={() => startTTS()}/>
-                </>}
-        </div>
-
-        <audio ref={audioRef} 
-            controls
-            onPlaying={() => setPlaying(true)}
-            onEnded={() => nextParagraph()}/>
+    return <div>
+        {paragraphs.map((t,i) => {
+            return <div key={i} id={`readingRow${i}`}
+                className={`${styles.readingText} ${i===activeRow ? styles.currentReading : ''}`}
+                onDoubleClick={() => onClickParagraph(t)}>
+                {t}
+            </div>;
+        })}
+        <input type='button'
+            value="Edit Text" 
+            onClick={() => onEditRequest()}/>
     </div>;
+}
+
+interface BottomAudioPlayerProps {
+    onPlayChange?: (playing: boolean) => void;
+    onEnd: () => void;
+    audio?: string;
+    autoplay?: boolean;
+}
+function BottomAudioPlayer({onPlayChange, onEnd, audio, autoplay}: BottomAudioPlayerProps) {
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        const detectMediaKeys = (e : KeyboardEvent) => {
+            if (e.key === ' ' && audioRef.current) {
+                audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+            }
+        };
+        window.addEventListener('keydown', detectMediaKeys);
+        return () => {
+            window.removeEventListener('keydown', detectMediaKeys);
+        }
+    }, [audioRef])
+
+    useEffect(() => {
+        if(!audioRef.current) return;
+        if(autoplay && audio)  {
+            audioRef.current.play();
+        } else {
+            audioRef.current.pause();
+        }
+    }, [audio]);
+
+    return <audio ref={audioRef} 
+        controls
+        src={audio && `data:audio/mpeg;base64,${audio}` || undefined}
+        onPlaying={() => onPlayChange && onPlayChange(true)}
+        onEnded={() => onEnd()}/>
 }
