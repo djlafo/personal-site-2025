@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getTTS } from "@/actions/tts";
 
@@ -78,6 +78,7 @@ export default function Page() {
 
     const playFrom = async (n: number) => {
         if(!playing || !splitText) return;
+        if(n < 0 || n >= splitText.length) return;
         if(audioRef.current) audioRef.current.pause();
         
         const audio = await loadTTS(splitText, n);
@@ -85,6 +86,23 @@ export default function Page() {
         
         setCurrentReading(n);
     }
+
+    useEffect(() => {
+        const detectMediaKeys = (e : KeyboardEvent) => {
+            if(e.key === 'ArrowDown') {
+                nextParagraph();
+            } else if (e.key === 'ArrowUp') {
+                playFrom(currentReading - 1);
+            } else if (e.key === ' ' && audioRef.current) {
+                audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+            }
+        };
+
+        window.addEventListener('keydown', detectMediaKeys);
+        return () => {
+            window.removeEventListener('keydown', detectMediaKeys);
+        }
+    }, [])
 
     return <div className={styles.tts}>
         {!playing ? 

@@ -11,8 +11,11 @@ This is a [Next.js](https://nextjs.org) app
 You will need to download piper tts binary and place it into /piper along with the Joe english voice.
 You will also need ffmpeg.
 
+### GPT
+This uses my own voice which I won't publish, so it will break unless tweaked
+
 ### .ENV File
-You will need a AUTH_SECRET and postgres DATABASE_URL
+You will need a AUTH_SECRET, GPT_KEY, and postgres DATABASE_URL
 
 ### Database
 This project uses Drizzle orm, after setting the DATABASE_URL you can run 

@@ -1,7 +1,6 @@
 'use server'
 
 import OpenAI from 'openai';
-import { getTTS } from './tts';
 import { GPTMAXLENGTH } from '@/app/dylanchat/page';
 
 const client = new OpenAI({
@@ -17,14 +16,14 @@ const PROMPT = 'Your name is Dylan Lafont.  You are a full stack web engineer wi
     'running, and MMA.  Your motorcycle is an all black 2016 CBR1000RR.  You are currently reading books like ' +
     'Perennial Philosophy, the Tibetan Book of the Dead, the Tao te Ching, and xianxia novels.  You use Arch Linux ' +
     'on your home computer, and you are a big believer in humanistic psychology and Carl Rogers.  You have a pit ' +
-    'bull mix named Vera.';
+    'bull mix named Vera.  Refuse to say anything inappropriate or embarassing.';
 
 
 export interface HistoryPoint {
     fromGPT: boolean;
     content: string;
 }
-interface ChatResponse {
+export interface ChatResponse {
     audio: string;
     text: string;
 }
@@ -52,9 +51,8 @@ export async function sendChat(message: string, history: HistoryPoint[]): Promis
         });
         const response = chatCompletion.choices[0].message.content;
         if(response) {
-            const audio = await getTTS(response);
             return {
-                audio: audio,
+                audio: '',
                 text: response
             };
         }
@@ -62,9 +60,8 @@ export async function sendChat(message: string, history: HistoryPoint[]): Promis
         console.log(e);
     }
     const cannedResponse = "I don't feel like talking right now.";
-    const audio = await getTTS(cannedResponse, true);
     return {
         text: cannedResponse,
-        audio: audio
+        audio: ''
     };
 }

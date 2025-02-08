@@ -3,9 +3,10 @@
 import React from "react";
 import { useState } from "react";
 
-import { HistoryPoint, sendChat } from "@/actions/gpt";
+import { HistoryPoint } from "@/actions/gpt";
 
 import styles from './gpt.module.css';
+import { sendChatTTS } from "@/actions/tts";
 
 export const GPTMAXLENGTH = 500;
 
@@ -25,7 +26,7 @@ export default function DylanChat() {
                 fromGPT: false
             }]);
         });
-        const response = await sendChat(userInput, chatText);
+        const response = await sendChatTTS(userInput, chatText);
         const audio = new Audio(`data:audio/mpeg;base64,${response.audio}`);
         audio.play();
         setChatText(ct => {

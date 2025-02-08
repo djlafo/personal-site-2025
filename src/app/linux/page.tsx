@@ -31,7 +31,7 @@ export default function Linux() {
 		return () => {
 			window.removeEventListener('keydown', shiftActive);
 		}
-	}, [setActiveImage])
+	}, [setActiveImage]);
 
     return <>
         <GlowBackdrop id='linux-ss-glow' deviation='20' saturation="20"/>
