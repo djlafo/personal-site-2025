@@ -26,6 +26,11 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
+						<Link href={'/dylanchat'}>
+							Talk to Dylan
+						</Link>
+					</span>
+					<span>
 						<Link href={'/weather'}>
 							Weather
 						</Link>

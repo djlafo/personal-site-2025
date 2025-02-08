@@ -6,6 +6,7 @@ DAILY PLANNER
     - dont autofocus inactive rows (happens when switching to page)
     - Keyboard shortcuts
     - set max rows allowed to save
+    - bugged add row and remove row on planner with a lot of rows? (from this planner)
 
 VISUALIZER
     - enable PiP somehow?
@@ -24,6 +25,18 @@ LINUX
 
 TTS 
     - notes integration
+    - https://github.com/rhasspy/piper/blob/master/TRAINING.md
+    - https://github.com/rhasspy/piper-recording-studio
+    - https://github.com/jaywalnut310/vits/
+    - https://onnxruntime.ai/
+    - Space to pause/play, arrow keys to move paragraphs?
+
+Dylan GPT
+
+
+WEATHER 
+    - Check if weather req are async
+    - Fix weather day bug
 
 NOTES
 
@@ -34,4 +47,6 @@ MINESWEEPER
 
 add ipbans to registration
 allow inactivation of accounts
+refresh jwt
 Websocket events ex: notify when poll updates
+Get rid of user autofocus, seems to be messing with mobile

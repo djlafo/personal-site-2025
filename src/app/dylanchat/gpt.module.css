@@ -1,0 +1,21 @@
+.gpt {
+    padding: 10px;
+}
+
+.gpt form {
+    width: 100%;
+}
+
+.chatbox {
+    background-color: gray;
+    min-height: 100px;
+}
+
+.inputs {
+    margin-top: 15px;
+    display: flex;
+}
+
+.inputs input[type=text] {
+    flex: 4;
+}
