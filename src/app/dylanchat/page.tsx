@@ -7,8 +7,7 @@ import { HistoryPoint } from "@/actions/gpt";
 
 import styles from './gpt.module.css';
 import { sendChatTTS } from "@/actions/tts";
-
-export const GPTMAXLENGTH = 500;
+import { GPTMAXLENGTH } from "./constants";
 
 export default function DylanChat() {
     const [chatText, setChatText] = useState<HistoryPoint[]>([{

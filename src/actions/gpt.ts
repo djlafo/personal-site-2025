@@ -1,7 +1,7 @@
 'use server'
 
+import { GPTMAXLENGTH } from '@/app/dylanchat/constants';
 import OpenAI from 'openai';
-import { GPTMAXLENGTH } from '@/app/dylanchat/page';
 
 const client = new OpenAI({
   apiKey: process.env.GPT_KEY
