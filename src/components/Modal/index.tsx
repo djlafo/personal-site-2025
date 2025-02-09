@@ -7,6 +7,7 @@ interface ModalProps {
     children: React.ReactNode;
     styleOne?: boolean;
     doOnKey?: (e: KeyboardEvent) => void;
+    fullVertical?: boolean;
 }
 
 export function openOnEscFn(openFn : () => void) {
@@ -17,7 +18,7 @@ export function openOnEscFn(openFn : () => void) {
     }
 }
 
-export default function Modal({ opened, children, onClose, styleOne=false, doOnKey} : ModalProps) {
+export default function Modal({ opened, children, onClose, styleOne=false, doOnKey, fullVertical} : ModalProps) {
     const [prevOpened, setPrevOpened] = useState(false);
 
     if((prevOpened !== opened)) {
@@ -40,7 +41,7 @@ export default function Modal({ opened, children, onClose, styleOne=false, doOnK
 
     return <div className={`modal-parent ${prevOpened ? 'opened' : ''}`}>
         <div className='modal-background' onClick={() => onClose()}></div>
-        <div className={`modal-content ${styleOne ? 'style-one' : ''}`}>
+        <div className={`modal-content ${styleOne ? 'style-one' : ''} ${fullVertical ? 'full-vertical' : ''}`}>
             {children}
         </div>
     </div>;

@@ -13,6 +13,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body:has(.modal-parent.opened) {
+  overflow-y: hidden;
+}
+
 a, a:visited {
   color: white;
   text-decoration: none;

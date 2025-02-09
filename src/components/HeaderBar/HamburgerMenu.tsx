@@ -18,7 +18,11 @@ export default function HamburgerMenu() {
 				<div className={styles.burgerbar}/>
 			</div>
 			
-			<Modal opened={open} onClose={() => setOpen(false)} doOnKey={openOnEscFn(() => setOpen(true))}>
+			<Modal fullVertical 
+				opened={open} 
+				onClose={() => setOpen(false)} 
+				doOnKey={openOnEscFn(() => setOpen(true))}>
+					
 				<nav className={styles.linklist} onClick={() => setOpen(false)}>
 					<span>
 						<Link href={'/'}>
@@ -31,13 +35,18 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
+						<Link href={'/planner'}>
+							Daily Planner
+						</Link>
+					</span>
+					<span>
 						<Link href={'/weather'}>
 							Weather
 						</Link>
 					</span>
 					<span>
-						<Link href={'/planner'}>
-							Daily Planner
+						<Link href={'/tts'}>
+							TTS
 						</Link>
 					</span>
 					<span>
@@ -56,16 +65,14 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link href={'/tts'}>
-							TTS
-						</Link>
-					</span>
-					<span>
 						<Link href={'/linux'}>
 							Linux Stuff
 						</Link>
 					</span>
 					<div className={styles.linkdivider}/>
+					<span>
+						<Link href='/resume.pdf' target='_blank' rel='noreferrer'>Resume</Link>
+					</span>
 					<span>
 						<Link href='mailto:djlafo@gmail.com'>djlafo@gmail.com</Link>
 					</span>

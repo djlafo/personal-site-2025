@@ -30,6 +30,11 @@
     flex-direction: column;
     align-items: center;
     padding: 15px;
+    border: 1px solid cyan;
+    border-radius: 10px;
+    width: 260px;
+    box-sizing: border-box;
+    background-color: rgba(30, 30, 30, 0.4);
 }
 
 .linklist span {

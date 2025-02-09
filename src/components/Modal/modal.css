@@ -34,6 +34,10 @@
     overflow-y: auto;
 }
 
+.modal-content.full-vertical {
+    max-height: 95%;
+}
+
 .modal-content.style-one {
     background: #555555;
     padding: 25px;
