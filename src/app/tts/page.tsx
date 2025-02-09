@@ -149,7 +149,7 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
                 onClickParagraph(paragraphs[activeRow + 1], activeRow + 1);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                onClickParagraph(paragraphs[activeRow - 1], activeRow + 1);
+                onClickParagraph(paragraphs[activeRow - 1], activeRow - 1);
             }
         };
 
