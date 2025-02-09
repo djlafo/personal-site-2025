@@ -175,9 +175,11 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
                 {t}
             </div>;
         })}
-        <input type='button'
-            value="Edit Text" 
-            onClick={() => onEditRequest()}/>
+        <div className={styles.buttons}>
+            <input type='button'
+                value="Edit Text" 
+                onClick={() => onEditRequest()}/>
+        </div>
     </div>;
 }
 
