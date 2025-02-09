@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { HistoryPoint } from "@/actions/gpt";
@@ -15,6 +15,7 @@ export default function DylanChat() {
         content: "What's up?"
     }]);
     const [userInput, setUserInput] = useState('');
+    const [audioObj, setAudioObj] = useState(() => new Audio());
 
     const sendInput = async() => {
         setUserInput('');
@@ -26,8 +27,8 @@ export default function DylanChat() {
             }]);
         });
         const response = await sendChatTTS(userInput, chatText);
-        const audio = new Audio(`data:audio/mpeg;base64,${response.audio}`);
-        audio.play();
+        audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
+        audioObj.play();
         setChatText(ct => {
             return ct.concat([
             {
@@ -36,6 +37,13 @@ export default function DylanChat() {
             }]);
         });
     }
+
+    useEffect(() => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, [chatText])
 
     return <div className={styles.gpt}>
         <div className={styles.chatBox}>
