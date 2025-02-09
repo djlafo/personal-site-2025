@@ -145,8 +145,10 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
     useEffect(() => {
         const detectMediaKeys = (e : KeyboardEvent) => {
             if(e.key === 'ArrowDown') {
+                e.preventDefault();
                 onClickParagraph(paragraphs[activeRow + 1]);
             } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
                 onClickParagraph(paragraphs[activeRow - 1]);
             }
         };
@@ -190,7 +192,8 @@ function BottomAudioPlayer({onPlayChange, onEnd, audio, autoplay}: BottomAudioPl
 
     useEffect(() => {
         const detectMediaKeys = (e : KeyboardEvent) => {
-            if (e.key === ' ' && audioRef.current) {
+            if (e.key === ' ' && audioRef.current && audio) {
+                e.preventDefault();
                 audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
             }
         };
@@ -198,7 +201,7 @@ function BottomAudioPlayer({onPlayChange, onEnd, audio, autoplay}: BottomAudioPl
         return () => {
             window.removeEventListener('keydown', detectMediaKeys);
         }
-    }, [audioRef])
+    }, [audioRef, audio])
 
     useEffect(() => {
         if(!audioRef.current) return;
