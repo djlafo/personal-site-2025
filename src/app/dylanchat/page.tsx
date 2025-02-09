@@ -15,8 +15,10 @@ export default function DylanChat() {
         content: "What's up?"
     }]);
     const [userInput, setUserInput] = useState('');
-    const [audioObj, setAudioObj] = useState(() => {
-        if(typeof window !== 'undefined') return new Audio();
+    const [audioObj, setAudioObj] = useState<HTMLAudioElement | undefined>(() => {
+        if(typeof window !== 'undefined') {
+            return new Audio();
+        }
     });
 
     const sendInput = async() => {
@@ -29,8 +31,10 @@ export default function DylanChat() {
             }]);
         });
         const response = await sendChatTTS(userInput, chatText);
-        audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
-        audioObj.play();
+        if(audioObj) {
+            audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
+            audioObj.play();
+        }
         setChatText(ct => {
             return ct.concat([
             {
@@ -45,7 +49,7 @@ export default function DylanChat() {
             top: document.body.scrollHeight,
             behavior: 'smooth'
         });
-    }, [chatText])
+    }, [chatText]);
 
     return <div className={styles.gpt}>
         <div className={styles.chatBox}>
