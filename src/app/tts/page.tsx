@@ -17,8 +17,8 @@ export default function Page() {
 
     const [loading, setLoading] = useLoadingScreen();
 
-    const getAudioAndLoad = async (text: string) => {
-        const ind = paragraphs.findIndex(p => p === text);
+    const getAudioAndLoad = async (text: string, i?: number) => {
+        const ind = i || paragraphs.findIndex(p => p === text);
         if(ind === -1) return;
         setCurrentReading(ind);
         setLoading(true);
@@ -40,7 +40,7 @@ export default function Page() {
 
     const nextParagraph = async () => {
         if(currentReading+1 !== paragraphs.length) {
-            getAudioAndLoad(paragraphs[currentReading+1]);
+            getAudioAndLoad(paragraphs[currentReading+1], currentReading+1);
         }
     }
 
@@ -55,7 +55,7 @@ export default function Page() {
                 onStart={pg => setParagraphs(pg)}/>
             :
             <TTSTextDisplay paragraphs={paragraphs}
-                onClickParagraph={pg => getAudioAndLoad(pg)}
+                onClickParagraph={getAudioAndLoad}
                 activeRow={currentReading}
                 onEditRequest={setAudioFor}/>
         }
@@ -137,7 +137,7 @@ function TTSTextEditor({onStart, paragraphs}: TTSTextEditorProps) {
 
 interface TTSTextDisplayProps {
     paragraphs: string[];
-    onClickParagraph: (paragraph: string) => void;
+    onClickParagraph: (paragraph: string, ind?: number) => void;
     activeRow: number;
     onEditRequest: () => void;
 }
@@ -146,10 +146,10 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
         const detectMediaKeys = (e : KeyboardEvent) => {
             if(e.key === 'ArrowDown') {
                 e.preventDefault();
-                onClickParagraph(paragraphs[activeRow + 1]);
+                onClickParagraph(paragraphs[activeRow + 1], activeRow + 1);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                onClickParagraph(paragraphs[activeRow - 1]);
+                onClickParagraph(paragraphs[activeRow - 1], activeRow + 1);
             }
         };
 
@@ -171,7 +171,7 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
         {paragraphs.map((t,i) => {
             return <div key={i} id={`readingRow${i}`}
                 className={`${styles.readingText} ${i===activeRow ? styles.currentReading : ''}`}
-                onDoubleClick={() => onClickParagraph(t)}>
+                onDoubleClick={() => onClickParagraph(t, i)}>
                 {t}
             </div>;
         })}
