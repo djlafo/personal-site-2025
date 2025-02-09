@@ -13,7 +13,7 @@ import { useLoadingScreen } from "@/components/LoadingScreen";
 export default function Page() {
     const [paragraphs, setParagraphs] = useState<string[]>([]);
     const [currentReading, setCurrentReading] = useState(0);
-    const {currentAudio, setAudioFor} = useAudioLoader();
+    const {currentAudio, setAudioFor, loadTTS} = useAudioLoader();
 
     const [loading, setLoading] = useLoadingScreen();
 
@@ -24,8 +24,19 @@ export default function Page() {
         setLoading(true);
         setAudioFor();
         await setAudioFor(text);
+        preload(ind, 2);
         setLoading(false);
     };
+
+    const preload = async(start: number, times: number) => {
+        for(let i=start+1; i<start+1+times; i++) {
+            if(i < paragraphs.length) {
+                loadTTS(paragraphs[i]);
+            } else {
+                break;
+            }
+        }
+    }
 
     const nextParagraph = async () => {
         if(currentReading+1 !== paragraphs.length) {
@@ -67,42 +78,38 @@ function useAudioLoader() {
             setCurrentAudio(undefined);
             return;
         }
-        const match = audioLogs.find(al => al.text === text);
-        if(!match) {
-            const audio = await loadTTS(text);
-            if(audio) {
-                setAudioLogs(al => al.concat([{
-                    text: text,
-                    audio: audio
-                }]));
-                setCurrentAudio(audio);
-                return audio;
-            } else {
-                toast('Failed to load TTS audio');
-            }
+        const audio = await loadTTS(text);
+        if(audio) {
+            setCurrentAudio(audio);
+            return audio;
         } else {
-            setCurrentAudio(match.audio);
-            return match.audio;
+            toast('Failed to load TTS audio');
         }
     }
 
     const loadTTS = async (text: string) => {
-        try {
-            const ret = await getTTS(text);
-            audioLogs.push({
-                text: text, 
-                audio: ret
-            });
-            return ret;
-        } catch (e) {
-            if(e instanceof Error) toast(e.message);
-            return;
+        const match = audioLogs.find(al => al.text === text);
+        if(!match) {
+            try {
+                const audio = await getTTS(text);
+                setAudioLogs(al => al.concat([{
+                    text: text,
+                    audio: audio
+                }]));
+                return audio;
+            } catch (e) {
+                if(e instanceof Error) toast(e.message);
+                return;
+            }
+        } else {
+            return match.audio;
         }
     }
 
     return {
         setAudioFor,
-        currentAudio
+        currentAudio,
+        loadTTS
     };
 }
 
@@ -152,7 +159,7 @@ function TTSTextDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}
 
     useEffect(() => {
         if(!activeRow && activeRow !== 0) return;
-        const div = document.querySelector(`#readingRow${activeRow+1}`);
+        const div = document.querySelector(`#readingRow${activeRow}`);
         if(div) div.scrollIntoView({
             behavior: 'smooth'
         });
