@@ -194,9 +194,16 @@ function BottomAudioPlayer({onPlayChange, onEnd, audio, autoplay}: BottomAudioPl
 
     useEffect(() => {
         const detectMediaKeys = (e : KeyboardEvent) => {
-            if (e.key === ' ' && audioRef.current && audio) {
+            if(!audioRef.current || !audio) return;
+            if (e.key === ' ') {
                 e.preventDefault();
                 audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 4, 0);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 2, audioRef.current.duration)
             }
         };
         window.addEventListener('keydown', detectMediaKeys);
