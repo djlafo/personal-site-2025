@@ -15,7 +15,9 @@ export default function DylanChat() {
         content: "What's up?"
     }]);
     const [userInput, setUserInput] = useState('');
-    const [audioObj, setAudioObj] = useState(() => new Audio());
+    const [audioObj, setAudioObj] = useState(() => {
+        if(typeof window !== 'undefined') return new Audio();
+    });
 
     const sendInput = async() => {
         setUserInput('');
