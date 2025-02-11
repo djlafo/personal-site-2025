@@ -8,6 +8,7 @@ export interface VisualizerOptionsType {
     fps: number;
     shuffleTimer: number;
     lock: boolean;
+    useAPI: boolean;
     canvas?: HTMLCanvasElement | null
 }
 
@@ -15,6 +16,7 @@ interface VisualizerOptionsOptions { // lol
     onStart: (o: VisualizerOptionsType) => void;
     onShuffle: () => void;
     onLock: (b: boolean) => void;
+    onUseAPI: (b: boolean) => void;
     onStop: () => void;
 }
 
@@ -24,6 +26,7 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
     const [fps, setFps] = useState('30');
     const [shuffleTimer, setShuffleTimer] = useState('15');
     const [lock, setLock] = useState(false);
+    const [useAPI, setUseAPI] = useState(false);
 
     const [started, setStarted] = useState(false);
 
@@ -33,7 +36,8 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
             height: Number(height) || 900,
             fps: Number(fps) || 30,
             shuffleTimer: Number(shuffleTimer) || 15,
-            lock: lock
+            lock: lock,
+            useAPI: useAPI
         });
         setStarted(true);
 
@@ -67,6 +71,12 @@ export default function VisualizerOptions(o : VisualizerOptionsOptions) {
             <input type='checkbox' id="lockInput" onChange={e => {
                 o.onLock(e.target.checked);
                 setLock(e.target.checked);
+            }}/>
+            &nbsp;&nbsp;
+            <label htmlFor='lockInput'>Use API: </label>
+            <input type='checkbox' id="apiInput" onChange={e => {
+                o.onUseAPI(e.target.checked);
+                setUseAPI(e.target.checked);
             }}/>
         </div>
         <div>

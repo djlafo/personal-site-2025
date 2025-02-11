@@ -14,6 +14,10 @@ You will also need ffmpeg.
 ### GPT
 This uses my own voice which I won't publish, so it will break unless tweaked
 
+### Visualizer
+Youll need butterchurn .json presets in the butterchurnpresets folder, or go add the npm package.  I'm using my own converted ones
+which I don't want to push to my repo as my own.
+
 ### .ENV File
 You will need a AUTH_SECRET, GPT_KEY, and postgres DATABASE_URL
 

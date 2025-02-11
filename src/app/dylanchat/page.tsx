@@ -4,10 +4,11 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { HistoryPoint } from "@/actions/gpt";
+import { sendChatTTS } from "@/actions/tts";
+
+import { GPTMAXLENGTH } from "./constants";
 
 import styles from './gpt.module.css';
-import { sendChatTTS } from "@/actions/tts";
-import { GPTMAXLENGTH } from "./constants";
 
 export default function DylanChat() {
     const [chatText, setChatText] = useState<HistoryPoint[]>([{
@@ -52,10 +53,20 @@ export default function DylanChat() {
     }, [chatText]);
 
     return <div className={styles.gpt}>
+        <div className={styles.disclaimer}>
+            Audio is actually my voice
+        </div>
+        <hr/>
         <div className={styles.chatBox}>
             {chatText.map(ct => {
                 return <React.Fragment key={crypto.randomUUID()}>
-                    <span>{ct.fromGPT ? 'Dylan' : 'You'}: {ct.content}</span><br/><br/>
+                    <div className={ct.fromGPT ? styles.left : styles.right}>
+                        <b>{ct.fromGPT ? 'Dylan' : 'You'}</b>
+                        <br/>
+                        <div>
+                            {ct.content}
+                        </div>
+                    </div>
                 </React.Fragment>;
             })}
         </div>

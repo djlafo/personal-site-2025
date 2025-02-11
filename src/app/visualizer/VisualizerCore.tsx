@@ -1,19 +1,33 @@
 import { useState } from "react";
 import { VisualizerOptionsType } from "./VisualizerOptions";
-import { createButterchurn, presets } from "./butterchurn";
+import { createButterchurn } from "./butterchurn";
+import butterchurnPreset from 'butterchurn-presets';
+import { getRandomPreset } from "@/actions/visualizer";
+
+const butterchurnPresets = butterchurnPreset.getPresets();
 
 export default function useVisualizerCore() {
     const [shuffleTimer, setShuffleTimer] = useState<number>();
     const [lock, _setLock] = useState(false);
+    const [useAPI, setUseAPI] = useState(false);
     const [visualizer, setVisualizer] = useState<any>();
     const [vRenderer, setVRenderer] = useState<number|null>();
     const [presetSwitcher, setPresetSwitcher] = useState<number|null>();
 
     const shuffle = ({v=visualizer, timer=shuffleTimer, lk=lock, preset=presetSwitcher}={}) => {
-        const presetFn : TimerHandler = () => {
-            const keys = Object.keys(presets);
-            v.loadPreset(presets[keys[Math.floor(Math.random() * keys.length)]], 1.0);
-            console.log('rendered');
+        const presetFn : TimerHandler = async () => {
+            let preset;
+            if(useAPI) {
+                let presetObj = await getRandomPreset();
+                console.log(presetObj.name);
+                preset = presetObj.preset;
+            } else {
+                const presetName = Object.keys(butterchurnPresets).at(Math.floor(Math.random() * butterchurnPresets.length));
+                console.log(preset);
+                if(!presetName) return;
+                preset = butterchurnPresets[presetName];
+            }
+            if(preset) v.loadPreset(preset, 1.0);
         };
         presetFn();
         if(!lk && !preset) setPresetSwitcher(setInterval(presetFn, 1000*Number(timer)));
@@ -59,5 +73,5 @@ export default function useVisualizerCore() {
         }
         setVisualizer(null);
     }
-    return {shuffle, create, setLock, stop};
+    return {shuffle, create, setLock, stop, setUseAPI};
 }

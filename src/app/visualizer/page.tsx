@@ -11,7 +11,7 @@ import useVisualizerCore from './VisualizerCore';
 import styles from './visualizer.module.css';
 
 export default function Visualizer() {
-    const {shuffle, create, setLock, stop} = useVisualizerCore();
+    const {shuffle, create, setLock, setUseAPI, stop} = useVisualizerCore();
     const [fullScreen, setFullScreen] = useState(false);
     const [isSupported, setIsSupported] = useState<boolean>();
     const [mediaDevices, setMediaDevices] = useState<boolean>();
@@ -32,7 +32,7 @@ export default function Visualizer() {
                 (isSupported === false && <>Browser not supported</>) ||
                 (!mediaDevices && <>Cannot get media source</>) ||
                 <>
-                    <VisualizerOptions onLock={setLock} onShuffle={shuffle} onStart={o => start(o)} onStop={stop}/>
+                    <VisualizerOptions onLock={setLock} onUseAPI={setUseAPI} onShuffle={shuffle} onStart={o => start(o)} onStop={stop}/>
                     <canvas ref={canvasRef} onClick={() => setFullScreen(fs => !fs)} className={fullScreen ? styles.full : ''}/>
                 </>    
             }

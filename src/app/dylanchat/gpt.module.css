@@ -1,5 +1,11 @@
 .gpt {
     padding: 10px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+    height: calc(100vh - 80px);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .gpt form {
@@ -18,4 +24,30 @@
 
 .inputs input[type=text] {
     flex: 4;
+}
+
+.disclaimer {
+    text-align: center;
+}
+
+.left, .right {
+    width: 70%;
+    margin: 20px 0;
+}
+
+.left div, .right div {
+    margin-top: 10px;
+    display: inline-block;
+    background-color: #0033AA;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.left {
+    margin-right: auto;
+}
+
+.right {
+    margin-left: auto;
+    text-align: right;
 }

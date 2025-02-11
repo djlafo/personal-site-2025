@@ -1,6 +1,7 @@
 .tts textarea {
     width: 100%;
-    resize: vertical;
+    resize: none;
+    height: calc(100vh - 250px);
     box-sizing: border-box;
 }
 

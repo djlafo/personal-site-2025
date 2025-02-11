@@ -1,11 +1,3 @@
-import dynamic from 'next/dynamic'
-
-// import butterchurn from 'butterchurn';
-import butterchurnPresets from 'butterchurn-presets';
-// import isButterchurnSupported from "butterchurn/lib/isSupported.min";
-
-export const presets = butterchurnPresets.getPresets();
-
 export function createButterchurn(canvas : HTMLCanvasElement, width : number, height : number) {
     return new Promise<any>((acc, rej) => {
         (async() => {

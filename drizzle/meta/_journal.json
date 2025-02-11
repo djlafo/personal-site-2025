@@ -36,6 +36,13 @@
       "when": 1738361749827,
       "tag": "0004_wide_ghost_rider",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1739312015427,
+      "tag": "0005_wide_yellow_claw",
+      "breakpoints": true
     }
   ]
 }
