@@ -53,12 +53,12 @@ export default function DylanChat() {
         });
     }, [chatText]);
 
-    return <div className={styles.gpt}>
+    return <div ref={chatRef} className={styles.gpt}>
         <div className={styles.disclaimer}>
             Audio is actually my voice
         </div>
         <hr/>
-        <div ref={chatRef} className={styles.chatBox}>
+        <div className={styles.chatBox}>
             {chatText.map(ct => {
                 return <React.Fragment key={crypto.randomUUID()}>
                     <div className={ct.fromGPT ? styles.left : styles.right}>
