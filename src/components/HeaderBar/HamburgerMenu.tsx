@@ -45,7 +45,7 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link href={'/tts'}>
+						<Link href={'/notes'}>
 							Notes/OCR/TTS
 						</Link>
 					</span>

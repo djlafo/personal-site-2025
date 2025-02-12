@@ -12,10 +12,10 @@ import { useLoadingScreen } from "@/components/LoadingScreen";
 import { notesTable } from "@/db/schema/notes";
 import { useUser } from "@/components/Session";
 import { useRouter } from "next/navigation";
-import { deleteNote, updateNote, createNote } from "@/actions/notes";
+import { deleteNote, updateNote, createNote, Note } from "@/actions/notes";
 
 interface EditorProps {
-    note?: typeof notesTable.$inferSelect
+    note?: Note
 }
 export default function Editor({note}: EditorProps) {
     const router = useRouter();
@@ -65,7 +65,7 @@ export default function Editor({note}: EditorProps) {
     }, [paragraphs, queueRead]);
 
     return <div className={styles.tts}>
-        <input type='button' value='Back' onClick={() => router.back()}/>
+        <input type='button' value='Back' onClick={() => router.push('/notes')}/>
         {
             !currentAudio ? 
             <TTSTextEditor paragraphs={paragraphs}
@@ -138,7 +138,7 @@ function useAudioLoader() {
 interface TTSTextEditorProps {
     paragraphs: string[];
     onStart: (paragraphs: string[]) => void;
-    note?: typeof notesTable.$inferSelect
+    note?: Note
 }
 function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
     const [user] = useUser();
@@ -149,16 +149,16 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
         try {
             const newNote = await createNote(textContent);
             toast('Created');
-            router.replace(`/tts/${newNote.id}`);
+            router.replace(`/notes/${newNote.id}`);
         } catch(e) {
             if(e instanceof Error) toast(e.message);
         }
     }
 
-    const _updateNote = async () => {
+    const _updateNote = async (checked?: boolean) => {
         if(!note) return;
         try {
-            await updateNote(note.id, textContent);
+            await updateNote(note.id, textContent, checked);
             toast('Updated');
         } catch(e) {
             if(e instanceof Error) toast(e.message);
@@ -169,7 +169,7 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
         if(!note) return;
         try {
             await deleteNote(note.id);
-            router.push('/tts');
+            router.push('/notes');
         } catch(e) {
             if(e instanceof Error) toast(e.message);
         }
@@ -190,7 +190,7 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
                     onClick={() => _createNote()}/> || <></>
             }
             
-            {note && note.userId === note.userId && 
+            {user && note && note.yours && 
                 <>
                     <input type='button' 
                         value="Update Note" 
@@ -198,6 +198,13 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
                     <input type='button' 
                         value="Delete Note" 
                         onClick={() => _deleteNote()}/>
+                    <div>
+                        <label htmlFor='publicCheckbox'>Public</label>
+                        <input id='publicCheckbox'
+                            type='checkbox'
+                            defaultChecked={note.public}
+                            onChange={e => _updateNote(e.target.checked)}/>
+                    </div>
                 </> || <></>
             }
         </div>

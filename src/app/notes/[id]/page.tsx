@@ -10,10 +10,16 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
             description: 'A note'
         }
     } else {
-        const note = await getNote(Number(p.id));
-        return {
-            title: `${note.text.substring(0,25)}...`,
-            description: 'A note'
+        try {
+            const note = await getNote(p.id);
+            return {
+                title: `${note.text.substring(0,25)}...`,
+                description: 'A note'
+            }
+        } catch {
+            return {
+                title: 'Error'
+            }
         }
     }
 }
@@ -26,8 +32,12 @@ export default async function Page({params}: PageProps) {
     if(p.id === 'new') {
         return <Editor/>;
     } else {
-        const note = await getNote(Number(p.id));
-        return <Editor note={note}/>
+        try {
+            const note = await getNote(p.id);
+            return <Editor note={note}/>
+        } catch(e) {
+            if(e instanceof Error) return <span>{e.message}</span>;
+        }
     }
 
 }
