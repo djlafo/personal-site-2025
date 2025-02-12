@@ -6,6 +6,8 @@ import { notesTable } from "@/db/schema/notes";
 import { getUser } from "@/lib/sessions"
 import { eq } from "drizzle-orm";
 
+const MAXLEN = 50000000;
+
 export async function getNotes(): Promise<Note[]> {
     const user = await getUser();
     if(!user) throw new Error('Not signed in');
@@ -24,6 +26,7 @@ export async function createNote(text: string): Promise<Note> {
     const user = await getUser();
     if(!user) throw new Error('Not signed in');
     if(!text) throw new Error('No text submitted');
+    if(text.length > MAXLEN) throw new Error('Content over allowed size');
     const query = await db.insert(notesTable).values({
         text: text,
         userId: user.id,
@@ -42,6 +45,8 @@ export async function createNote(text: string): Promise<Note> {
 
 export async function updateNote(id: string, text: string, pub?: boolean) {
     checkNote(id);
+    if(!text) throw new Error('No text submitted');
+    if(text.length > MAXLEN) throw new Error('Content over allowed size');
 
     const props: {text: string, public?: boolean } = { text: text };
     if(pub !== undefined) props.public = pub;
