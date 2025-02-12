@@ -1,30 +1,26 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
-
-import { getTTS } from "@/actions/tts";
-
-import styles from "./tts.module.css"; 
-import OCR from "@/components/OCR";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import Quill from 'quill';
+
+import OCR from "@/components/OCR";
+import { useUser } from "@/components/Session";
 import { useLoadingScreen } from "@/components/LoadingScreen";
 
-import { notesTable } from "@/db/schema/notes";
-import { useUser } from "@/components/Session";
-import { useRouter } from "next/navigation";
+import { getTTS } from "@/actions/tts";
 import { deleteNote, updateNote, createNote, Note } from "@/actions/notes";
+
+import styles from "./tts.module.css"; 
 
 interface EditorProps {
     note?: Note
 }
 export default function Editor({note}: EditorProps) {
+    const [user] = useUser();
     const router = useRouter();
-    const [paragraphs, setParagraphs] = useState<string[]>(() => {
-        if(note) {
-            return note.text.split('\n\n').filter(n => !!n);
-        }
-        return [];
-    });
+    const [paragraphs, setParagraphs] = useState<string[]>([]);
     const [currentReading, setCurrentReading] = useState(0);
     const {currentAudio, setAudioFor, loadTTS} = useAudioLoader();
     const [queueRead, setQueueRead] = useState(false);
@@ -65,10 +61,10 @@ export default function Editor({note}: EditorProps) {
     }, [paragraphs, queueRead]);
 
     return <div className={styles.tts}>
-        <input type='button' value='Back' onClick={() => router.push('/notes')}/>
+        {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
         {
             !currentAudio ? 
-            <TTSTextEditor paragraphs={paragraphs}
+            <TTSTextEditor
                 note={note}
                 onStart={pg => {
                     setParagraphs(pg);
@@ -134,20 +130,20 @@ function useAudioLoader() {
     };
 }
 
-
 interface TTSTextEditorProps {
-    paragraphs: string[];
     onStart: (paragraphs: string[]) => void;
     note?: Note
 }
-function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
+function TTSTextEditor({onStart, note}: TTSTextEditorProps) {
     const [user] = useUser();
     const router = useRouter();
-    const [textContent, setTextContent] = useState(paragraphs.length && paragraphs.join('\n\n') || '');
+    const [content, setContent] = useState(note?.text || '[]');
+    const [textContent, setTextContent] = useState('');
+    const quillRef = useRef<HTMLDivElement>(null);
 
     const _createNote = async () => {
         try {
-            const newNote = await createNote(textContent);
+            const newNote = await createNote(content);
             toast('Created');
             router.replace(`/notes/${newNote.id}`);
         } catch(e) {
@@ -158,7 +154,7 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
     const _updateNote = async (checked?: boolean) => {
         if(!note) return;
         try {
-            await updateNote(note.id, textContent, checked);
+            await updateNote(note.id, content, checked);
             toast('Updated');
         } catch(e) {
             if(e instanceof Error) toast(e.message);
@@ -174,9 +170,53 @@ function TTSTextEditor({onStart, paragraphs, note}: TTSTextEditorProps) {
             if(e instanceof Error) toast(e.message);
         }
     }
+
+    useEffect(() => {
+        if(!quillRef.current) return;
+
+        const container = quillRef.current;
+        if(!(container instanceof HTMLDivElement)) return;
+        const editorContainer = container.appendChild(
+            container.ownerDocument.createElement('div')
+        );
+        const quill = new Quill(editorContainer, {
+            modules: {
+                toolbar: [
+                    [{'size': ['small', false, 'large', 'huge']}], 
+                    [{'header': [1,2,3,4,5,6,false]}],
+                    ['bold', 'italic', 'underline', 'strike'], 
+                    [{'color': []}, {'background': []}], 
+                    [{'script': 'sub'}, {'script': 'super'}], 
+                    ['blockquote', 'code-block'], 
+                    [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'indent': '-1'}, {'indent': '+1'}], 
+                    [{'direction': 'rtl'}, {'align': []}], 
+                    ['link', 'image', 'video']
+                ]
+            },
+            theme: 'snow'
+        });
+
+        try {
+            quill.setContents(JSON.parse(content));
+        } catch {
+            quill.setText(content);
+        }
+        setTextContent(quill.getText());
+        
+        quill.on(Quill.events.TEXT_CHANGE, () => {
+            setTextContent(quill.getText());
+            setContent(JSON.stringify(quill.getContents()));
+        });
+
+        return () => {
+            quillRef.current = null;
+            container.innerHTML = '';
+        }
+    }, [quillRef]);
+
     return <>
-        <textarea onChange={e => setTextContent(e.target.value)}
-            value={textContent}/>
+        {/* <QuillBar ref={quillBarRef}/> */}
+        <div className={styles.quill} ref={quillRef}/>
 
         <div className={styles.buttons}>
             <OCR onText={s => setTextContent(tc => tc + s)}

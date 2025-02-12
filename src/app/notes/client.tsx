@@ -1,6 +1,6 @@
 'use client'
 
-import { notesTable } from "@/db/schema/notes"
+import { getTextFromDelta } from "./[id]/helpers";
 import { useRouter } from "next/navigation";
 
 import styles from './notes.module.css';
@@ -14,7 +14,7 @@ export function NoteCard({note}: NoteCardProps) {
 
     return <div className={styles.noteCard} 
         onClick={() => router.push(`/notes/${note.id}`)}>
-        {note.text.split('\n')[0].substring(0, 100)}...
+        {getTextFromDelta(note.text).split('\n')[0].substring(0, 100)}...
     </div>;
 }
 

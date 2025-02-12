@@ -1,9 +1,4 @@
-.tts textarea {
-    width: 100%;
-    resize: none;
-    height: calc(100vh - 320px);
-    box-sizing: border-box;
-}
+@import url("https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
 
 .tts {
     margin-left: 2.5%;
@@ -39,5 +34,30 @@
     left: 0;
     bottom: 0;
     width: 100%;
+    background-color: cyan;
+}
+
+.quill {
+    width: 100%;
+    height: calc(100vh - 425px);
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.quill iframe {
+    width: 70%;
+    aspect-ratio: 16/9;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.quill img {
+    height: 40vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.quillBar {
     background-color: cyan;
 }

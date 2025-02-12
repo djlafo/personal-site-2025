@@ -24,6 +24,6 @@ export default async function Page() {
             </div>
         </div>;
     } else {
-        redirect('tts/new');
+        redirect('/notes/new');
     }
 }
