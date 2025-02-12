@@ -1,0 +1,129 @@
+import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
+import { useUser } from "@/components/Session";
+import { useRouter } from "next/navigation";
+import Quill from "quill";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+
+import styles from '../tts.module.css';
+import OCR from "@/components/OCR";
+
+export interface QuillEditorProps {
+    onStart: (paragraphs: string[]) => void;
+    note?: Note
+}
+export default function QuillEditor({onStart, note}: QuillEditorProps) {
+    const [user] = useUser();
+    const router = useRouter();
+    const [content, setContent] = useState(note?.text || '[]');
+    const [textContent, setTextContent] = useState('');
+    const quillRef = useRef<HTMLDivElement>(null);
+
+    const _createNote = async () => {
+        try {
+            const newNote = await createNote(content);
+            toast('Created');
+            router.replace(`/notes/${newNote.id}`);
+        } catch(e) {
+            if(e instanceof Error) toast(e.message);
+        }
+    }
+
+    const _updateNote = async (checked?: boolean) => {
+        if(!note) return;
+        try {
+            await updateNote(note.id, content, checked);
+            toast('Updated');
+        } catch(e) {
+            if(e instanceof Error) toast(e.message);
+        }
+    }
+
+    const _deleteNote = async () => {
+        if(!note) return;
+        try {
+            await deleteNote(note.id);
+            router.push('/notes');
+        } catch(e) {
+            if(e instanceof Error) toast(e.message);
+        }
+    }
+
+    useEffect(() => {
+        if(!quillRef.current) return;
+
+        const container = quillRef.current;
+        if(!(container instanceof HTMLDivElement)) return;
+        const editorContainer = container.appendChild(
+            container.ownerDocument.createElement('div')
+        );
+        const quill = new Quill(editorContainer, {
+            modules: {
+                toolbar: [
+                    [{'size': ['small', false, 'large', 'huge']}], 
+                    [{'header': [1,2,3,4,5,6,false]}],
+                    ['bold', 'italic', 'underline', 'strike'], 
+                    [{'color': []}, {'background': []}], 
+                    [{'script': 'sub'}, {'script': 'super'}], 
+                    ['blockquote', 'code-block'], 
+                    [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'indent': '-1'}, {'indent': '+1'}], 
+                    [{'direction': 'rtl'}, {'align': []}], 
+                    ['link', 'image', 'video']
+                ]
+            },
+            theme: 'snow'
+        });
+
+        try {
+            quill.setContents(JSON.parse(content));
+        } catch {
+            quill.setText(content);
+        }
+        setTextContent(quill.getText());
+        
+        quill.on(Quill.events.TEXT_CHANGE, () => {
+            setTextContent(quill.getText());
+            setContent(JSON.stringify(quill.getContents()));
+        });
+
+        return () => {
+            quillRef.current = null;
+            container.innerHTML = '';
+        }
+    }, [quillRef]);
+
+    return <>
+        <div className={styles.quill} ref={quillRef}/>
+
+        <div className={styles.buttons}>
+            <OCR onText={s => setTextContent(tc => tc + s)}
+                className={styles.ocr}/>
+            <input type='button' 
+                value="Generate Audio" 
+                onClick={() => onStart(textContent.split('\n\n').filter(p => !!p))}/>
+            {user && !note &&
+                <input type='button' 
+                    value="Create Note" 
+                    onClick={() => _createNote()}/> || <></>
+            }
+            
+            {user && note && note.yours && 
+                <>
+                    <input type='button' 
+                        value="Update Note" 
+                        onClick={() => _updateNote()}/>
+                    <input type='button' 
+                        value="Delete Note" 
+                        onClick={() => _deleteNote()}/>
+                    <div>
+                        <label htmlFor='publicCheckbox'>Public</label>
+                        <input id='publicCheckbox'
+                            type='checkbox'
+                            defaultChecked={note.public}
+                            onChange={e => _updateNote(e.target.checked)}/>
+                    </div>
+                </> || <></>
+            }
+        </div>
+    </>;
+}
