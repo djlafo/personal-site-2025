@@ -33,7 +33,7 @@ export default function Login(props: LoginProps) {
 
     return <div className={styles.login}>
         <form>
-            <input id='username' name='username' placeholder='username' type='text'/>
+            <input id='username' name='username' placeholder='username' type='text' autoFocus/>
 
             <input id='password' name='password' placeholder='password' type='password'/>
             

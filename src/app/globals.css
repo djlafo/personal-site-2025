@@ -3,6 +3,12 @@
   src: local('Gohu'), url('/GohuFont14NerdFontMono-Regular.ttf'), format('ttf');
 }
 
+/* Prevent zoom on mobile */
+:root {
+  touch-action: pan-x pan-y;
+  height: 100% 
+}
+
 body {
   background-color: #000000;
   color: #FFFFFF;
