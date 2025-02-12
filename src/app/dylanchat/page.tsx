@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 
 import { HistoryPoint } from "@/actions/gpt";
@@ -21,6 +21,7 @@ export default function DylanChat() {
             return new Audio();
         }
     });
+    const chatRef = useRef<HTMLDivElement>(null);
 
     const sendInput = async() => {
         setUserInput('');
@@ -46,8 +47,8 @@ export default function DylanChat() {
     }
 
     useEffect(() => {
-        window.scrollTo({
-            top: document.body.scrollHeight,
+        chatRef.current?.scrollTo({
+            top: chatRef.current.scrollHeight,
             behavior: 'smooth'
         });
     }, [chatText]);
@@ -57,7 +58,7 @@ export default function DylanChat() {
             Audio is actually my voice
         </div>
         <hr/>
-        <div className={styles.chatBox}>
+        <div ref={chatRef} className={styles.chatBox}>
             {chatText.map(ct => {
                 return <React.Fragment key={crypto.randomUUID()}>
                     <div className={ct.fromGPT ? styles.left : styles.right}>
