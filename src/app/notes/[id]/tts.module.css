@@ -4,10 +4,6 @@
     margin-left: 2.5%;
     margin-right: 2.5%;
     height: 100%;
-    padding-bottom: 40px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 }
 
 .tts > input {
@@ -62,4 +58,16 @@
 
 .quillBar {
     background-color: cyan;
+}
+
+.editorDiv {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 35px);
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
+
+.hidden {
+    display: none;
 }

@@ -8,7 +8,7 @@ import { useLoadingScreen } from "@/components/LoadingScreen";
 import { Note } from "@/actions/notes";
 
 import useAudioLoader from "./components/audioloader";
-import QuillEditor from "./components/quill";
+import QuillEditor from "./components/quilleditor";
 import ReadDisplay from "./components/readdisplay";
 import AudioPlayer from "./components/audioplayer";
 
@@ -62,19 +62,20 @@ export default function Editor({note}: EditorProps) {
 
     return <div className={styles.tts}>
         {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
-        {
-            !currentAudio ? 
+
+        <div className={`${styles.editorDiv} ${currentAudio ? styles.hidden : ''}`}>
             <QuillEditor
                 note={note}
                 onStart={pg => {
                     setParagraphs(pg);
                     setQueueRead(true);
                 }}/>
-            :
+        </div>
+        {currentAudio &&
             <ReadDisplay paragraphs={paragraphs}
                 onClickParagraph={getAudioAndLoad}
                 activeRow={currentReading}
-                onEditRequest={setAudioFor}/>
+                onEditRequest={setAudioFor}/> || <></>
         }
         <AudioPlayer onEnd={nextParagraph}
             audio={currentAudio}
