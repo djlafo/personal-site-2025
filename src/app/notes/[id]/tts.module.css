@@ -3,10 +3,18 @@
 .tts {
     margin-left: 2.5%;
     margin-right: 2.5%;
+    height: 100%;
+    padding-bottom: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.tts > input {
+    width: 60px;
 }
 
 .buttons {
-    margin-bottom: 60px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -39,9 +47,10 @@
 
 .quill {
     width: 100%;
-    height: calc(100vh - 425px);
     box-sizing: border-box;
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .quill iframe {

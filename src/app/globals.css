@@ -9,7 +9,17 @@
   height: 100% 
 }
 
+html, body {
+  height: 100%;
+}
+
+.fadechildren {
+  flex: 1;
+}
+
 body {
+  display: flex;
+  flex-direction: column;
   background-color: #000000;
   color: #FFFFFF;
   margin: 0;

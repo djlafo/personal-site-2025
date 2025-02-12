@@ -215,7 +215,6 @@ function TTSTextEditor({onStart, note}: TTSTextEditorProps) {
     }, [quillRef]);
 
     return <>
-        {/* <QuillBar ref={quillBarRef}/> */}
         <div className={styles.quill} ref={quillRef}/>
 
         <div className={styles.buttons}>

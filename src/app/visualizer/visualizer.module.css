@@ -4,7 +4,7 @@
 
 .visualizer canvas {
     width: 100%;
-    height: calc(100vw/16*9);
+    aspect-ratio: 16/9;
 }
 
 .visualizer canvas {
