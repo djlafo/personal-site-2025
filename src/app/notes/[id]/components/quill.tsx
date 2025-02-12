@@ -2,6 +2,8 @@ import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter } from "next/navigation";
 import Quill from "quill";
+import ImageResize from 'quill-image-resize';
+Quill.register('modules/imageResize', ImageResize);
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -69,7 +71,8 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
                     [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'indent': '-1'}, {'indent': '+1'}], 
                     [{'direction': 'rtl'}, {'align': []}], 
                     ['link', 'image', 'video']
-                ]
+                ],
+                imageResize: {}
             },
             theme: 'snow'
         });

@@ -21,7 +21,7 @@
     "openai": "^4.83.0",
     "pg": "^8.13.1",
     "quill": "^2.0.3",
-    "quill-image-resize-module": "^3.0.0",
+    "quill-image-resize": "^3.0.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.3",
