@@ -68,6 +68,10 @@
     box-sizing: border-box;
 }
 
+.readingDiv {
+    margin-bottom: 40px;
+}
+
 .hidden {
     display: none;
 }
