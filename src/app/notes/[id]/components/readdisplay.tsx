@@ -34,7 +34,7 @@ export default function ReadDisplay({paragraphs, onClickParagraph, activeRow, on
         });
     }, [activeRow])
 
-    return <div>
+    return <div className={styles.readingDiv}>
         {paragraphs.map((t,i) => {
             return <div key={i} id={`readingRow${i}`}
                 className={`${styles.readingText} ${i===activeRow ? styles.currentReading : ''}`}
