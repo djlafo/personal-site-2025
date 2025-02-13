@@ -25,43 +25,31 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const quillRef = useRef<HTMLDivElement>(null);
 
     const _createNote = async () => {
-        try {
-            const newNote = await createNote(content);
-            if(newNote instanceof MyError) {
-                toast(newNote.message);
-            } else {
-                toast('Created');
-                router.replace(`/notes/${newNote.id}`);
-            }
-        } catch(e) {
-            if(e instanceof Error) toast(e.message);
+        const newNote = await createNote(content);
+        if(newNote instanceof MyError) {
+            toast(newNote.message);
+        } else {
+            toast('Created');
+            router.replace(`/notes/${newNote.id}`);
         }
-    }
+}
 
     const _updateNote = async (checked?: boolean) => {
         if(!note) return;
-        try {
-            const updatedNote = await updateNote(note.id, content, checked);
-            if(updatedNote instanceof MyError) {
-                toast(updatedNote.message);
-            } else {
-                toast('Updated');
-            }
-        } catch(e) {
-            if(e instanceof Error) toast(e.message);
+        const updatedNote = await updateNote(note.id, content, checked);
+        if(updatedNote instanceof MyError) {
+            toast(updatedNote.message);
+        } else {
+            toast('Updated');
         }
     }
 
     const _deleteNote = async () => {
         if(!note) return;
-        try {
-            if(await deleteNote(note.id)) {
-                router.push('/notes');
-            } else {
-                toast('Failed to delete');
-            }
-        } catch(e) {
-            if(e instanceof Error) toast(e.message);
+        if(await deleteNote(note.id)) {
+            router.push('/notes');
+        } else {
+            toast('Failed to delete');
         }
     }
 

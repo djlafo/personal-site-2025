@@ -7,6 +7,7 @@ import { getOCR } from '@/actions/ocr';
 import styles from './ocr.module.css';
 import { toast } from 'react-toastify';
 import { useLoadingScreen } from '../LoadingScreen';
+import { MyError } from '@/lib/myerror';
 
 interface OCRProps {
     onText: (s: string) => void;
@@ -17,18 +18,16 @@ export default function OCR({onText, className}: OCRProps) {
     const [loading, setLoading] = useLoadingScreen();
 
     const getImageOCR = async () => {
-        try {
-            if(!fileRef.current || !fileRef.current.files?.length) return;
-            const img = fileRef.current.files[0];
-            setLoading(true);
-            const text = await getOCR(img);
-            setLoading(false);
-            // process out extraneous newlines
+        if(!fileRef.current || !fileRef.current.files?.length) return;
+        const img = fileRef.current.files[0];
+        setLoading(true);
+        const text = await getOCR(img);
+        setLoading(false);
+        // process out extraneous newlines
+        if(text instanceof MyError) {
+            toast(text.message);
+        } else {
             onText(text.replaceAll(/(?<!\n)\n(?!\n)/g, '. '));
-        } catch (e) {
-            if(e instanceof Error) {
-                toast(e.message);
-            }
         }
     }
 

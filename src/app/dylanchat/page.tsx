@@ -9,6 +9,8 @@ import { sendChatTTS } from "@/actions/tts";
 import { GPTMAXLENGTH } from "./constants";
 
 import styles from './gpt.module.css';
+import { MyError } from "@/lib/myerror";
+import { toast } from "react-toastify";
 
 export default function DylanChat() {
     const [chatText, setChatText] = useState<HistoryPoint[]>([{
@@ -33,17 +35,21 @@ export default function DylanChat() {
             }]);
         });
         const response = await sendChatTTS(userInput, chatText);
-        if(audioObj) {
-            audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
-            audioObj.play();
+        if(response instanceof MyError) {
+            toast(response.message);
+        } else {
+            if(audioObj) {
+                audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
+                audioObj.play();
+            }
+            setChatText(ct => {
+                return ct.concat([
+                {
+                    content: response.text,
+                    fromGPT: true
+                }]);
+            });
         }
-        setChatText(ct => {
-            return ct.concat([
-            {
-                content: response.text,
-                fromGPT: true
-            }]);
-        });
     }
 
     useEffect(() => {

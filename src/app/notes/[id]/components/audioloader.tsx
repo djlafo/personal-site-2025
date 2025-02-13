@@ -1,4 +1,5 @@
 import { getTTS } from "@/actions/tts";
+import { MyError } from "@/lib/myerror";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -27,16 +28,16 @@ export default function useAudioLoader() {
     const loadTTS = async (text: string) => {
         const match = audioLogs.find(al => al.text === text);
         if(!match) {
-            try {
-                const audio = await getTTS(text);
+            const audio = await getTTS(text);
+            if(audio instanceof MyError) {
+                toast(audio.message);
+                return;
+            } else {
                 setAudioLogs(al => al.concat([{
                     text: text,
                     audio: audio
                 }]));
                 return audio;
-            } catch (e) {
-                if(e instanceof Error) toast(e.message);
-                return;
             }
         } else {
             return match.audio;

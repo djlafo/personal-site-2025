@@ -3,6 +3,7 @@ import { ResolvingMetadata } from "next";
 import { getNote } from "@/actions/notes";
 import EditorProxy from "./editorproxy";
 import { getTextFromDelta } from "./helpers";
+import { MyError } from "@/lib/myerror";
 
 export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata) {
     const p = await params;
@@ -12,17 +13,16 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
             description: 'A note'
         }
     } else {
-        try {
-            const note = await getNote(p.id);
+        const note = await getNote(p.id);
+        if(note instanceof MyError) {
+            return {
+                title: 'Error'
+            }
+        } else {
             const text = getTextFromDelta(note.text);
             return {
                 title: `${text.substring(0,25)}...`,
                 description: 'A note'
-            }
-        } catch(e) {
-            console.log(e);
-            return {
-                title: 'Error'
             }
         }
     }
@@ -36,11 +36,11 @@ export default async function Page({params}: PageProps) {
     if(p.id === 'new') {
         return <EditorProxy/>;
     } else {
-        try {
-            const note = await getNote(p.id);
+        const note = await getNote(p.id);
+        if(note instanceof MyError) {
+            return <span>{note.message}</span>;
+        } else {
             return <EditorProxy note={note}/>;
-        } catch(e) {
-            if(e instanceof Error) return <span>{e.message}</span>;
         }
     }
 
