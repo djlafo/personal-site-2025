@@ -107,7 +107,9 @@ export async function register(state: FormState, formData: FormData) {
         });
         return userToUserInfo(newUser[0])
     } else {
-        throw new Error('Failed to create');
+        return {
+            error: 'Failed to create'
+        };
     }
 }
 

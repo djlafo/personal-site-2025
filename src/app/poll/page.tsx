@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { listPolls, SerializedPoll } from "@/actions/polls";
+import { listPolls } from "@/actions/polls/polls";
+import { SerializedPoll } from "@/actions/polls/types";
 
 import { PollButton, CreateButton } from './PollButtons';
 

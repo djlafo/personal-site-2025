@@ -6,6 +6,8 @@ import { NewNoteButton, NoteCard } from "./client";
 
 import styles from './notes.module.css';
 
+import { MyError } from "@/lib/myerror";
+
 export const metadata: Metadata = {
     title: "Notes"
 };
@@ -15,14 +17,25 @@ export default async function Page() {
 
     if(user) {
         const notes = await getNotes();
-        return <div className={styles.notes}>
-            <NewNoteButton/>
-            <div className={styles.noteContainer}>
-                {notes.map(n => {
-                    return <NoteCard key={n.id} note={n}/>;
-                })}
-            </div>
-        </div>;
+
+        if(notes instanceof MyError) {
+            if(notes.authRequired) {
+                redirect('/login');
+            } else {
+                return <div>
+                    {notes.message}
+                </div>;
+            }
+        } else {
+            return <div className={styles.notes}>
+                <NewNoteButton/>
+                <div className={styles.noteContainer}>
+                    {notes.map(n => {
+                        return <NoteCard key={n.id} note={n}/>;
+                    })}
+                </div>
+            </div>;
+        }
     } else {
         redirect('/notes/new');
     }

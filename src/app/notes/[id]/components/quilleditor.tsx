@@ -1,3 +1,5 @@
+'use client'
+
 import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter } from "next/navigation";
@@ -9,6 +11,7 @@ import { toast } from "react-toastify";
 
 import styles from '../tts.module.css';
 import OCR from "@/components/OCR";
+import { MyError } from "@/lib/myerror";
 
 export interface QuillEditorProps {
     onStart: (paragraphs: string[]) => void;
@@ -24,8 +27,12 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const _createNote = async () => {
         try {
             const newNote = await createNote(content);
-            toast('Created');
-            router.replace(`/notes/${newNote.id}`);
+            if(newNote instanceof MyError) {
+                toast(newNote.message);
+            } else {
+                toast('Created');
+                router.replace(`/notes/${newNote.id}`);
+            }
         } catch(e) {
             if(e instanceof Error) toast(e.message);
         }
@@ -34,8 +41,12 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const _updateNote = async (checked?: boolean) => {
         if(!note) return;
         try {
-            await updateNote(note.id, content, checked);
-            toast('Updated');
+            const updatedNote = await updateNote(note.id, content, checked);
+            if(updatedNote instanceof MyError) {
+                toast(updatedNote.message);
+            } else {
+                toast('Updated');
+            }
         } catch(e) {
             if(e instanceof Error) toast(e.message);
         }
@@ -44,8 +55,11 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const _deleteNote = async () => {
         if(!note) return;
         try {
-            await deleteNote(note.id);
-            router.push('/notes');
+            if(await deleteNote(note.id)) {
+                router.push('/notes');
+            } else {
+                toast('Failed to delete');
+            }
         } catch(e) {
             if(e instanceof Error) toast(e.message);
         }

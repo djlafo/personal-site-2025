@@ -1,14 +1,20 @@
 'use client'
 
-import styles from './pollcreate.module.css';
 import { redirect } from 'next/navigation';
-import { addPoll } from '@/actions/polls';
+import { toast } from 'react-toastify';
+
+import { addPoll } from '@/actions/polls/polls';
+import { MyError } from '@/lib/myerror';
+
+import styles from './pollcreate.module.css';
 
 export default function Page() {
 
     const _addPoll = (f: FormData) => {
         addPoll(f).then(u => {
-            if(u) {
+            if(u instanceof MyError) {
+                toast(u.message);
+            } else {
                 redirect(`/poll/${u}`);
             }
         });

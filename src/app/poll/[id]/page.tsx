@@ -1,17 +1,25 @@
 import { ResolvingMetadata } from "next";
-import { readPoll } from "@/actions/polls"
+import { readPoll } from "@/actions/polls/polls"
 import Poll from './Poll';
 import { Suspense } from "react";
 
 import styles from './poll.module.css';
 import { LoadingScreenFallBack } from "@/components/LoadingScreen";
+import { MyError } from "@/lib/myerror";
 
 export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata) {
     const par = await params;
     const fullPoll = await readPoll(par.id);
-    return {
-        title: fullPoll.title,
-        description: 'A poll'
+
+    if(fullPoll instanceof MyError) {
+        return {
+            title: fullPoll.message
+        };
+    } else {
+        return {
+            title: fullPoll.title,
+            description: 'A poll'
+        }
     }
 }
 
@@ -29,5 +37,11 @@ export default function Page(props: PageProps) {
 async function PollLoader(props: PageProps) {
     const params = await props.params;
     const fullPoll = await readPoll(params.id);
-    return <Poll poll={fullPoll}/>
+    if(fullPoll instanceof MyError) {
+        return <div>
+            {fullPoll.message}
+        </div>;
+    } else {
+        return <Poll poll={fullPoll}/>
+    }
 }

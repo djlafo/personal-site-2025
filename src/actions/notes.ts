@@ -2,15 +2,27 @@
 
 import db from "@/db";
 import { notesTable } from "@/db/schema/notes";
+import { MyError } from "@/lib/myerror";
 
 import { getUser } from "@/lib/sessions"
 import { eq } from "drizzle-orm";
 
 const MAXLEN = 50000000;
 
-export async function getNotes(): Promise<Note[]> {
+export interface Note {
+    id: string;
+    text: string;
+    public: boolean;
+    yours: boolean;
+}
+
+export async function getNote(id: string) {
+    return await checkNote(id, true);
+}
+
+export async function getNotes(): Promise<Note[] | MyError> {
     const user = await getUser();
-    if(!user) throw new Error('Not signed in');
+    if(!user) return new MyError({message: 'Not signed in', authRequired: true});
     const query = await db.select().from(notesTable).where(eq(notesTable.userId, user.id));
     return query.map(q => {
         return {
@@ -22,11 +34,11 @@ export async function getNotes(): Promise<Note[]> {
     });
 }
 
-export async function createNote(text: string): Promise<Note> {
+export async function createNote(text: string): Promise<Note | MyError> {
     const user = await getUser();
-    if(!user) throw new Error('Not signed in');
-    if(!text) throw new Error('No text submitted');
-    if(text.length > MAXLEN) throw new Error('Content over allowed size');
+    if(!user) return new MyError({message: 'Not signed in', authRequired: true});
+    if(!text) return new MyError({message: 'No text submitted'});
+    if(text.length > MAXLEN) return new MyError({message: 'Content over allowed size'});
     const query = await db.insert(notesTable).values({
         text: text,
         userId: user.id,
@@ -45,8 +57,8 @@ export async function createNote(text: string): Promise<Note> {
 
 export async function updateNote(id: string, text: string, pub?: boolean) {
     checkNote(id);
-    if(!text) throw new Error('No text submitted');
-    if(text.length > MAXLEN) throw new Error('Content over allowed size');
+    if(!text) return new MyError({message: 'No text submitted'});
+    if(text.length > MAXLEN) return new MyError({message: 'Content over allowed size'});
 
     const props: {text: string, public?: boolean } = { text: text };
     if(pub !== undefined) props.public = pub;
@@ -61,21 +73,12 @@ export async function deleteNote(id: string) {
     return true;
 }
 
-export async function getNote(id: string) {
-    return await checkNote(id, true);
-}
-
-export interface Note {
-    id: string;
-    text: string;
-    public: boolean;
-    yours: boolean;
-}
-async function checkNote(id: string, allowPublic = false): Promise<Note> {
+async function checkNote(id: string, allowPublic = false): Promise<Note | MyError> {
     const user = await getUser();
     const note = await db.select().from(notesTable).where(eq(notesTable.id, id)).limit(1);
-    if(note.length !== 1) throw new Error('Note not found');
-    if((allowPublic && !note[0].public || !allowPublic) && (!user || note[0].userId !== user.id)) throw new Error('This isnt your note, what is wrong with you');
+    if(note.length !== 1) return new MyError({message: 'Note not found'});
+    if(!allowPublic && !user) return new MyError({message: 'Not signed in', authRequired: true});
+    if((allowPublic && !note[0].public || !allowPublic) && (!user || note[0].userId !== user.id)) return new MyError({message: 'This isnt your note, what is wrong with you'});
     return {
         id: note[0].id,
         text: note[0].text,

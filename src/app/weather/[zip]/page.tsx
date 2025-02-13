@@ -16,7 +16,11 @@ export default async function Page({params} : PageProps) {
 }
 
 async function LoadAndRedirect(params: {zip: string}) {
-    const coords = await getCoordsFromZip(params.zip);
-    redirect(`/weather/${params.zip}/${coords}`);
+    try {
+        const coords = await getCoordsFromZip(params.zip);
+        redirect(`/weather/${params.zip}/${coords}`);
+    } catch {
+        redirect('/weather');
+    }
     return <></>;
 }

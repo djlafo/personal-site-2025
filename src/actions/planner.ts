@@ -8,10 +8,9 @@ import { plannerTable } from '@/db/schema/planner';
 import { getUser } from '@/lib/sessions';
 
 import { PlannerData } from '@/app/planner/UsePlanner';
+import { MyError } from '@/lib/myerror';
 
-// TODO SET TYPES
-
-export async function getPlannerData(): Promise<PlannerData | undefined>{
+export async function getPlannerData(): Promise<PlannerData | MyError>{
     const user = await getUser();
     if(user) {
         const planner = await db.select()
@@ -22,9 +21,14 @@ export async function getPlannerData(): Promise<PlannerData | undefined>{
         if(planner.length === 1) {
             return planner[0].planner.data as PlannerData;
         } else if (planner.length === 0) { // create a planner row for user automatically for later
-            const newPlanner = await db.insert(plannerTable).values({}).returning({ id: plannerTable.id});
+            const newPlanner = await db.insert(plannerTable).values({}).returning();
             await db.update(usersTable).set({plannerId: newPlanner[0].id}).where(eq(usersTable.id, user.id));
+            return newPlanner[0].data as PlannerData;
+        } else {
+            return new MyError({message: 'Somehow more than one planner has shown up'});
         }
+    } else {
+        return new MyError({message: 'Not logged in', authRequired: true});
     }
 }
 
@@ -41,9 +45,9 @@ export async function savePlannerData(pd: PlannerData) {
             .limit(1);
 
         if(planner.length === 1) {
-            await db.update(plannerTable).set({ data: pd }).where(eq(plannerTable.id, planner[0].planner.id));
-            return true;
+            const saved = await db.update(plannerTable).set({ data: pd }).where(eq(plannerTable.id, planner[0].planner.id)).returning();
+            return saved[0].data as PlannerData;
         }
     }
-    return false;
+    return new MyError({message: 'Not logged in', authRequired: true});
 }

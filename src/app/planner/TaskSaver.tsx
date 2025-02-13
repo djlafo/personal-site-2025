@@ -5,6 +5,7 @@ import { getPlannerData, savePlannerData } from "@/actions/planner";
 import { getEmptyPlanner, PlannerData } from "./UsePlanner";
 import { useUser } from "@/components/Session";
 import { toast } from "react-toastify";
+import { MyError } from "@/lib/myerror";
 
 
 interface TaskSaverProps {
@@ -71,16 +72,20 @@ export default function TaskSaver(props : TaskSaverProps) {
 
     const saveToServer = () => {
         savePlannerData(props.plannerData).then(r => {
-            if(r) setLastSaved(props.plannerData);
+            if(r instanceof MyError) {
+                toast(r.message);
+            } else {
+                setLastSaved(props.plannerData);
+            }
         });
     }
 
     const loadServer = () => {
         getPlannerData().then(pd => {
-            if(pd) {
-                props.onLoad(pd);
+            if(pd instanceof MyError) {
+                toast(pd.message);
             } else {
-                toast('Nothing saved');
+                props.onLoad(pd);
             }
         });
     }
