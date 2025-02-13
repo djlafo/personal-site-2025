@@ -8,9 +8,13 @@ import { cookies, headers } from 'next/headers';
 
 const secretKey = process.env.AUTH_SECRET;
 
+export interface JWTObjType {
+    exp: number;
+    data: typeof usersTable.$inferSelect
+}
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
     const token = jwt.sign({
-        exp: Math.floor(getExpiration()/1000),
+        exp: Math.floor(getExpirationDefault()/1000),
         data: obj
     }, secretKey);
 
@@ -21,18 +25,29 @@ export function decrypt(s: string) {
     return jwt.verify(s, secretKey);
 }
 
-export function getExpiration() {
+export function getExpirationDefault() {
     return (Date.now() + (60 * 60 * 24 * 1000));
 }
 
+export async function getDecryptedJWT() {
+    const decrypted = await decryptSession();
+    if(decrypted) {
+        return decrypted as JWTObjType;
+    }
+}
+
 export async function getUser() : Promise<typeof usersTable.$inferSelect | undefined> {
+    const decrypted = await decryptSession();
+    if(decrypted) return decrypted.data as typeof usersTable.$inferSelect;
+}
+
+async function decryptSession() {
     const cookieStore = await cookies();
     const sessionHeader = cookieStore.get('session')?.value;
     if(sessionHeader) {
         try {
-            const decrypted = decrypt(sessionHeader);
-            return decrypted.data as typeof usersTable.$inferSelect;
-        } catch (e) { 
+            return decrypt(sessionHeader);
+        } catch {
             // invalid header
         }
     }

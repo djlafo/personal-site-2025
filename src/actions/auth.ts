@@ -4,7 +4,7 @@ import db from '@/db';
 import { usersTable } from '@/db/schema/users';
 import { eq, or } from 'drizzle-orm';
 
-import { encrypt, getExpiration, getUser } from '@/lib/sessions';
+import { encrypt, getDecryptedJWT, getExpirationDefault, getUser, JWTObjType } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
 import { cookies, headers } from 'next/headers';
@@ -16,10 +16,14 @@ type FormState = {
     username?: String;
 } | undefined
 
-function userToUserInfo(u: typeof usersTable.$inferSelect) : UserInfo {
-    return {
-        username: u.username
-    };
+async function userToUserInfo() : Promise<UserInfo | undefined> {
+    const fullJwt = await getDecryptedJWT();
+    if(fullJwt) {
+        return {
+            username: fullJwt.data.username,
+            exp: fullJwt.exp
+        };
+    }
 }
 
 export async function login(state: FormState, formData: FormData) {
@@ -45,13 +49,13 @@ export async function login(state: FormState, formData: FormData) {
             cookieStore.set('session', jwt, {
                 httpOnly: true,
                 secure: true,
-                expires: getExpiration(),
+                expires: getExpirationDefault(),
                 sameSite: 'lax',
                 path: '/'
             });
 
             await updatedIp;
-            return userToUserInfo(user);
+            return await userToUserInfo();
         }
 
     }
@@ -101,11 +105,11 @@ export async function register(state: FormState, formData: FormData) {
         cookieStore.set('session', jwt, {
             httpOnly: true,
             secure: true,
-            expires: getExpiration(),
+            expires: getExpirationDefault(),
             sameSite: 'lax',
             path: '/'
         });
-        return userToUserInfo(newUser[0])
+        return userToUserInfo()
     } else {
         return {
             error: 'Failed to create'
@@ -114,8 +118,5 @@ export async function register(state: FormState, formData: FormData) {
 }
 
 export async function getUserInfo() {
-    const user = await getUser();
-    if(user) {
-        return userToUserInfo(user);
-    }
+    return await userToUserInfo();
 }
