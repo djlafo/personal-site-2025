@@ -19,13 +19,9 @@ export default async function Page() {
         const notes = await getNotes();
 
         if(notes instanceof MyError) {
-            if(notes.authRequired) {
-                redirect('/login');
-            } else {
-                return <div>
-                    {notes.message}
-                </div>;
-            }
+            return <div>
+                {notes.message}
+            </div>;
         } else {
             return <div className={styles.notes}>
                 <NewNoteButton/>
