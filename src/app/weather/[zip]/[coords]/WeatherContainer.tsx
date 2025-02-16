@@ -17,7 +17,11 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const [currentDay, setCurrentDay] = useState<string>(searchParams.get('day') || Object.keys(weatherData)[0]);
+    const [currentDay, setCurrentDay] = useState<string>(() => {
+        const day = searchParams.get('day');
+        if(day && Object.keys(weatherData).includes(day)) return day;
+        return Object.keys(weatherData)[0]
+    });
 
     const _setCurrentDay = (day: string) => {
         router.replace(`${pathname}?day=${day}`);
