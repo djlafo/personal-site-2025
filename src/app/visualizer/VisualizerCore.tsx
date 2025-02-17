@@ -22,8 +22,8 @@ export default function useVisualizerCore() {
                 console.log(presetObj.name);
                 preset = presetObj.preset;
             } else {
-                const presetName = Object.keys(butterchurnPresets).at(Math.floor(Math.random() * butterchurnPresets.length));
-                console.log(preset);
+                const presetName = Object.keys(butterchurnPresets).at(Math.floor(Math.random() * Object.keys(butterchurnPresets).length));
+                console.log(presetName);
                 if(!presetName) return;
                 preset = butterchurnPresets[presetName];
             }
