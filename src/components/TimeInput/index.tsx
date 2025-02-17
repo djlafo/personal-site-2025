@@ -42,14 +42,13 @@ const calculateString = (n : number) : string => {
     return `${hours ? `${hours}h ` : ''}${minutes ? `${minutes}m ` : '' }${seconds}s`;
 };
 
-interface TimeProps extends ComponentProps<'input'> {
+export interface TimeProps extends ComponentProps<'input'> {
     value?: number; 
     onValueChange?: valueChangeFunction;
     countdownOnSet?: boolean;
     onZero?: () => void;
 }
-function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: TimeProps ) {
-    // const [remainingTime, setRemainingTime] = useState(1500);
+export default function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: TimeProps ) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [remainingTimeText, setRemainingTimeText] = useState('');
     const [internalValue, setInternalValue] = useState<number | null>();
@@ -62,8 +61,10 @@ function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: T
     const alertValueChange = (s: string) => {
         setEditing(false);
         const v = calculateTime(s);
-        if(onValueChange) onValueChange(v);
-        if(countdownOnSet) startCountdown(v);
+        if(v !== internalValue && onValueChange) {
+            onValueChange(v);
+        }
+        setRemainingTimeText(calculateString(v));
     }
     const startCountdown = (v : number) => {
         if(!v) return;
@@ -117,5 +118,3 @@ function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: T
     </span>;
 
 }
-
-export default TimeInput;

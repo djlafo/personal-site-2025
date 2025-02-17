@@ -9,101 +9,48 @@ import styles from './planner.module.css';
 
 const TEXTAREA_PADDING = 5;
 
+const onTimerOver = (done: boolean) => {
+    if(done) return;
+    const a = new Audio('/timer-alert.mp3');
+    a.play();
+    alert('Deadline reached!');
+}
+
 interface TaskListProps {
     plannerData: PlannerData
     onRemove: (t : Task) => void;
     onUpdate: (ta : Array<Task>) => void;
     children: React.ReactNode;
 }
-interface StringTask extends Omit<Task, 'motivation' | 'necessity'> {
-    motivation : string;
-}
-export default function TaskList(props : TaskListProps) {
-    const [lastTasks, setLastTasks] = useState<Array<Task>>();
-    const [taskCopy, setTaskCopy] = useState<Array<StringTask>>();
-
-    const onTimerOver = (done: boolean) => {
-        if(done) return;
-        const a = new Audio('/timer-alert.mp3');
-        a.play();
-        alert('Deadline reached!');
-    }
-
-    if(lastTasks !== props.plannerData.tasks) {
-        setLastTasks(props.plannerData.tasks);
-        setTaskCopy(props.plannerData.tasks.map(t => {
-            let overdue = t.overdue || false;
-            let deadline = t.deadline;
-            if(deadline)  {
-                deadline -= Date.now();
-                deadline = Math.floor(deadline/1000);
-                if(deadline < 0) {
-                    deadline = 0;
-                    overdue = true;
-                }
-            }
-            const translated : StringTask = {
-                label: t.label || '',
-                motivation: t.motivation.toString() || '0',
-                UUID: t.UUID,
-                done: t.done || false,
-                deadline: deadline,
-                overdue: overdue
-            };
-            return translated;
-        }));
-    }
+export default function TaskList({plannerData, onRemove, onUpdate, children} : TaskListProps) {
+    const tasks = plannerData.tasks;
 
     const addRow = () => {
-        props.onUpdate(props.plannerData.tasks.concat([{
+        onUpdate(tasks.concat([{
             UUID: crypto.randomUUID(),
             label: '',
             motivation: 0,
             done: false,
-            deadline: 0,
-            overdue: false
+            deadline: 0
         }]));
     }
 
-    const updateRow = (ind : number, pt : Partial<StringTask>, immediate=false) => {
-        if(!taskCopy) return;
-        const tcc = taskCopy.slice();
-        tcc.splice(ind, 1, Object.assign(taskCopy[ind], pt));
-        if(immediate) {
-            updateTasks(tcc);
-        } else {
-            setTaskCopy(tcc);
-        }
+    const updateRow = (ind : number, pt : Partial<Task>) => {
+        const tcc = JSON.parse(JSON.stringify(tasks));
+        tcc.splice(ind, 1, Object.assign(tcc[ind], pt));
+        onUpdate(tcc);
     }
 
     const anyChecked = () => {
-        if(!taskCopy) return false;
-        return taskCopy.some(t => t.done);
+        return tasks.some(t => t.done);
     }
 
     const checkAll = (checked : boolean) => {
-        if(!taskCopy) return;
-        const tcc = taskCopy.slice();
+        const tcc = tasks.slice();
         tcc.map(t => {
             return Object.assign(t, {done: checked});
         });
-        updateTasks(tcc);
-    }
-
-    const updateTasks = (tasks = taskCopy) => {
-        if(!tasks) return;
-
-        props.onUpdate(tasks.map(t => {
-            const translated : Task = {
-                label : t.label,
-                motivation: Number(t.motivation),
-                UUID: t.UUID,
-                done: t.done,
-                deadline: t.deadline ? Date.now() + (t.deadline * 1000) : 0,
-                overdue: t.overdue
-            }
-            return translated;
-        }));
+        onUpdate(tcc);
     }
 
     // hack to resize on initial load, i apologize for this
@@ -116,11 +63,11 @@ export default function TaskList(props : TaskListProps) {
             window.onresize = resize;
             resize();
         }, 50);
-    }, [taskCopy]);
+    }, [tasks]);
 
     return <div className={styles.tasklist}>
         <div className={styles.buttons}>
-            {(taskCopy && taskCopy.length && <>
+            {(tasks.length && <>
                 <span>
                     <input id='allCheck' 
                         type='checkbox'
@@ -129,43 +76,45 @@ export default function TaskList(props : TaskListProps) {
                     <label htmlFor='allCheck'>All</label>
                 </span>
             </>) || <></>}
-            {props.children}
+            {children}
         </div>
-        {(taskCopy && taskCopy.length && 
+        {(tasks.length && 
             <div>
-                {taskCopy.map((t, i)=> {
+                {tasks.map((t, i)=> {
+
+                    const overdue = t.deadline ? t.deadline - Date.now() < 0 : false;
+                    const timeLeft = t.deadline && !overdue ? Math.floor((t.deadline - Date.now())/1000) : 0;
+
                     return <div key={t.UUID} 
-                        className={`${styles.taskcell} ${t.done ? styles.done : ''} ${t.overdue ? styles.overdue : ''} ${t.deadline && !t.overdue ? styles.timed : ''}`}>        
+                        className={`${styles.taskcell} ${t.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${t.deadline && !overdue ? styles.timed : ''}`}>        
                         <textarea rows={1}
-                            autoFocus={i === taskCopy.length - 1}
+                            autoFocus={i === tasks.length - 1}
                             value={t.label} 
                             onChange={e => {
                                 updateRow(i, {label: e.target.value});
                                 e.target.style.height = 'auto';
                                 e.target.style.height = `${e.target.scrollHeight + TEXTAREA_PADDING}px`;
-                            }}
-                            onBlur={() => updateTasks()}/>
+                            }}/>
                         <div className={styles.taskdetails}>
                             <div>
                                 <input type='number' 
                                     min='0'
                                     max='100'
-                                    value={t.motivation} 
-                                    onChange={e => updateRow(i, {motivation: e.target.value})}
-                                    onBlur={() => updateTasks()}/>
+                                    value={t.motivation.toString()} 
+                                    onChange={e => updateRow(i, {motivation: Number(e.target.value)})}/>
                                 <br/>
-                                <TimeInput value={t.deadline} 
+                                <TimeInput value={timeLeft} 
                                     countdownOnSet
                                     onZero={() => onTimerOver(t.done)}
-                                    onValueChange={n => updateRow(i, {deadline: n, overdue: false}, true)}/>
+                                    onValueChange={n => updateRow(i, {deadline: n ? Date.now() + n*1000 : 0})}/>
                             </div>
                             <div>
                                 <input type='checkbox'
                                     checked={t.done}
                                     onChange={e => {
-                                        updateRow(i, {done: !t.done}, true);
+                                        updateRow(i, {done: !t.done});
                                     }}/>
-                                <input type='button' value='x' onClick={() => props.onRemove(props.plannerData.tasks[i])}/>
+                                <input type='button' value='x' onClick={() => onRemove(tasks[i])}/>
                             </div>
                         </div>
                     </div>;

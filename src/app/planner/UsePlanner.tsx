@@ -11,7 +11,6 @@ export interface Task {
     UUID: string;
     done: boolean;
     deadline: number;
-    overdue: boolean;
 }
 
 interface UsePlannerReturn {
@@ -29,7 +28,7 @@ export function getEmptyPlanner() : PlannerData {
     };
 };
 
-export default function usePlanner(setter ?: () => PlannerData) {
+export default function usePlanner(setter ?: () => PlannerData | undefined) {
     const [plannerData, _setPlannerData] = useState<PlannerData>((setter && setter()) || getEmptyPlanner());
 
     function appendToPlannerData(data: Partial<PlannerData>) {

@@ -2,16 +2,13 @@
 
 import usePlanner, { PlannerData } from './UsePlanner';
 import TaskList from './TaskList';
-import TaskSaver, { load } from './TaskSaver';
+import TaskSaver from './TaskSaver';
 
 import styles from './planner.module.css';
 
 
 export default function Planner({initPlannerData} : {initPlannerData?: PlannerData}) {
-    const {plannerData, removeTask, sort, setTasks, setPlannerData} = usePlanner(() => {
-        if(initPlannerData) return initPlannerData;
-        return load();
-    });
+    const {plannerData, removeTask, sort, setTasks, setPlannerData} = usePlanner(() => initPlannerData);
 
     return <>
         <div className={styles.planner}>

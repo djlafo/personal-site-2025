@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getPlannerData, savePlannerData } from "@/actions/planner";
 import { getEmptyPlanner, PlannerData } from "./UsePlanner";
@@ -11,15 +11,6 @@ import { MyError } from "@/lib/myerror";
 interface TaskSaverProps {
     onLoad: (pd?: PlannerData) => void;
     plannerData: PlannerData
-}
-
-export const load = () => {
-    if(typeof window === 'undefined') return;
-    const storage = localStorage.getItem('tasks');
-    if(!storage) return;
-    try {
-        return JSON.parse(storage);
-    } catch {}
 }
 
 export default function TaskSaver(props : TaskSaverProps) {
@@ -63,11 +54,7 @@ export default function TaskSaver(props : TaskSaverProps) {
 
     const loadBrowser = () => {
         const loaded = load();
-        if(loaded) {
-            props.onLoad(loaded);
-        } else {
-            toast('Nothing saved');
-        }
+        if(!loaded) toast('Nothing saved');
     };
 
     const saveToServer = () => {
@@ -86,19 +73,44 @@ export default function TaskSaver(props : TaskSaverProps) {
                 toast(pd.message);
             } else {
                 props.onLoad(pd);
+                setLastSaved(pd);
             }
         });
+    }
+
+    const load = () => {
+        if(typeof window === 'undefined') return;
+        const storage = localStorage.getItem('tasks');
+        if(!storage) return;
+        try {
+            const pd: PlannerData = JSON.parse(storage);
+            if(pd.tasks.length) {
+                props.onLoad(pd);
+                setLastSaved(pd);
+                return true;
+            }
+        } catch { 
+            return false;
+        }
     }
 
     const clearValues = () => {
         const copy: PlannerData = JSON.parse(JSON.stringify(props.plannerData));
         copy.tasks.forEach(t => {
             t.deadline = 0;
-            t.overdue = false;
             t.motivation = 0;
         });
         props.onLoad(copy);
     }
+
+    const isSaved = () => {
+        return JSON.stringify(lastSaved)===JSON.stringify(props.plannerData);
+    }
+
+    useEffect(() => {
+        if(!props.plannerData.tasks.length)
+            load();
+    }, []);
 
     return <>
         {
@@ -142,7 +154,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         </span>
         <label>
             {
-                (props.plannerData.tasks.length && (JSON.stringify(lastSaved)===JSON.stringify(props.plannerData) ? 'Last change saved' : 'Last change unsaved')) || ''
+                (isSaved() ? 'Last change saved' : 'Last change unsaved')
             }
         </label>
     </>
