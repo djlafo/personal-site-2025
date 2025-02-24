@@ -5,10 +5,11 @@ import { eq, isNotNull, and } from 'drizzle-orm';
 
 import { usersTable } from '@/db/schema/users';
 import { plannerTable } from '@/db/schema/planner';
-import { getUser } from '@/lib/sessions';
 
-import { PlannerData } from '@/app/planner/UsePlanner';
+import { getUser } from '@/lib/sessions';
 import { MyError } from '@/lib/myerror';
+
+import { PlannerData } from '@/app/planner/usePlanner';
 
 export async function getPlannerData(): Promise<PlannerData | MyError>{
     const user = await getUser();

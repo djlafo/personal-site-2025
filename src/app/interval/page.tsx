@@ -1,7 +1,7 @@
 'use client'
 
 import Insert from './Insert';
-import { useTimer } from './timer';
+import { useTimer } from './useTimer';
 import RoundBox from './RoundBox';
 
 import styles from './interval.module.css';

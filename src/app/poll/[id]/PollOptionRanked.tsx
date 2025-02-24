@@ -1,9 +1,11 @@
+import { useState } from "react";
+import { toast } from "react-toastify";
+
 import { updateOption } from "@/actions/polls/options";
 import { SerializedFullPoll, SerializedPollOption } from "@/actions/polls/types";
 import { RankValueType } from "@/actions/polls/votes";
+
 import { MyError } from "@/lib/myerror";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 import styles from './poll.module.css';
 
@@ -26,7 +28,7 @@ export default function RankedPollOption(props: RankedPollOptionProps) {
     })();
     const [rank, setRank] = useState<number>(propRank);
     
-    if(props.emptyChanges && rank!==propRank) {
+    if(props.emptyChanges && rank !== propRank) {
         setRank(propRank);
     }
 

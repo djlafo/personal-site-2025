@@ -1,28 +1,31 @@
 'use client'
+
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-
-import styles from './poll.module.css';
 import { toast } from "react-toastify";
+
 import { SerializedFullPoll } from "@/actions/polls/types";
 import { RankValueType, setVoteRanks } from "@/actions/polls/votes";
 import { updatePoll, UpdatePollProps } from "@/actions/polls/polls";
 import { addOption } from "@/actions/polls/options";
+
 import { MyError } from "@/lib/myerror";
-import RankedPollOption from "./rankedoption";
-import PollOption from "./option";
+
+import RankedPollOption from "./PollOptionRanked";
+import PollOption from "./PollOption";
+
+import styles from './poll.module.css';
 
 interface PollProps {
     poll: SerializedFullPoll
 }
-export default function Poll(props: PollProps) {
+export default function Poll({ poll: _poll }: PollProps) {
     const router = useRouter();
-    const [poll, setPoll] = useState(props.poll);
+    const [poll, setPoll] = useState(_poll);
     const [newOptionText, setNewOptionText] = useState('');
-    const [changedValues, setChangedValues] = useState<Array<RankValueType>>([]);
-    const pathname = usePathname();
+    const [changedValues, setChangedValues] = useState<RankValueType[]>([]);
 
     const _inactivatePoll = async() => {
         const res = await updatePoll(poll.uuid, {active: false});
@@ -90,16 +93,18 @@ export default function Poll(props: PollProps) {
             }
         </div>
         {mine && <span>
-            <label htmlFor=''>Allow guests to add options</label>
-            <input type='checkbox' 
+            <label htmlFor='addableBox'>Allow guests to add options</label>
+            <input id='addableBox'
+                type='checkbox' 
                 defaultChecked={poll.guestAddable} 
                 onChange={e => _updatePoll({guestAddable: e.target.checked})}/>
             </span> || <></>
         }
         <br/>
         {mine && <span>
-            <label htmlFor=''>Ranked Choice</label>
-            <input type='checkbox' 
+            <label htmlFor='rankedBox'>Ranked Choice</label>
+            <input id='rankedBox'
+                type='checkbox' 
                 defaultChecked={poll.rankedChoice} 
                 onChange={e => _updatePoll({rankedChoice: e.target.checked})}/>
             </span> || <></>
@@ -125,7 +130,7 @@ export default function Poll(props: PollProps) {
         }
         <div className={styles.pollOptions}>
             {
-                poll.options.map((p,i)=> {
+                poll.options.map((p)=> {
                     return poll.rankedChoice ? 
                         <RankedPollOption 
                             key={p.id} 

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getWeather } from "./WeatherApi";
+import { getWeather } from "./WeatherAPI";
 import WeatherContainer from "./WeatherContainer";
 import { formatWeatherData } from "./WeatherGraph/helpersAndTypes";
 import { ResolvingMetadata } from "next";

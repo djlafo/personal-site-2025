@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { PlannerData, Task } from "./UsePlanner";
+import { PlannerData, Task } from "./usePlanner";
 
 import TimeInput from '@/components/TimeInput';
 

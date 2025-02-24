@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-export interface PlannerData {
-    tasks: Array<Task>
-}
 export interface Task {
     label : string;
     motivation: number;
@@ -12,17 +9,19 @@ export interface Task {
     done: boolean;
     deadline: number;
 }
-
+export interface PlannerData {
+    tasks: Task[];
+}
 interface UsePlannerReturn {
     plannerData: PlannerData;
     addTask: (t: Task) => void;
     removeTask: (t: Task) => void;
     sort: () => void;
-    setTasks: (ta: Array<Task>) => void;
+    setTasks: (ta: Task[]) => void;
     setPlannerData: (pd?: PlannerData) => void;
 }
 
-export function getEmptyPlanner() : PlannerData {
+export function getEmptyPlanner(): PlannerData {
     return {
         tasks: []
     };
@@ -60,9 +59,9 @@ export default function usePlanner(setter ?: () => PlannerData | undefined) {
                 const motDiff = b.motivation - a.motivation;
                 return motDiff;
             });
-            const done : Array<Task> = [];
-            const undone : Array<Task> = [];
-            const timed : Array<Task> = [];
+            const done: Task[] = [];
+            const undone: Task[] = [];
+            const timed: Task[] = [];
             copy.forEach(c => {
                 if(c.done) {
                     done.push(c);
@@ -79,7 +78,7 @@ export default function usePlanner(setter ?: () => PlannerData | undefined) {
         });
     }
 
-    const setTasks = (ta: Array<Task>) => _setPlannerData(pd => appendToPlannerData({
+    const setTasks = (ta: Task[]) => _setPlannerData(pd => appendToPlannerData({
         tasks: ta
     }));
 

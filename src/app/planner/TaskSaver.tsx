@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 import { getPlannerData, savePlannerData } from "@/actions/planner";
-import { getEmptyPlanner, PlannerData } from "./UsePlanner";
+import { getEmptyPlanner, PlannerData } from "./usePlanner";
 import { useUser } from "@/components/Session";
 import { toast } from "react-toastify";
 import { MyError } from "@/lib/myerror";

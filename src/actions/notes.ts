@@ -1,11 +1,12 @@
 'use server'
 
+import { eq } from "drizzle-orm";
+
 import db from "@/db";
 import { notesTable } from "@/db/schema/notes";
-import { MyError } from "@/lib/myerror";
 
+import { MyError } from "@/lib/myerror";
 import { getUser } from "@/lib/sessions"
-import { eq } from "drizzle-orm";
 
 const MAXLEN = 50000000;
 

@@ -1,6 +1,6 @@
 'use client'
 
-import usePlanner, { PlannerData } from './UsePlanner';
+import usePlanner, { PlannerData } from './usePlanner';
 import TaskList from './TaskList';
 import TaskSaver from './TaskSaver';
 

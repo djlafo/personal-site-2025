@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { supported } from './butterchurn';
 
 import VisualizerOptions, {VisualizerOptionsType} from './VisualizerOptions';
-import useVisualizerCore from './VisualizerCore';
+import useVisualizerCore from './useVisualizerCore';
 
 import styles from './visualizer.module.css';
 

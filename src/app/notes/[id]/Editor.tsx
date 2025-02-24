@@ -1,16 +1,17 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";;
+import { useRouter } from "next/navigation";
+
 import { useUser } from "@/components/Session";
 import { useLoadingScreen } from "@/components/LoadingScreen";
 
 import { Note } from "@/actions/notes";
 
-import useAudioLoader from "./components/audioloader";
-import QuillEditor from "./components/quilleditor";
-import ReadDisplay from "./components/readdisplay";
-import AudioPlayer from "./components/audioplayer";
+import useAudioLoader from "./components/useAudioLoader";
+import QuillEditor from "./components/QuillEditor";
+import ReadDisplay from "./components/ReadDisplay";
+import AudioPlayer from "./components/AudioPlayer";
 
 import styles from "./tts.module.css";  
 
@@ -25,7 +26,7 @@ export default function Editor({note}: EditorProps) {
     const {currentAudio, setAudioFor, loadTTS} = useAudioLoader();
     const [queueRead, setQueueRead] = useState(false);
 
-    const [loading, setLoading] = useLoadingScreen();
+    const [, setLoading] = useLoadingScreen();
 
     const getAudioAndLoad = async (text: string, i?: number) => {
         const ind = i || paragraphs.findIndex(p => p === text);

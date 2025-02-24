@@ -1,7 +1,7 @@
 import { ResolvingMetadata } from "next";
 
 import { getNote } from "@/actions/notes";
-import EditorProxy from "./editorproxy";
+import EditorProxy from "./EditorProxy";
 import { getTextFromDelta } from "./helpers";
 import { MyError } from "@/lib/myerror";
 

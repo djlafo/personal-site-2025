@@ -1,4 +1,4 @@
-import { WeatherData } from '../WeatherApi/types';
+import { WeatherData } from '../WeatherAPI/types';
 
 export interface Point {
     x: string;
