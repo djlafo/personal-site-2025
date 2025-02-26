@@ -17,12 +17,12 @@ const onTimerOver = (done: boolean) => {
 }
 
 interface TaskListProps {
-    plannerData: PlannerData
-    onRemove: (t : Task) => void;
-    onUpdate: (ta : Array<Task>) => void;
+    plannerData: PlannerData;
+    onRemove: (t: Task) => void;
+    onUpdate: (ta: Task[]) => void;
     children: React.ReactNode;
 }
-export default function TaskList({plannerData, onRemove, onUpdate, children} : TaskListProps) {
+export default function TaskList({plannerData, onRemove, onUpdate, children}: TaskListProps) {
     const tasks = plannerData.tasks;
 
     const addRow = () => {
@@ -35,7 +35,7 @@ export default function TaskList({plannerData, onRemove, onUpdate, children} : T
         }]));
     }
 
-    const updateRow = (ind : number, pt : Partial<Task>) => {
+    const updateRow = (ind: number, pt: Partial<Task>) => {
         const tcc = JSON.parse(JSON.stringify(tasks));
         tcc.splice(ind, 1, Object.assign(tcc[ind], pt));
         onUpdate(tcc);
@@ -45,7 +45,7 @@ export default function TaskList({plannerData, onRemove, onUpdate, children} : T
         return tasks.some(t => t.done);
     }
 
-    const checkAll = (checked : boolean) => {
+    const checkAll = (checked: boolean) => {
         const tcc = tasks.slice();
         tcc.map(t => {
             return Object.assign(t, {done: checked});

@@ -10,7 +10,7 @@ export default function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: Audi
     const audioRef = useRef<HTMLAudioElement>(null);
 
     useEffect(() => {
-        const detectMediaKeys = (e : KeyboardEvent) => {
+        const detectMediaKeys = (e: KeyboardEvent) => {
             if(!audioRef.current || !audio) return;
             if (e.key === ' ') {
                 e.preventDefault();

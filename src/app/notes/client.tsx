@@ -7,7 +7,7 @@ import styles from './notes.module.css';
 import { Note } from "@/actions/notes";
 
 interface NoteCardProps {
-    note: Note
+    note: Note;
 }
 export function NoteCard({note}: NoteCardProps) {
     const router = useRouter();

@@ -10,7 +10,7 @@ interface ModalProps {
     fullVertical?: boolean;
 }
 
-export function openOnEscFn(openFn : () => void) {
+export function openOnEscFn(openFn: () => void) {
     return (e: KeyboardEvent) => {
         if(e.key === 'Escape' && !document.querySelector('.modal-parent.opened')) {
             openFn();
@@ -18,7 +18,7 @@ export function openOnEscFn(openFn : () => void) {
     }
 }
 
-export default function Modal({ opened, children, onClose, styleOne=false, doOnKey, fullVertical} : ModalProps) {
+export default function Modal({ opened, children, onClose, styleOne=false, doOnKey, fullVertical}: ModalProps) {
     const [prevOpened, setPrevOpened] = useState(false);
 
     if((prevOpened !== opened)) {
@@ -26,7 +26,7 @@ export default function Modal({ opened, children, onClose, styleOne=false, doOnK
     }
 
     useEffect(() => {
-		const onEsc = (e : KeyboardEvent) => {
+		const onEsc = (e: KeyboardEvent) => {
             if(doOnKey) doOnKey(e);
             if(opened && e.key === "Escape") {
                 onClose();

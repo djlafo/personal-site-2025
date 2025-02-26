@@ -13,7 +13,7 @@ export interface RankedPollOptionProps {
     option: SerializedPollOption;
     uuid: string;
     myPoll: boolean;
-    options: Array<SerializedPollOption>;
+    options: SerializedPollOption[];
     onChange: (rv: RankValueType) => void;
     onPollChange: (p: SerializedFullPoll) => void;
     emptyChanges: boolean;

@@ -1,6 +1,6 @@
 export interface WeatherAPIData {                                                                
     properties: {
-        periods: Array<WeatherPeriods>
+        periods: WeatherPeriods[];
     };
     [key: string]: any;
 }
@@ -19,12 +19,12 @@ export interface WeatherPeriods {
     temperature: number;
     temperatureUnit: string;
     relativeHumidity: {
-        value: number,
-        unitCode: string
+        value: number;
+        unitCode: string;
     };
     probabilityOfPrecipitation: {
-        unitCode: string,
-        value: number
+        unitCode: string;
+        value: number;
     };
     windSpeed: string;
     shortForecast: string;

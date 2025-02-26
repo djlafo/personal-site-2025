@@ -16,7 +16,7 @@ import AudioPlayer from "./components/AudioPlayer";
 import styles from "./tts.module.css";  
 
 interface EditorProps {
-    note?: Note
+    note?: Note;
 }
 export default function Editor({note}: EditorProps) {
     const [user] = useUser();

@@ -7,7 +7,7 @@ import TaskSaver from './TaskSaver';
 import styles from './planner.module.css';
 
 
-export default function Planner({initPlannerData} : {initPlannerData?: PlannerData}) {
+export default function Planner({initPlannerData}: {initPlannerData?: PlannerData}) {
     const {plannerData, removeTask, sort, setTasks, setPlannerData} = usePlanner(() => initPlannerData);
 
     return <>

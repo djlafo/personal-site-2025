@@ -15,7 +15,7 @@ import { MyError } from "@/lib/myerror";
 
 export interface QuillEditorProps {
     onStart: (paragraphs: string[]) => void;
-    note?: Note
+    note?: Note;
 }
 export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const [user] = useUser();

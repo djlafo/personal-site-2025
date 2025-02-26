@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export interface Task {
-    label : string;
+    label: string;
     motivation: number;
     UUID: string;
     done: boolean;
@@ -84,7 +84,7 @@ export default function usePlanner(setter ?: () => PlannerData | undefined) {
 
     const setPlannerData = (pd?: PlannerData) => _setPlannerData(pd || getEmptyPlanner());
 
-    const ret : UsePlannerReturn = {
+    const ret: UsePlannerReturn = {
         plannerData,
         addTask,
         removeTask,

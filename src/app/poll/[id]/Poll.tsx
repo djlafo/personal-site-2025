@@ -19,7 +19,7 @@ import PollOption from "./PollOption";
 import styles from './poll.module.css';
 
 interface PollProps {
-    poll: SerializedFullPoll
+    poll: SerializedFullPoll;
 }
 export default function Poll({ poll: _poll }: PollProps) {
     const router = useRouter();

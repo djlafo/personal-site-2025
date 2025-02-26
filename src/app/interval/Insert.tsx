@@ -5,10 +5,10 @@ import TimeInput from '@/components/TimeInput';
 
 import styles from './interval.module.css';
 
-type onSetFunction = (start : number, num : number, time : number) => void;
+type onSetFunction = (start: number, num: number, time: number) => void;
 type roundsFunction = (n: number) => void;
 
-function Insert({onSet, changeRounds, readOnly} : {onSet: onSetFunction, changeRounds: roundsFunction, readOnly?: boolean}) {
+function Insert({onSet, changeRounds, readOnly}: {onSet: onSetFunction, changeRounds: roundsFunction, readOnly?: boolean}) {
     const [num, setNum] = useState(0);
     const [time, setTime] = useState(0);
     const [start, setStart] = useState(1);

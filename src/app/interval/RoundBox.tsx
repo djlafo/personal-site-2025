@@ -13,7 +13,7 @@ interface RoundProps {
     setRound: () => void;
 }
 
-function RoundBox({ activeRound, time, roundNumber, readOnly, setTime, removeTime, addTime, setRound} : RoundProps) {
+function RoundBox({ activeRound, time, roundNumber, readOnly, setTime, removeTime, addTime, setRound}: RoundProps) {
     return <div className={activeRound ? 'active-round' : ''}>
         <div className={styles.roundtitle}>
             Round {roundNumber+1}

@@ -7,7 +7,7 @@ import styles from './tooltip.module.css';
 // const dataOrder = ['temp', 'heat', 'bulb', 'uv', 'rain', 'humidity', 'wind'];
 const labels = ['Temperature', 'Heat Index', 'Wet Bulb', 'UV Index', 'Rain Chance', 'Humidity', 'Wind Speed'];
 
-const Tooltip : SliceTooltip = (point) => {
+const Tooltip: SliceTooltip = (point) => {
     const time = new Date(point.slice.points[0].data.x).toLocaleTimeString('en-US', {hour: 'numeric', hour12: true});
     
     const points = point.slice.points.map(p => {

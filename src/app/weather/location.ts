@@ -33,7 +33,7 @@ export async function getCityFromZip(zip: string) {
     if(row.length === 1) return `${row[0].city}, ${row[0].state_name}`;
 }
 
-export async function getCoordsFromZip(zip: string) : Promise<string> {
+export async function getCoordsFromZip(zip: string): Promise<string> {
     const row = await db.select().from(zipsTable).where(eq(zipsTable.zip, zip));
     if(row.length === 1) {
         return `${row[0].lat},${row[0].lng}`;
@@ -43,7 +43,7 @@ export async function getCoordsFromZip(zip: string) : Promise<string> {
 }
 
 /* HELPER FUNCTIONS */
-// function deg2rad(deg : number) : number {
+// function deg2rad(deg: number): number {
 //     return deg * (Math.PI/180)
 // }
 
@@ -51,7 +51,7 @@ export async function getCoordsFromZip(zip: string) : Promise<string> {
 // const dist2 = getDistance(lat, long, Number(d.lat), Number(d.lng));
 // return dist < dist2 ? c : d; 
 
-// function getDistance(lat1 : number, lon1 : number, lat2 : number, lon2 : number) : number {
+// function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
 //     const R = 3958.8;
 //     const dLat = deg2rad(lat2-lat1);  // deg2rad below
 //     const dLon = deg2rad(lon2-lon1); 

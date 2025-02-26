@@ -10,7 +10,7 @@ interface ReadDisplayProps {
 }
 export default function ReadDisplay({paragraphs, onClickParagraph, activeRow, onEditRequest}: ReadDisplayProps) {
     useEffect(() => {
-        const detectMediaKeys = (e : KeyboardEvent) => {
+        const detectMediaKeys = (e: KeyboardEvent) => {
             if(e.key === 'ArrowDown') {
                 e.preventDefault();
                 onClickParagraph(paragraphs[activeRow + 1], activeRow + 1);

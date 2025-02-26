@@ -1,5 +1,5 @@
 export interface SerializedFullPoll extends SerializedPoll {
-    options: Array<SerializedPollOption>;
+    options: SerializedPollOption[];
 }
 export interface SerializedPoll {
     uuid: string;
@@ -12,7 +12,7 @@ export interface SerializedPoll {
 export interface SerializedPollOption {
     id: number;
     text: string;
-    votes: Array<SerializedPollVotes>;
+    votes: SerializedPollVotes[];
 }
 export interface SerializedPollVotes {
     id: number;

@@ -1,15 +1,15 @@
 import { UVAPIData, WeatherAPIData, WeatherPeriods, WeatherData } from "./types";
 
-const coordinateURL = (coord : string) => `https://api.weather.gov/points/${coord}`;
+const coordinateURL = (coord: string) => `https://api.weather.gov/points/${coord}`;
 const uvURL = (zip: string) => `https://data.epa.gov/efservice/getEnvirofactsUVHOURLY/ZIP/${zip}/JSON`;
 
-export async function getWeather(zip : string, coord : string, cache=false): Promise<Array<WeatherData>> {
+export async function getWeather(zip: string, coord: string, cache=false): Promise<WeatherData[]> {
     return new Promise((acc, rej) => {
         (async() => {
             let currentApi = '';
             try {
                 currentApi = uvURL(zip);
-                const uvProm = apiFetch<Array<UVAPIData>>({
+                const uvProm = apiFetch<UVAPIData[]>({
                     storageKey: `uv${zip}`,
                     api: uvURL(zip)
                 }, cache);
@@ -20,14 +20,14 @@ export async function getWeather(zip : string, coord : string, cache=false): Pro
                 const hourlyURL = coordJson.properties.forecastHourly;
 
                 currentApi = hourlyURL;
-                const weatherJson : WeatherAPIData = await apiFetch<WeatherAPIData>({
+                const weatherJson: WeatherAPIData = await apiFetch<WeatherAPIData>({
                     storageKey: `weather${zip}`,
                     api: hourlyURL
                 }, cache);
-                const uvJson : Array<UVAPIData> = await uvProm;
+                const uvJson: UVAPIData[] = await uvProm;
 
-                const dataPoints : Array<WeatherPeriods> = weatherJson.properties.periods;
-                const data: Array<WeatherData> = dataPoints.map(e => {
+                const dataPoints: WeatherPeriods[] = weatherJson.properties.periods;
+                const data: WeatherData[] = dataPoints.map(e => {
                     const date = new Date(e.startTime);
                     return {
                         time: date,
@@ -53,7 +53,7 @@ export async function getWeather(zip : string, coord : string, cache=false): Pro
 
 
 /* HELPER FUNCTIONS */
-const findUV = (a : Array<UVAPIData>, d : Date) => {
+const findUV = (a: UVAPIData[], d: Date) => {
     return a.find(uv => {
         const day = Number(uv.DATE_TIME.substring(4, 6));
         const time = uv.DATE_TIME.substring(12).split(' ');
@@ -68,7 +68,7 @@ const findUV = (a : Array<UVAPIData>, d : Date) => {
 }
 
 
-function calcHeatIndex(T : number, RH : number) : number {
+function calcHeatIndex(T: number, RH: number): number {
     let calc = .5 * (T + 61 + ((T-68)*1.2) + (RH*.094));
     calc = (calc + T) / 2;
     if(calc >= 80) {
@@ -80,16 +80,16 @@ function calcHeatIndex(T : number, RH : number) : number {
     return calc;
 }
 
-function calcWetBulb(T: number, RH : number) : number {
+function calcWetBulb(T: number, RH: number): number {
     return T * Math.atan(0.151977 * Math.sqrt(RH + 8.313689)) + 0.00391838 * Math.sqrt(RH**3) * Math.atan(0.023101 * RH) - Math.atan(RH - 1.676331) + Math.atan(T + RH) - 4.686035;
 }
 
 type common = {
-    storageKey : string;
+    storageKey: string;
     api: string;
 };
 
-const apiFetch = async function<T>(f : common, cache = false) : Promise<T> {
+const apiFetch = async function<T>(f: common, cache = false): Promise<T> {
     return new Promise((acc,rej) => {
         (async() => {
             try {
@@ -98,7 +98,7 @@ const apiFetch = async function<T>(f : common, cache = false) : Promise<T> {
                     storage = cache && localStorage.getItem(f.storageKey); 
                     date = cache && localStorage.getItem(`${f.storageKey}Date`);
                 }
-                let tJson : T;
+                let tJson: T;
                 if(storage && date && new Date(date) > new Date()) {
                     tJson = JSON.parse(storage);
                 } else {

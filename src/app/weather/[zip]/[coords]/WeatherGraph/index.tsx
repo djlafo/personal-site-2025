@@ -5,7 +5,7 @@ import { WeatherDataPoint } from './helpersAndTypes';
 
 import styles from './weathergraph.module.css';
 
-const graphProps : (data : Array<WeatherDataPoint>) => LineSvgProps = (data) => {
+const graphProps: (data: WeatherDataPoint[]) => LineSvgProps = (data) => {
     return {
         data: data,
         sliceTooltip: Tooltip,
@@ -61,7 +61,7 @@ const graphProps : (data : Array<WeatherDataPoint>) => LineSvgProps = (data) => 
     };
 };
 
-export default function WeatherGraph({ data } : { data: Array<WeatherDataPoint> }) {
+export default function WeatherGraph({ data }: { data: WeatherDataPoint[] }) {
     return <div className={styles.weathergraph}>
         <ResponsiveLine {...graphProps(data)}/>
     </div>;

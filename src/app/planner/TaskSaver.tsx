@@ -10,11 +10,11 @@ import { MyError } from "@/lib/myerror";
 
 interface TaskSaverProps {
     onLoad: (pd?: PlannerData) => void;
-    plannerData: PlannerData
+    plannerData: PlannerData;
 }
 
-export default function TaskSaver(props : TaskSaverProps) {
-    const [lastSaved, setLastSaved] = useState(props.plannerData);
+export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
+    const [lastSaved, setLastSaved] = useState(plannerData);
     const [user] = useUser();
 
     const checkClipboard = () => {
@@ -26,7 +26,7 @@ export default function TaskSaver(props : TaskSaverProps) {
     }
     const copy = () => {
         if(!checkClipboard()) return;
-        navigator.clipboard.writeText(JSON.stringify(props.plannerData));
+        navigator.clipboard.writeText(JSON.stringify(plannerData));
         toast('Copied to clipboard');
     };
 
@@ -36,7 +36,7 @@ export default function TaskSaver(props : TaskSaverProps) {
             try {
                 const copied = JSON.parse(t);
                 if(copied.constructor === Object) {
-                    props.onLoad(copied);
+                    onLoad(copied);
                 } else {
                     throw new Error('Invalid tasks format');
                 }
@@ -48,8 +48,8 @@ export default function TaskSaver(props : TaskSaverProps) {
 
     const saveToBrowser = () => {
         if(typeof window === 'undefined') return;
-        localStorage.setItem('tasks', JSON.stringify(props.plannerData));
-        setLastSaved(props.plannerData);
+        localStorage.setItem('tasks', JSON.stringify(plannerData));
+        setLastSaved(plannerData);
     };
 
     const loadBrowser = () => {
@@ -58,11 +58,11 @@ export default function TaskSaver(props : TaskSaverProps) {
     };
 
     const saveToServer = () => {
-        savePlannerData(props.plannerData).then(r => {
+        savePlannerData(plannerData).then(r => {
             if(r instanceof MyError) {
                 toast(r.message);
             } else {
-                setLastSaved(props.plannerData);
+                setLastSaved(plannerData);
             }
         });
     }
@@ -72,7 +72,7 @@ export default function TaskSaver(props : TaskSaverProps) {
             if(pd instanceof MyError) {
                 toast(pd.message);
             } else {
-                props.onLoad(pd);
+                onLoad(pd);
                 setLastSaved(pd);
             }
         });
@@ -85,7 +85,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         try {
             const pd: PlannerData = JSON.parse(storage);
             if(pd.tasks.length) {
-                props.onLoad(pd);
+                onLoad(pd);
                 setLastSaved(pd);
                 return true;
             }
@@ -95,29 +95,29 @@ export default function TaskSaver(props : TaskSaverProps) {
     }
 
     const clearValues = () => {
-        const copy: PlannerData = JSON.parse(JSON.stringify(props.plannerData));
+        const copy: PlannerData = JSON.parse(JSON.stringify(plannerData));
         copy.tasks.forEach(t => {
             t.deadline = 0;
             t.motivation = 0;
         });
-        props.onLoad(copy);
+        onLoad(copy);
     }
 
     const isSaved = () => {
-        return JSON.stringify(lastSaved)===JSON.stringify(props.plannerData);
+        return JSON.stringify(lastSaved)===JSON.stringify(plannerData);
     }
 
     useEffect(() => {
-        if(!props.plannerData.tasks.length)
+        if(!plannerData.tasks.length)
             load();
     }, []);
 
     return <>
         {
-            (props.plannerData.tasks.length !== 0 && <>
+            (plannerData.tasks.length !== 0 && <>
                 <span>
                     <label>Clear</label>
-                    <input type='button' value='Rows' onClick={() => props.onLoad(getEmptyPlanner())}/>
+                    <input type='button' value='Rows' onClick={() => onLoad(getEmptyPlanner())}/>
                     <input type='button' value='Times&Values' onClick={() => clearValues()}/>
                 </span>
             </>) || <></>
@@ -127,7 +127,7 @@ export default function TaskSaver(props : TaskSaverProps) {
                 user && <>
                     <label>Server</label>
                     {
-                        (props.plannerData.tasks.length !== 0 && <>
+                        (plannerData.tasks.length !== 0 && <>
                                 <input type='button' value='Save' onClick={() => saveToServer()}/>
                         </>) || <></>
                     }
@@ -138,7 +138,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         <span>
             <label>Browser</label>
             {
-                (props.plannerData.tasks.length !== 0 && <>
+                (plannerData.tasks.length !== 0 && <>
                         <input type='button' value='Save' onClick={() => saveToBrowser()}/>
                 </>) || <></>
             }
@@ -146,7 +146,7 @@ export default function TaskSaver(props : TaskSaverProps) {
         </span>
         <span>
             {   
-                (props.plannerData.tasks.length !== 0 && <>
+                (plannerData.tasks.length !== 0 && <>
                     <input type='button' value='Copy' onClick={() => copy()}/>
                 </>) || <></>
             }

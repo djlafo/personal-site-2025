@@ -15,7 +15,7 @@ export default function useVisualizerCore() {
     const [presetSwitcher, setPresetSwitcher] = useState<number|null>();
 
     const shuffle = ({v=visualizer, timer=shuffleTimer, lk=lock, preset=presetSwitcher}={}) => {
-        const presetFn : TimerHandler = async () => {
+        const presetFn: TimerHandler = async () => {
             let preset;
             if(useAPI) {
                 let presetObj = await getRandomPreset();
@@ -32,7 +32,7 @@ export default function useVisualizerCore() {
         presetFn();
         if(!lk && !preset) setPresetSwitcher(setInterval(presetFn, 1000*Number(timer)));
     }
-    const create = (o : VisualizerOptionsType) => {
+    const create = (o: VisualizerOptionsType) => {
         if(!o.canvas) return;
         if(vRenderer) {
             clearInterval(vRenderer);
@@ -44,7 +44,7 @@ export default function useVisualizerCore() {
         }
         createButterchurn(o.canvas, o.width, o.height).then(v => {
             setVisualizer(v);
-            const renderFn : TimerHandler = () => {
+            const renderFn: TimerHandler = () => {
                 v.render();
             };
             setVRenderer(setInterval(renderFn, 1000/(o.fps || 30)));
@@ -53,7 +53,7 @@ export default function useVisualizerCore() {
             _setLock(o.lock);
         }).catch(e => {});
     }
-    const setLock = (b : boolean) => {
+    const setLock = (b: boolean) => {
         if(b && presetSwitcher) {
             clearInterval(presetSwitcher);
             setPresetSwitcher(null);

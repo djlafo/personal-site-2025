@@ -1,4 +1,4 @@
-export function createButterchurn(canvas : HTMLCanvasElement, width : number, height : number) {
+export function createButterchurn(canvas: HTMLCanvasElement, width: number, height: number) {
     return new Promise<any>((acc, rej) => {
         (async() => {
             const butterchurn = await import('butterchurn');

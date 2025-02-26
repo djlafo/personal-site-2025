@@ -11,7 +11,7 @@ const images = ['desk2.png', 'desk1.png', 'desk3.png', 'desk2-1.png', 'desk3-3.p
 export default function Linux() {
     const [activeImage, setActiveImage] = useState(0);
 
-    const increment = (n: number, inc: number) : number => {
+    const increment = (n: number, inc: number): number => {
         const res = n + inc;
         if(res < 0) return images.length-1;
         if(res >= images.length) return 0;
@@ -19,7 +19,7 @@ export default function Linux() {
     };
 
     useEffect(() => {
-		const shiftActive = (e : KeyboardEvent) => {
+		const shiftActive = (e: KeyboardEvent) => {
             if(e.key === 'ArrowLeft') {
                 setActiveImage(a => increment(a, -1));
             } else if (e.key === 'ArrowRight') {

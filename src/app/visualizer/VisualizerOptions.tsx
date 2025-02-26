@@ -9,7 +9,7 @@ export interface VisualizerOptionsType {
     shuffleTimer: number;
     lock: boolean;
     useAPI: boolean;
-    canvas?: HTMLCanvasElement | null
+    canvas?: HTMLCanvasElement | null;
 }
 
 interface VisualizerOptionsOptions { // lol
@@ -20,7 +20,7 @@ interface VisualizerOptionsOptions { // lol
     onStop: () => void;
 }
 
-export default function VisualizerOptions(o : VisualizerOptionsOptions) {
+export default function VisualizerOptions(o: VisualizerOptionsOptions) {
     const [width, setWidth] = useState('1600');
     const [height, setHeight] = useState('900');
     const [fps, setFps] = useState('30');

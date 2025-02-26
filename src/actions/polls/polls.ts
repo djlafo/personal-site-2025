@@ -69,7 +69,7 @@ export async function readPoll(uuid: string) {
     const ip = await getClientIdentifier();
     const serializedOptions = options.map(p => {
         const votes = poll.filter(p2 => p.poll_options && p2.poll_options && p2.poll_options.id === p.poll_options.id && !!p2.poll_votes);
-        const serializedVotes: Array<SerializedPollVotes> = votes.map(v => {
+        const serializedVotes: SerializedPollVotes[] = votes.map(v => {
             return {
                 id: v.poll_votes?.id || -1,
                 yours: !!v.poll_votes?.ip && v.poll_votes?.ip === ip,

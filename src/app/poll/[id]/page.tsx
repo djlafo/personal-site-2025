@@ -24,19 +24,19 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
 }
 
 interface PageProps {
-    params : Promise<{ id: string}>
+    params: Promise<{ id: string}>;
 }
-export default function Page(props: PageProps) {
+export default function Page({ params }: PageProps) {
     return <div className={styles.poll}>
         <Suspense fallback={<LoadingScreenFallBack/>}>
-            <PollLoader params={props.params}/>
+            <PollLoader params={params}/>
         </Suspense>
     </div>;
 }
 
-async function PollLoader(props: PageProps) {
-    const params = await props.params;
-    const fullPoll = await readPoll(params.id);
+async function PollLoader({ params }: PageProps) {
+    const _params = await params;
+    const fullPoll = await readPoll(_params.id);
     if(fullPoll instanceof MyError) {
         return <div>
             {fullPoll.message}

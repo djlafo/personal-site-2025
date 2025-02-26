@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
 }
 
 interface PageProps {
-    params : Promise<{ id: string}>
+    params: Promise<{ id: string}>;
 }
 export default async function Page({params}: PageProps) {
     const p = await params;

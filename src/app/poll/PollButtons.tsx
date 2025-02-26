@@ -4,7 +4,7 @@ import { useUser } from "@/components/Session";
 import { useRouter } from "next/navigation";
 
 interface PollButtonOptions {
-    uuid: string
+    uuid: string;
     title: string;
 }
 export function PollButton(props: PollButtonOptions) {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 type timerReturn = [
     {
-        times: Array<number>;
+        times: number[];
         round: number;
         active: boolean;
     },
@@ -20,7 +20,7 @@ type timerReturn = [
     }
 ];
 
-export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerReturn {
+export function useTimer({ onRoundOver }: { onRoundOver: () => void }): timerReturn {
     const [times, _setTimes] = useState([25*60, 5*60, 25*60, 5*60, 25*60, 5*60, 25*60, 25*60]);
     const [round, _setRound] = useState(0);
     const [currentTimer, setCurrentTimer] = useState<number | undefined>();
@@ -55,18 +55,18 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
         }
     }, []);
 
-    const setRounds = (n : number) => {
+    const setRounds = (n: number) => {
         setTimes(new Array(n).fill(1500));
     };
 
-    const setTimes = (a : Array<number> | React.SetStateAction<Array<number>>) => {
+    const setTimes = (a: number[] | React.SetStateAction<number[]>) => {
         _setTimes(a);
         if(round > a.length-1) {
             setRound(a.length-1);
         }
     }
 
-    const setRound = (n : number) => {
+    const setRound = (n: number) => {
         if(n >= times.length)
             n = times.length-1;
         if(n < 0)
@@ -74,13 +74,13 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
         _setRound(n);
     }
 
-    const setTimeAt = (n : number, amount: number) => {
+    const setTimeAt = (n: number, amount: number) => {
         const copy = times.slice();
         copy[n] = amount;
         setTimes(copy);
     };
 
-    const setTimeAtN = (start : number, num : number, time : number) => {
+    const setTimeAtN = (start: number, num: number, time: number) => {
         setTimes(r => r.map((r,i) => {
             if((i-start) % num === 0 || ( num === 0 && start === i)) {
                 return time;
@@ -144,7 +144,7 @@ export function useTimer({ onRoundOver } : { onRoundOver: () => void }) : timerR
         {
             times,
             round,
-            active : !!currentTimer
+            active: !!currentTimer
         }, 
         {
             nextRound,

@@ -3,19 +3,19 @@ import { WeatherData } from '../WeatherAPI/types';
 export interface Point {
     x: string;
     y: number;
-    color: string
+    color: string;
 }
 export interface WeatherDataPoint {
     id: string;
     color: string;
-    data: Array<Point>
+    data: Point[];
 }
 export interface FormattedWeatherData {
-    [key : string]: Array<WeatherDataPoint>
+    [key: string]: WeatherDataPoint[];
 }
 
-export function formatWeatherData(weatherData : Array<WeatherData>) : FormattedWeatherData {
-    const formattedWeatherData : FormattedWeatherData = {};
+export function formatWeatherData(weatherData: WeatherData[]): FormattedWeatherData {
+    const formattedWeatherData: FormattedWeatherData = {};
     weatherData.forEach(wd => {
         const date = wd.time.toDateString();
         if(!formattedWeatherData[date]) {
@@ -46,13 +46,13 @@ export function formatWeatherData(weatherData : Array<WeatherData>) : FormattedW
 
 /* HELPERS TO HELPERS */
 interface WeatherKeyMappingData {
-    label: string,
-    color: string
+    label: string;
+    color: string;
 }
 interface WeatherKeyMappingType {
-    [key : string]: WeatherKeyMappingData
+    [key: string]: WeatherKeyMappingData;
 }
-const weatherKeyMapping : WeatherKeyMappingType= {
+const weatherKeyMapping: WeatherKeyMappingType= {
     temp: {
         label: 'Temperature',
         color: 'hsl(7, 88%, 40%)'
@@ -92,7 +92,7 @@ const getRowTemplate = () => {
     });
 }
 
-const clearUV = (fwd : FormattedWeatherData) => {
+const clearUV = (fwd: FormattedWeatherData) => {
     Object.keys(fwd).forEach(k => {
         const dayData = fwd[k as keyof FormattedWeatherData];
         const uvRow = dayData.findIndex(r => r.id==='UV Index');

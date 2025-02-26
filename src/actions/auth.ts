@@ -16,7 +16,7 @@ type FormState = {
     username?: String;
 } | undefined
 
-async function userToUserInfo() : Promise<UserInfo | undefined> {
+async function userToUserInfo(): Promise<UserInfo | undefined> {
     const fullJwt = await getDecryptedJWT();
     if(fullJwt) {
         return {

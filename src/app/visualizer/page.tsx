@@ -17,7 +17,7 @@ export default function Visualizer() {
     const [mediaDevices, setMediaDevices] = useState<boolean>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    const start = (o : VisualizerOptionsType) => {
+    const start = (o: VisualizerOptionsType) => {
         create({...o, canvas: canvasRef.current});
     }
 

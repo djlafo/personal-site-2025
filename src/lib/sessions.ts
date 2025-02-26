@@ -10,7 +10,7 @@ const secretKey = process.env.AUTH_SECRET;
 
 export interface JWTObjType {
     exp: number;
-    data: typeof usersTable.$inferSelect
+    data: typeof usersTable.$inferSelect;
 }
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
     const token = jwt.sign({
@@ -36,7 +36,7 @@ export async function getDecryptedJWT() {
     }
 }
 
-export async function getUser() : Promise<typeof usersTable.$inferSelect | undefined> {
+export async function getUser(): Promise<typeof usersTable.$inferSelect | undefined> {
     const decrypted = await decryptSession();
     if(decrypted) return decrypted.data as typeof usersTable.$inferSelect;
 }

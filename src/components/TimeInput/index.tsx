@@ -1,10 +1,10 @@
 import React, { useState, useRef, ComponentProps } from 'react';
 import './timeinput.css';
 
-type valueChangeFunction = (n : number) => void;
+type valueChangeFunction = (n: number) => void;
 
-const calculateTime = (s : string) : number => {
-    const parts : Array<string> = s.split(' ');
+const calculateTime = (s: string): number => {
+    const parts: string[] = s.split(' ');
     
     let timeCalc = 0;
     if(parts.length > 0) {
@@ -34,7 +34,7 @@ const calculateTime = (s : string) : number => {
     return timeCalc;
 };
 
-const calculateString = (n : number) : string => {
+const calculateString = (n: number): string => {
     let minutes = Math.floor(n / 60);
     const seconds = n % 60;
     const hours = Math.floor(minutes / 60);
@@ -66,7 +66,7 @@ export default function TimeInput({ value, onValueChange, countdownOnSet, onZero
         }
         setRemainingTimeText(calculateString(v));
     }
-    const startCountdown = (v : number) => {
+    const startCountdown = (v: number) => {
         if(!v) return;
         const now = Number(new Date());
         const handler: TimerHandler = () => {

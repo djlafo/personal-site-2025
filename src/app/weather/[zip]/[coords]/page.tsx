@@ -8,8 +8,8 @@ import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 
 
 interface MetaProps {
-    params: Promise<{ zip: string, coords: string}>
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    params: Promise<{ zip: string, coords: string}>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 export async function generateMetadata({ params, searchParams }: MetaProps, parent: ResolvingMetadata) {
     const par = await params;
@@ -22,9 +22,9 @@ export async function generateMetadata({ params, searchParams }: MetaProps, pare
 }
 
 interface PageProps {
-    params : Promise<{ zip: string, coords: string}>
+    params: Promise<{ zip: string, coords: string}>;
 }
-export default async function Page({params} : PageProps) {
+export default async function Page({params}: PageProps) {
     const p = await params;
     return <Suspense fallback={<LoadingScreenFallBack/>}>
         <WeatherContainerContainer zip={p.zip} coords={p.coords}/>

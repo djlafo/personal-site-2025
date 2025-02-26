@@ -35,7 +35,7 @@ export interface RankValueType {
     rank: number;
     pollOptionId: number;
 }
-export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
+export async function setVoteRanks(uuid: string, values: RankValueType[]) {
     const user = await getUser();
     let ip = await getClientIdentifier();
     if(!ip) return new MyError({message: 'Failed to vote'});
@@ -59,7 +59,7 @@ export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
         );
 
     // insert any votes that dont exist yet
-    const newRows: Array<any> = [];
+    const newRows: any[] = [];
     options.forEach(o => {
         const ind = currentVotes.findIndex(cv => cv.poll_options?.id === o.id);
         if(ind === -1) {
@@ -72,7 +72,7 @@ export async function setVoteRanks(uuid: string, values: Array<RankValueType>) {
         }
     });
     const all = currentVotes.map(cv => cv.poll_votes);
-    const done: Array<typeof all> = await Promise.all(newRows);
+    const done: (typeof all)[] = await Promise.all(newRows);
     const combined = done.map(d => d[0]).concat(all);
 
     combined.forEach(c => {

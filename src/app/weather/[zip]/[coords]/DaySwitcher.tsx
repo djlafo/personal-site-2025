@@ -3,14 +3,14 @@ import { useCallback, useEffect } from "react";
 import styles from './weeklyweather.module.css';
 
 interface DaySwitcherProps {
-    days: Array<string>;
+    days: string[];
     currentDay: string;
     onDaySwitched: (s: string) => void;
 }
 
-export default function DaySwitcher({days, currentDay, onDaySwitched} : DaySwitcherProps) {
+export default function DaySwitcher({days, currentDay, onDaySwitched}: DaySwitcherProps) {
 
-    const switchDay = useCallback((n : number) => {
+    const switchDay = useCallback((n: number) => {
         const currentIndex = days.indexOf(currentDay);
         let res = currentIndex + n;
         if(res < 0) res = days.length-1;
@@ -19,7 +19,7 @@ export default function DaySwitcher({days, currentDay, onDaySwitched} : DaySwitc
     }, [currentDay, days, onDaySwitched]);
 
     useEffect(() => {
-		const shiftActive = (e : KeyboardEvent) => {
+		const shiftActive = (e: KeyboardEvent) => {
             if(e.key === 'ArrowLeft') {
                 switchDay(-1);
             } else if (e.key === 'ArrowRight') {
