@@ -18,29 +18,27 @@ export default function useAudioLoader() {
 
     const loadTTS = (text: string) => {
         const match = audioLogs.find(a => a.text === text) || requests.find(r => r.text === text);
-        if(!match) {
-            const newReq = new Promise<string>((acc, rej) => {
-                getTTS(text).then(audio => {
-                    setRequests(rs => rs.filter(r => r.text !== text));
-                    if(audio instanceof MyError) {
-                        rej(audio.message);
-                    } else {
-                        setAudioLogs(al => al.concat([{
-                            audio: audio,
-                            text: text
-                        }]));
-                        acc(audio);
-                    }
-                });
+        if(match) return match.audio;
+
+        const newReq = new Promise<string>((acc, rej) => {
+            getTTS(text).then(audio => {
+                setRequests(rs => rs.filter(r => r.text !== text));
+                if(audio instanceof MyError) {
+                    rej(audio.message);
+                } else {
+                    setAudioLogs(al => al.concat([{
+                        audio: audio,
+                        text: text
+                    }]));
+                    acc(audio);
+                }
             });
-            setRequests(r => r.concat([{
-                text: text,
-                audio: newReq
-            }]));
-            return newReq;
-        } else {
-            return match.audio;
-        }
+        });
+        setRequests(r => r.concat([{
+            text: text,
+            audio: newReq
+        }]));
+        return newReq;
     }
 
     return loadTTS;

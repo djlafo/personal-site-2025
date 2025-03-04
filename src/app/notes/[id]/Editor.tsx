@@ -1,19 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { toast } from "react-toastify";
-
 import { useUser } from "@/components/Session";
-import { useLoadingScreen } from "@/components/LoadingScreen";
 
 import { Note } from "@/actions/notes";
 
-import useAudioLoader from "./components/useAudioLoader";
 import QuillEditor from "./components/QuillEditor";
 import ReadDisplay from "./components/ReadDisplay";
-import AudioPlayer from "./components/AudioPlayer";
+import { AudioPlayerContainer } from "./components/AudioPlayer";
 
 import styles from "./tts.module.css";  
 
@@ -21,83 +17,50 @@ interface EditorProps {
     note?: Note;
 }
 export default function Editor({note}: EditorProps) {
-    const [user] = useUser();
     const router = useRouter();
+    const [user] = useUser();
     const [paragraphs, setParagraphs] = useState<string[]>([]);
-    const [currentReading, setCurrentReading] = useState(-1);
-    const [currentAudio, setCurrentAudio] = useState<string | undefined>();
-    const loadTTS = useAudioLoader();
 
-    const [, setLoading] = useLoadingScreen();
+    return <div className={styles.tts}>
+        {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
 
-    const getAudioAndLoad = async (text: string) => {
-        const aud = loadTTS(text);
-        if(aud instanceof Promise) {
-            setLoading(true);
-            try {
-                const realAud = await aud;
-                setCurrentAudio(realAud);
-            } catch (e) {
-                if(typeof e === 'string') toast(e); 
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setCurrentAudio(aud);
-        }
-    };
+        <div className={`${styles.editorDiv} ${paragraphs && paragraphs.length ? styles.hidden : ''}`}>
+            <QuillEditor
+                note={note}
+                onStart={pg => {
+                    setParagraphs(pg);
+                }}/>
+        </div>
+        {paragraphs && paragraphs.length && 
+            <Reader paragraphs={paragraphs} 
+                onEdit={() => setParagraphs([])}/> 
+            || <></>}
+    </div>;
+}
 
-    const preload = (start: number, times: number) => {
-        for(let i=start+1; i<start+1+times; i++) {
-            if(i < paragraphs.length) {
-                loadTTS(paragraphs[i]);
-            } else {
-                break;
-            }
-        }
-    }
-
+interface ReaderProps {
+    paragraphs: string[];
+    onEdit: () => void;
+}
+function Reader({paragraphs, onEdit}: ReaderProps) {
+    const [currentReading, setCurrentReading] = useState(0);
+    
     const nextParagraph = () => {
         if(currentReading + 1 !== paragraphs.length) {
             setCurrentReading(currentReading + 1);
         }
     }
 
-    useEffect(() => {
-        if(paragraphs && paragraphs.length && currentReading >= 0) {
-            getAudioAndLoad(paragraphs[currentReading]);
-            preload(currentReading, 2);
-        }
-    }, [paragraphs, currentReading]);
-
-    return <div className={styles.tts}>
-        {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
-
-        <div className={`${styles.editorDiv} ${currentAudio ? styles.hidden : ''}`}>
-            <QuillEditor
-                note={note}
-                onStart={pg => {
-                    setParagraphs(pg);
-                    setCurrentReading(0);
-                }}/>
-        </div>
-        {currentAudio &&
-            <ReadDisplay paragraphs={paragraphs}
-                onClickParagraph={(t, i) => {
-                    setCurrentReading(i);
-                }}
-                activeRow={currentReading}
-                onEditRequest={() => {
-                    setCurrentAudio(undefined);
-                    setCurrentReading(-1);
-                }}/> || <></>
-        }
-        <AudioPlayer onEnd={nextParagraph}
-            audio={currentAudio}
-            autoplay/>
-    </div>;
+    return <>
+        <ReadDisplay paragraphs={paragraphs}
+            onClickParagraph={(t, i) => {
+                setCurrentReading(i);
+            }}
+            activeRow={currentReading}
+            onEditRequest={onEdit}/>
+        <AudioPlayerContainer onEnd={nextParagraph}
+            paragraphs={paragraphs}
+            currentReading={currentReading}
+            autoplay/>   
+    </>;
 }
-
-
-
-

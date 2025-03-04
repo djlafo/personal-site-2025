@@ -1,17 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+
+import { useLoadingScreen } from "@/components/LoadingScreen";
+
+import useAudioLoader from "./useAudioLoader";
 
 interface AudioPlayerProps {
     onPlayChange?: (playing: boolean) => void;
     onEnd: () => void;
-    audio?: string;
+    audio: string;
     autoplay?: boolean;
 }
-export default function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: AudioPlayerProps) {
+export function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: AudioPlayerProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
 
     useEffect(() => {
         const detectMediaKeys = (e: KeyboardEvent) => {
-            if(!audioRef.current || !audio) return;
+            if(!audioRef.current) return;
             if (e.key === ' ') {
                 e.preventDefault();
                 audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
@@ -27,7 +32,7 @@ export default function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: Audi
         return () => {
             window.removeEventListener('keydown', detectMediaKeys);
         }
-    }, [audioRef, audio])
+    }, [audioRef])
 
     useEffect(() => {
         if(!audioRef.current) return;
@@ -36,11 +41,58 @@ export default function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: Audi
         } else {
             audioRef.current.pause();
         }
-    }, [audio]);
+    }, [audioRef, audio]);
 
     return <audio ref={audioRef} 
         controls
         src={audio && `data:audio/mpeg;base64,${audio}` || undefined}
         onPlaying={() => onPlayChange && onPlayChange(true)}
         onEnded={() => onEnd()}/>
+}
+
+interface AudioPlayerContainerProps extends Omit<AudioPlayerProps, 'audio'> {
+    paragraphs: string[];
+    currentReading: number;
+}
+export function AudioPlayerContainer({paragraphs, currentReading, ...theRest}: AudioPlayerContainerProps) {
+    const [audio, setAudio] = useState<string>();
+    
+    const loadTTS = useAudioLoader();
+    const [, setLoading] = useLoadingScreen();
+
+    const getAudioAndLoad = async (text: string) => {
+        const aud = loadTTS(text);
+        if(aud instanceof Promise) {
+            setLoading(true);
+            try {
+                const realAud = await aud;
+                setAudio(realAud);
+            } catch (e) {
+                if(typeof e === 'string') toast(e); 
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setAudio(aud);
+        }
+    };
+
+    const preload = (start: number, times: number) => {
+        for(let i=start+1; i<start+1+times; i++) {
+            if(i < paragraphs.length) {
+                loadTTS(paragraphs[i]);
+            } else {
+                break;
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(currentReading < 0 || currentReading >= paragraphs.length) return;
+        getAudioAndLoad(paragraphs[currentReading]);
+        preload(currentReading, 2);
+    }, [paragraphs, currentReading]);
+
+    if(audio)
+        return <AudioPlayer audio={audio} {...theRest} />;
 }
