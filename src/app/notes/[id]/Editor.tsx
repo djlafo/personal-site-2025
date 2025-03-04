@@ -1,7 +1,9 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import { toast } from "react-toastify";
 
 import { useUser } from "@/components/Session";
 import { useLoadingScreen } from "@/components/LoadingScreen";
@@ -22,24 +24,30 @@ export default function Editor({note}: EditorProps) {
     const [user] = useUser();
     const router = useRouter();
     const [paragraphs, setParagraphs] = useState<string[]>([]);
-    const [currentReading, setCurrentReading] = useState(0);
-    const {currentAudio, setAudioFor, loadTTS} = useAudioLoader();
-    const [queueRead, setQueueRead] = useState(false);
+    const [currentReading, setCurrentReading] = useState(-1);
+    const [currentAudio, setCurrentAudio] = useState<string | undefined>();
+    const loadTTS = useAudioLoader();
 
     const [, setLoading] = useLoadingScreen();
 
-    const getAudioAndLoad = async (text: string, i?: number) => {
-        const ind = i || paragraphs.findIndex(p => p === text);
-        if(ind === -1) return;
-        setCurrentReading(ind);
-        setLoading(true);
-        setAudioFor();
-        await setAudioFor(text);
-        preload(ind, 2);
-        setLoading(false);
+    const getAudioAndLoad = async (text: string) => {
+        const aud = loadTTS(text);
+        if(aud instanceof Promise) {
+            setLoading(true);
+            try {
+                const realAud = await aud;
+                setCurrentAudio(realAud);
+            } catch (e) {
+                if(typeof e === 'string') toast(e); 
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setCurrentAudio(aud);
+        }
     };
 
-    const preload = async(start: number, times: number) => {
+    const preload = (start: number, times: number) => {
         for(let i=start+1; i<start+1+times; i++) {
             if(i < paragraphs.length) {
                 loadTTS(paragraphs[i]);
@@ -49,17 +57,18 @@ export default function Editor({note}: EditorProps) {
         }
     }
 
-    const nextParagraph = async () => {
-        if(currentReading+1 !== paragraphs.length) {
-            getAudioAndLoad(paragraphs[currentReading+1], currentReading+1);
+    const nextParagraph = () => {
+        if(currentReading + 1 !== paragraphs.length) {
+            setCurrentReading(currentReading + 1);
         }
     }
 
     useEffect(() => {
-        if(queueRead) {
-            if(paragraphs && paragraphs.length) getAudioAndLoad(paragraphs[0]);
+        if(paragraphs && paragraphs.length && currentReading >= 0) {
+            getAudioAndLoad(paragraphs[currentReading]);
+            preload(currentReading, 2);
         }
-    }, [paragraphs, queueRead]);
+    }, [paragraphs, currentReading]);
 
     return <div className={styles.tts}>
         {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
@@ -69,14 +78,19 @@ export default function Editor({note}: EditorProps) {
                 note={note}
                 onStart={pg => {
                     setParagraphs(pg);
-                    setQueueRead(true);
+                    setCurrentReading(0);
                 }}/>
         </div>
         {currentAudio &&
             <ReadDisplay paragraphs={paragraphs}
-                onClickParagraph={getAudioAndLoad}
+                onClickParagraph={(t, i) => {
+                    setCurrentReading(i);
+                }}
                 activeRow={currentReading}
-                onEditRequest={setAudioFor}/> || <></>
+                onEditRequest={() => {
+                    setCurrentAudio(undefined);
+                    setCurrentReading(-1);
+                }}/> || <></>
         }
         <AudioPlayer onEnd={nextParagraph}
             audio={currentAudio}

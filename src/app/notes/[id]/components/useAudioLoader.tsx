@@ -1,52 +1,47 @@
 import { getTTS } from "@/actions/tts";
 import { MyError } from "@/lib/myerror";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
 interface AudioLog {
     text: string;
     audio: string;
 }
+
+interface AudioLogProm {
+    text: string;
+    audio: Promise<string>;
+}
+
 export default function useAudioLoader() {
     const [audioLogs, setAudioLogs] = useState<AudioLog[]>([]);
-    const [currentAudio, setCurrentAudio] = useState<string | undefined>();
+    const [requests, setRequests] = useState<AudioLogProm[]>([]);
 
-    const setAudioFor = async (text?: string) => {
-        if(!text) {
-            setCurrentAudio(undefined);
-            return;
-        }
-        const audio = await loadTTS(text);
-        if(audio) {
-            setCurrentAudio(audio);
-            return audio;
-        } else {
-            toast('Failed to load TTS audio');
-        }
-    }
-
-    const loadTTS = async (text: string) => {
-        const match = audioLogs.find(al => al.text === text);
+    const loadTTS = (text: string) => {
+        const match = audioLogs.find(a => a.text === text) || requests.find(r => r.text === text);
         if(!match) {
-            const audio = await getTTS(text);
-            if(audio instanceof MyError) {
-                toast(audio.message);
-                return;
-            } else {
-                setAudioLogs(al => al.concat([{
-                    text: text,
-                    audio: audio
-                }]));
-                return audio;
-            }
+            const newReq = new Promise<string>((acc, rej) => {
+                getTTS(text).then(audio => {
+                    setRequests(rs => rs.filter(r => r.text !== text));
+                    if(audio instanceof MyError) {
+                        rej(audio.message);
+                    } else {
+                        setAudioLogs(al => al.concat([{
+                            audio: audio,
+                            text: text
+                        }]));
+                        acc(audio);
+                    }
+                });
+            });
+            setRequests(r => r.concat([{
+                text: text,
+                audio: newReq
+            }]));
+            return newReq;
         } else {
             return match.audio;
         }
     }
 
-    return {
-        setAudioFor,
-        currentAudio,
-        loadTTS
-    };
+    return loadTTS;
 }

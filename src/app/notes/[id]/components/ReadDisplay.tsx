@@ -4,7 +4,7 @@ import styles from '../tts.module.css';
 
 interface ReadDisplayProps {
     paragraphs: string[];
-    onClickParagraph: (paragraph: string, ind?: number) => void;
+    onClickParagraph: (paragraph: string, ind: number) => void;
     activeRow: number;
     onEditRequest: () => void;
 }
