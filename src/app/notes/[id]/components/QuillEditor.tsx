@@ -26,7 +26,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const quillRef = useRef<HTMLDivElement>(null);
 
     const _createNote = async () => {
-        const newNote = await createNote(content, searchParams.get('pId') || '');
+        const newNote = await createNote(content, searchParams.get('pId') || undefined);
         if(newNote instanceof MyError) {
             toast(newNote.message);
         } else {

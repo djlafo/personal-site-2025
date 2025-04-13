@@ -37,7 +37,7 @@ export async function getNotes(): Promise<Note[] | MyError> {
     });
 }
 
-export async function createNote(text: string, parentId: string): Promise<Note | MyError> {
+export async function createNote(text: string, parentId?: string): Promise<Note | MyError> {
     const user = await getUser();
     if(!user) return new MyError({message: 'Not signed in', authRequired: true});
     if(!text) return new MyError({message: 'No text submitted'});

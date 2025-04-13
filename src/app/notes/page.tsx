@@ -23,14 +23,10 @@ export default async function Page() {
                 {notes.message}
             </div>;
         } else {
-            const topLevelNotes: Note[] = notes.filter(n => !n.parentId);
-
             return <div className={styles.notes}>
                 <NewNoteButton/>
                 <div>
-                    {topLevelNotes.map(n => {
-                        return <NoteParent key={n.id} note={n} notes={notes}/>;
-                    })}
+                    <NoteParent notes={notes}/>
                 </div>
             </div>;
         }

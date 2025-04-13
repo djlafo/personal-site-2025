@@ -29,23 +29,33 @@ export function NewNoteButton() {
 }
 
 interface NoteParentProps {
-    note: Note;
+    note?: Note;
     notes: Note[];
 }
 export function NoteParent({note, notes}: NoteParentProps) {
-    const children = notes.filter(n => n.parentId === note.id);
-    const [opened, setOpened] = useState<boolean>(false);
+    const [opened, setOpened] = useState<boolean>(!note);
 
-    return <div className={`${styles.parentContainer} ${children.length ? styles.hasChildren : ''}`}>
-        {children.length && <span onClick={() => setOpened(o => !o)}>{opened ? '-' : '+'}</span> || <>*</>}
-        <NoteItem note={note}/>
-            {
-                children.length && 
-                <div className={`${styles.noteParent} ${opened ? styles.opened : ''}`}>
-                    {children.map(c => {
-                        return <NoteParent key={c.id} notes={notes} note={c}/>;
-                    })}
-                </div> || <></>
-            }
+    const children = notes.filter(n => note ? n.parentId === note.id : !n.parentId);
+    const hasChildren: Note[] = [];
+    const noChildren: Note[] = [];
+    children.forEach(c => {
+        const child = notes.find(n => n.parentId === c.id);
+        child ? hasChildren.push(c) : noChildren.push(c);
+    });
+    const sorted = [...hasChildren, ...noChildren];
+
+    return <div className={styles.parentContainer}>
+        {note && <>
+            {children.length && <span onClick={() => setOpened(o => !o)}>{opened ? '-' : '+'}</span> || <>&nbsp;</>}
+            <NoteItem note={note}/>
+        </>}
+        {
+            children.length && 
+            <div className={`${styles.noteParent} ${!note ? styles.topLevel : ''} ${opened ? styles.opened : ''}`}>
+                {sorted.map(c => {
+                    return <NoteParent key={c.id} notes={notes} note={c}/>;
+                })}
+            </div> || <></>
+        }
     </div>;
 }

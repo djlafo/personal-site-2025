@@ -2,10 +2,6 @@
     padding: 10px;
 }
 
-.noteItem {
-    padding: 10px 0;
-}
-
 .noteItem > span, .parentContainer > span {
     cursor: pointer;
 }
@@ -18,8 +14,10 @@
     color: cyan;
 }
 
-.noteParent {
-    margin-left: 30px;
+.noteParent:not(.topLevel) {
+    margin-left: 6px;
+    padding-left: 12px;
+    border-left: 1px solid cyan;
 }
 
 .noteParent:not(.opened) {
@@ -27,11 +25,6 @@
 }
 
 .parentContainer {
-    margin: 24px 0;
-    padding: 8px;
+    margin: 12px 0;
     overflow: hidden;
-}
-
-.parentContainer.hasChildren {
-    border: 1px solid cyan;
 }
