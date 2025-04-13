@@ -8,6 +8,7 @@ import { useUser } from '@/components/Session';
 import { useRouter } from 'next/navigation';
 
 import styles from './headerbar.module.css';
+import Link from 'next/link';
 
 export default function LoginButton() {
     const [user, setUser, pending] = useUser();
@@ -34,9 +35,7 @@ export default function LoginButton() {
                 </span>) 
             ||
             (!pending && !user && 
-                <input type='button' 
-                    value='Login' 
-                    onClick={() => router.push('/login')}/>)
+                <Link href='/login'>Login</Link>)
         }
     </div>
 }
