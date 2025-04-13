@@ -48,6 +48,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
 
     const _deleteNote = async () => {
         if(!note) return;
+        localStorage.removeItem(`NOTE[${note.id}]`);
         if(await deleteNote(note.id)) {
             router.push('/notes');
         } else {
