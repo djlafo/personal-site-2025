@@ -23,10 +23,10 @@ export function NewNoteButton() {
     return <Link href='/notes/new'>New</Link>
 }
 
-function orderNotesByChildren(notes: Note[]): Note[] {
+function orderNotesByChildren(subnotes: Note[], notes: Note[]): Note[] {
     const hasChildren: Note[] = [];
     const noChildren: Note[] = [];
-    notes.forEach(c => {
+    subnotes.forEach(c => {
         const child = notes.find(n => n.parentId === c.id);
         child ? hasChildren.push(c) : noChildren.push(c);
     });
@@ -51,7 +51,7 @@ export function NoteParent({note, notes}: NoteParentProps) {
         setOpened(b);
     }
 
-    const children = orderNotesByChildren(notes.filter(n => note ? n.parentId === note.id : !n.parentId));
+    const children = orderNotesByChildren(notes.filter(n => note ? n.parentId === note.id : !n.parentId), notes);
 
     useEffect(() => {
         if(typeof window !== 'undefined' && note) {
