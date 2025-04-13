@@ -1,6 +1,6 @@
 'use server'
 
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 import db from "@/db";
 import { notesTable } from "@/db/schema/notes";
@@ -12,6 +12,7 @@ const MAXLEN = 50000000;
 
 export interface Note {
     id: string;
+    parentId: string | null;
     text: string;
     public: boolean;
     yours: boolean;
@@ -24,10 +25,11 @@ export async function getNote(id: string) {
 export async function getNotes(): Promise<Note[] | MyError> {
     const user = await getUser();
     if(!user) return new MyError({message: 'Not signed in', authRequired: true});
-    const query = await db.select().from(notesTable).where(eq(notesTable.userId, user.id));
+    const query = await db.select().from(notesTable).where(eq(notesTable.userId, user.id)).orderBy(asc(notesTable.text));
     return query.map(q => {
         return {
             id: q.id,
+            parentId: q.parentId,
             text: q.text,
             public: q.public,
             yours: true
@@ -35,7 +37,7 @@ export async function getNotes(): Promise<Note[] | MyError> {
     });
 }
 
-export async function createNote(text: string): Promise<Note | MyError> {
+export async function createNote(text: string, parentId: string): Promise<Note | MyError> {
     const user = await getUser();
     if(!user) return new MyError({message: 'Not signed in', authRequired: true});
     if(!text) return new MyError({message: 'No text submitted'});
@@ -43,9 +45,11 @@ export async function createNote(text: string): Promise<Note | MyError> {
     const query = await db.insert(notesTable).values({
         text: text,
         userId: user.id,
+        parentId: parentId,
         id: crypto.randomUUID()
     }).returning({
         id: notesTable.id,
+        parentId: notesTable.parentId,
         text: notesTable.text,
         public: notesTable.public
     });
@@ -83,6 +87,7 @@ async function checkNote(id: string, allowPublic = false): Promise<Note | MyErro
     return {
         id: note[0].id,
         text: note[0].text,
+        parentId: note[0].userId === user?.id ? note[0].parentId : null,
         public: note[0].public,
         yours: note[0].userId === user?.id
     };

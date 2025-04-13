@@ -3,7 +3,7 @@
 import db from "@/db";
 import { pollOptionsTable, pollsTable, pollVotesTable } from "@/db/schema/polls";
 import { getClientIdentifier, getUser } from "@/lib/sessions";
-import { and, desc, eq, inArray, isNull, or } from "drizzle-orm";
+import { and, desc, eq, inArray, or } from "drizzle-orm";
 import { SerializedPoll, SerializedPollOption, SerializedPollVotes } from "./types";
 import { MyError } from "@/lib/myerror";
 

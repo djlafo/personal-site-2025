@@ -1,8 +1,8 @@
-import { getNotes } from "@/actions/notes";
+import { getNotes, Note } from "@/actions/notes";
 import { getUser } from "@/lib/sessions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { NewNoteButton, NoteCard } from "./client";
+import { NewNoteButton, NoteParent } from "./client";
 
 import styles from './notes.module.css';
 
@@ -23,11 +23,13 @@ export default async function Page() {
                 {notes.message}
             </div>;
         } else {
+            const topLevelNotes: Note[] = notes.filter(n => !n.parentId);
+
             return <div className={styles.notes}>
                 <NewNoteButton/>
-                <div className={styles.noteContainer}>
-                    {notes.map(n => {
-                        return <NoteCard key={n.id} note={n}/>;
+                <div>
+                    {topLevelNotes.map(n => {
+                        return <NoteParent key={n.id} note={n} notes={notes}/>;
                     })}
                 </div>
             </div>;

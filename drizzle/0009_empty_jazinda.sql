@@ -1,0 +1,2 @@
+ALTER TABLE "notes" ADD COLUMN "parentId" varchar(255);--> statement-breakpoint
+ALTER TABLE "notes" ADD CONSTRAINT "notes_parentId_notes_id_fk" FOREIGN KEY ("parentId") REFERENCES "public"."notes"("id") ON DELETE no action ON UPDATE no action;

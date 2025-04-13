@@ -2,7 +2,7 @@
 
 import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Quill from "quill";
 import ImageResize from 'quill-image-resize';
 Quill.register('modules/imageResize', ImageResize);
@@ -18,6 +18,7 @@ export interface QuillEditorProps {
     note?: Note;
 }
 export default function QuillEditor({onStart, note}: QuillEditorProps) {
+    const searchParams = useSearchParams();
     const [user] = useUser();
     const router = useRouter();
     const [content, setContent] = useState(note?.text || '[]');
@@ -25,7 +26,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     const quillRef = useRef<HTMLDivElement>(null);
 
     const _createNote = async () => {
-        const newNote = await createNote(content);
+        const newNote = await createNote(content, searchParams.get('pId') || '');
         if(newNote instanceof MyError) {
             toast(newNote.message);
         } else {
@@ -115,10 +116,10 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
             {user && note && note.yours && 
                 <>
                     <input type='button' 
-                        value="Update Note" 
+                        value='Update Note' 
                         onClick={() => _updateNote()}/>
                     <input type='button' 
-                        value="Delete Note" 
+                        value='Delete Note' 
                         onClick={() => _deleteNote()}/>
                     <div>
                         <label htmlFor='publicCheckbox'>Public</label>
@@ -127,6 +128,9 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
                             defaultChecked={note.public}
                             onChange={e => _updateNote(e.target.checked)}/>
                     </div>
+                    <input type='button'
+                        value='New Subnote'
+                        onClick={() => router.push(`/notes/new?pId=${note.id}`)}/>
                 </> || <></>
             }
         </div>
