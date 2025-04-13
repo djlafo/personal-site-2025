@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link";
 import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -128,9 +129,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
                             defaultChecked={note.public}
                             onChange={e => _updateNote(e.target.checked)}/>
                     </div>
-                    <input type='button'
-                        value='New Subnote'
-                        onClick={() => router.push(`/notes/new?pId=${note.id}`)}/>
+                    <Link href={`/notes/new?pId=${note.id}`}>New Subnote</Link>
                 </> || <></>
             }
         </div>

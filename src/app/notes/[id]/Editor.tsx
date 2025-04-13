@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { useUser } from "@/components/Session";
 
@@ -17,12 +17,11 @@ interface EditorProps {
     note?: Note;
 }
 export default function Editor({note}: EditorProps) {
-    const router = useRouter();
     const [user] = useUser();
     const [paragraphs, setParagraphs] = useState<string[]>([]);
 
     return <div className={styles.tts}>
-        {user && <input type='button' value='Back' onClick={() => router.push('/notes')}/> || <></>}
+        {user && <Link href='/notes'>Back</Link> || <></>}
 
         <div className={`${styles.editorDiv} ${paragraphs && paragraphs.length ? styles.hidden : ''}`}>
             <QuillEditor

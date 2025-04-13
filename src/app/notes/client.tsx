@@ -1,7 +1,6 @@
 'use client'
 
 import { getTextFromDelta } from "./[id]/helpers";
-import { useRouter } from "next/navigation";
 
 import styles from './notes.module.css';
 import { Note } from "@/actions/notes";
@@ -12,7 +11,6 @@ interface NoteItemProps {
     note: Note;
 }
 export function NoteItem({note}: NoteItemProps) {
-    const router = useRouter();
 
     return <span className={styles.noteItem}>
         <Link href={`/notes/${note.id}`}>
