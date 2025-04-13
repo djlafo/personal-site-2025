@@ -2,7 +2,7 @@
     padding: 10px;
 }
 
-.noteItem > span, .parentContainer > span {
+.parentContainer > span {
     cursor: pointer;
 }
 
@@ -10,7 +10,7 @@
     margin: 0 10px;
 }
 
-.noteItem > span:hover, .parentContainer > span:hover {
+.parentContainer > span:hover {
     color: cyan;
 }
 
@@ -27,4 +27,5 @@
 .parentContainer {
     margin: 12px 0;
     overflow: hidden;
+    line-height: 1.7;
 }
