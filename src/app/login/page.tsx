@@ -23,20 +23,19 @@ export default function Login() {
     const [loginState, _login] = useActionState(login, undefined);
     const [registerState, _register] = useActionState(register, undefined);
 
-    useEffect(() => {
-        if(isUser(loginState) && loginState.username) {
-            setUser(loginState);
-        } else if(isUser(registerState) && registerState.username) {
-            setUser(registerState);
-        }
-    }, [loginState, registerState]);
+    const _setUser = (u: UserInfo) => {
+        setUser(u);
+        const redirect = searchParams.get('redirect');
+        router.push(redirect || '/');
+    }
 
     useEffect(() => {
-        if(user) {
-            const redirect = searchParams.get('redirect');
-            router.push(redirect || '/');
+        if(isUser(loginState) && loginState.username) {
+            _setUser(loginState);
+        } else if(isUser(registerState) && registerState.username) {
+            _setUser(registerState);
         }
-    }, [user]);
+    }, [loginState, registerState]);
 
     return <div className={styles.login}>
         <h2>
