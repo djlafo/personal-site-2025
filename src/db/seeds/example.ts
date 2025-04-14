@@ -13,7 +13,7 @@ async function main() {
 
     await db.insert(usersTable).values(user);
 
-    const users = await db.select().from(usersTable);
+    // const users = await db.select().from(usersTable);
 
     await db.update(usersTable).set({
         password: 'anotherhash'

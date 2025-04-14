@@ -1,11 +1,9 @@
-import { ResolvingMetadata } from "next";
-
 import { getNote } from "@/actions/notes";
 import EditorProxy from "./EditorProxy";
 import { getTextFromDelta } from "./helpers";
 import { MyError } from "@/lib/myerror";
 
-export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata) {
+export async function generateMetadata({ params }: PageProps) { // , parent: ResolvingMetadata
     const p = await params;
     if(p.id === 'new') {
         return {

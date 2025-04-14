@@ -1,4 +1,4 @@
-import { getNotes, Note } from "@/actions/notes";
+import { getNotes } from "@/actions/notes";
 import { getUser } from "@/lib/sessions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";

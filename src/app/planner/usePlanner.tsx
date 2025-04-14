@@ -78,7 +78,7 @@ export default function usePlanner(setter ?: () => PlannerData | undefined) {
         });
     }
 
-    const setTasks = (ta: Task[]) => _setPlannerData(pd => appendToPlannerData({
+    const setTasks = (ta: Task[]) => _setPlannerData(() => appendToPlannerData({
         tasks: ta
     }));
 

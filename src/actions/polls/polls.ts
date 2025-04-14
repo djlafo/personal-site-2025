@@ -60,7 +60,7 @@ export async function readPoll(uuid: string) {
     if(!poll[0].polls) return new MyError({message: 'Poll not found'});
 
     const seen: {[key:number]: boolean} = {};
-    let options = poll.filter(p => {
+    const options = poll.filter(p => {
         if(!p.poll_options || !p.poll_options.active) return false;
         const added = Object.hasOwn(seen, p.poll_options.id);
         seen[p.poll_options.id] = true;

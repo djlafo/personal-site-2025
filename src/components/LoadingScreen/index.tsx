@@ -10,7 +10,9 @@ type LoadingType = [
 
 const LoadingContext = createContext<LoadingType>([
     false,
-    (b: boolean) => {}
+    (b: boolean) => {
+        throw new Error(`Loading Context not set yet ${b}`); // b for lint
+    }
 ]);
 
 interface LoadingScreenProps {

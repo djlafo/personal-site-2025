@@ -18,7 +18,7 @@ export default function DylanChat() {
         content: "What's up?"
     }]);
     const [userInput, setUserInput] = useState('');
-    const [audioObj, setAudioObj] = useState<HTMLAudioElement | undefined>(() => {
+    const [audioObj] = useState<HTMLAudioElement | undefined>(() => {
         if(typeof window !== 'undefined') {
             return new Audio();
         }

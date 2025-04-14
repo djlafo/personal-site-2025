@@ -1,4 +1,3 @@
-import { ResolvingMetadata } from "next";
 import { readPoll } from "@/actions/polls/polls"
 import Poll from './Poll';
 import { Suspense } from "react";
@@ -7,7 +6,7 @@ import styles from './poll.module.css';
 import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 import { MyError } from "@/lib/myerror";
 
-export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata) {
+export async function generateMetadata({ params }: PageProps) { // , parent: ResolvingMetadata
     const par = await params;
     const fullPoll = await readPoll(par.id);
 

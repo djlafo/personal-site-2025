@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { zipsTable } from '@/db/schema/zips';
 import Papa from 'papaparse';
-const fs = require('node:fs/promises');
+import fs from 'node:fs/promises';
 import path from 'path';
 
 const filePath = path.join(__dirname, 'uszips.csv');

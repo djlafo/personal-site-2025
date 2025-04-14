@@ -19,7 +19,11 @@ export function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: AudioPlayerP
             if(!audioRef.current) return;
             if (e.key === ' ') {
                 e.preventDefault();
-                audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+                if(audioRef.current.paused) {
+                    audioRef.current.play()
+                } else {
+                    audioRef.current.pause();
+                } 
             } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 4, 0);

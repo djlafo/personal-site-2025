@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { getWeather } from "./WeatherAPI";
 import WeatherContainer from "./WeatherContainer";
 import { formatWeatherData } from "./WeatherGraph/helpersAndTypes";
-import { ResolvingMetadata } from "next";
 import { getCityFromZip } from "../../location";
 import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 
@@ -11,7 +10,7 @@ interface MetaProps {
     params: Promise<{ zip: string, coords: string}>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
-export async function generateMetadata({ params, searchParams }: MetaProps, parent: ResolvingMetadata) {
+export async function generateMetadata({ params, searchParams }: MetaProps) { // , parent: ResolvingMetadata
     const par = await params;
     const search = await searchParams;
     const city = await getCityFromZip(par.zip);

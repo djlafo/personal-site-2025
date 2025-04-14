@@ -18,7 +18,7 @@ export default function useVisualizerCore() {
         const presetFn: TimerHandler = async () => {
             let preset;
             if(useAPI) {
-                let presetObj = await getRandomPreset();
+                const presetObj = await getRandomPreset();
                 console.log(presetObj.name);
                 preset = presetObj.preset;
             } else {
@@ -51,7 +51,7 @@ export default function useVisualizerCore() {
             shuffle({v:v, timer: o.shuffleTimer, preset:null});
             setShuffleTimer(o.shuffleTimer);
             _setLock(o.lock);
-        }).catch(e => {});
+        }).catch(() => {});
     }
     const setLock = (b: boolean) => {
         if(b && presetSwitcher) {

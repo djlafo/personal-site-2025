@@ -15,7 +15,7 @@ interface OCRProps {
 }
 export default function OCR({onText, className}: OCRProps) {
     const fileRef = useRef<HTMLInputElement>(null);
-    const [loading, setLoading] = useLoadingScreen();
+    const [, setLoading] = useLoadingScreen();
 
     const getImageOCR = async () => {
         if(!fileRef.current || !fileRef.current.files?.length) return;

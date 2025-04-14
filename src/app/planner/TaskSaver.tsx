@@ -40,7 +40,7 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
                 } else {
                     throw new Error('Invalid tasks format');
                 }
-            } catch (e) {
+            } catch {
                 toast('This doesn\'t seem to be the right data');
             }
         });

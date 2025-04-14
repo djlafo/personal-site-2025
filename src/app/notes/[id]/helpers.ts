@@ -6,7 +6,7 @@ interface Ops {
 }
 export function getTextFromDelta(d: string) {
     try {
-        let json: Ops = JSON.parse(d);
+        const json: Ops = JSON.parse(d);
         let s = '';
         json.ops.map(o => {
             if(o.insert && typeof o.insert === 'string') {

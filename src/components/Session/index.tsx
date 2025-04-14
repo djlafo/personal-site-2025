@@ -13,6 +13,7 @@ export type UserContextType = [
     pending: boolean
 ];
 const SessionContext = createContext<UserContextType>([undefined, (u?: UserInfo) => {
+    console.log(u); // linter
     throw new Error('Session context not provided setter yet');
 }, true]);
 
@@ -32,7 +33,6 @@ export function UserProvider(props: SessionProps) {
 
     useEffect(() => {
         getUserInfo().then(u => {
-            let newUser = u;
             if(u) {
                 console.log(u);
                 const expiry = new Date(u.exp*1000 - 1000*60*60*3);

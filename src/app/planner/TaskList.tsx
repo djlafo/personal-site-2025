@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PlannerData, Task } from "./usePlanner";
 
 import TimeInput from '@/components/TimeInput';
@@ -111,7 +111,7 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
                             <div>
                                 <input type='checkbox'
                                     checked={t.done}
-                                    onChange={e => {
+                                    onChange={() => {
                                         updateRow(i, {done: !t.done});
                                     }}/>
                                 <input type='button' value='x' onClick={() => onRemove(tasks[i])}/>

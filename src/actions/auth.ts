@@ -4,7 +4,7 @@ import db from '@/db';
 import { usersTable } from '@/db/schema/users';
 import { eq, or } from 'drizzle-orm';
 
-import { encrypt, getDecryptedJWT, getExpirationDefault, getUser, JWTObjType } from '@/lib/sessions';
+import { encrypt, getDecryptedJWT, getExpirationDefault } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
 import { cookies, headers } from 'next/headers';
@@ -12,8 +12,8 @@ import { cookies, headers } from 'next/headers';
 import { UserInfo } from '@/components/Session';
 
 type FormState = {
-    error?: String;
-    username?: String;
+    error?: string;
+    username?: string;
 } | undefined
 
 async function userToUserInfo(): Promise<UserInfo | undefined> {

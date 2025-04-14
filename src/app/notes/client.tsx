@@ -28,7 +28,11 @@ function orderNotesByChildren(subnotes: Note[], notes: Note[]): Note[] {
     const noChildren: Note[] = [];
     subnotes.forEach(c => {
         const child = notes.find(n => n.parentId === c.id);
-        child ? hasChildren.push(c) : noChildren.push(c);
+        if(child) {
+            hasChildren.push(c); 
+        } else {
+            noChildren.push(c);
+        }
     });
     return [...hasChildren, ...noChildren];
 }

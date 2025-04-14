@@ -80,7 +80,7 @@ export default function Poll({ poll: _poll }: PollProps) {
                 {mine && 
                     <input type='text' 
                         defaultValue={poll.title} 
-                        onBlur={e => _updatePoll({title: poll.title})}/>
+                        onBlur={() => _updatePoll({title: poll.title})}/>
                     || poll.title
                 }
             </h2>
