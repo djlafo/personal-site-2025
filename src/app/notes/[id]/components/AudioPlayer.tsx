@@ -42,10 +42,8 @@ export function AudioPlayer({onPlayChange, onEnd, audio, autoplay}: AudioPlayerP
         if(!audioRef.current) return;
         if(autoplay && audio)  {
             audioRef.current.play();
-        } else {
-            audioRef.current.pause();
         }
-    }, [audioRef, audio]);
+    }, [autoplay, audioRef, audio]);
 
     return <audio ref={audioRef} 
         controls
@@ -95,6 +93,7 @@ export function AudioPlayerContainer({paragraphs, currentReading, ...theRest}: A
         if(currentReading < 0 || currentReading >= paragraphs.length) return;
         getAudioAndLoad(paragraphs[currentReading]);
         preload(currentReading, 2);
+        // eslint-disable-next-line
     }, [paragraphs, currentReading]);
 
     if(audio)

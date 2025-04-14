@@ -62,6 +62,7 @@ export function NoteParent({note, notes}: NoteParentProps) {
             const ls = localStorage.getItem(`NOTE[${note.id}]`);
             setOpened(!!ls);
         }
+        // eslint-disable-next-line
     }, []);
 
     return <div className={styles.parentContainer}>

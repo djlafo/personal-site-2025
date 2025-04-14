@@ -34,6 +34,7 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
             localStorage.setItem('zip', zip);
             localStorage.setItem('coords', coords);
         }
+        // eslint-disable-next-line
     }, []);
 
     return <div>

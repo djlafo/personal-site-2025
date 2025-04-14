@@ -98,7 +98,8 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
             quillRef.current = null;
             container.innerHTML = '';
         }
-    }, [quillRef]);
+        // eslint-disable-next-line
+    }, []);
 
     return <>
         <div className={styles.quill} ref={quillRef}/>

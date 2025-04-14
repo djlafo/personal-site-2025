@@ -110,6 +110,7 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
     useEffect(() => {
         if(!plannerData.tasks.length)
             load();
+        // eslint-disable-next-line
     }, []);
 
     return <>

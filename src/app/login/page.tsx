@@ -1,12 +1,12 @@
 'use client'
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useState } from 'react';
 
 import { login, register } from '@/actions/auth';
 
 import styles from './login.module.css';
 
-import { UserInfo, useUser } from '@/components/Session';
+import { UserInfo } from '@/components/Session';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function isUser(obj: any): obj is UserInfo {
@@ -17,25 +17,31 @@ function isError(obj: any): obj is {error: string} {
 }
 
 export default function Login() {
-    const [user, setUser] = useUser();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [loginState, _login] = useActionState(login, undefined);
-    const [registerState, _register] = useActionState(register, undefined);
 
-    const _setUser = (u: UserInfo) => {
-        setUser(u);
+    const [loginState, _login] = useActionState(login, undefined);
+    const [lastLoginState, setLastLoginState] = useState(loginState);
+
+    const [registerState, _register] = useActionState(register, undefined);
+    const [lastRegisterState, setLastRegisterState] = useState(registerState);
+
+    const redirect = () => {
         const redirect = searchParams.get('redirect');
         router.push(redirect || '/');
     }
 
-    useEffect(() => {
+    if(lastLoginState !== loginState) {
         if(isUser(loginState) && loginState.username) {
-            _setUser(loginState);
-        } else if(isUser(registerState) && registerState.username) {
-            _setUser(registerState);
+            redirect();
         }
-    }, [loginState, registerState]);
+        setLastLoginState(loginState);
+    } else if (lastRegisterState !== registerState) {
+        if(isUser(registerState) && registerState.username) {
+            redirect();
+        }
+        setLastRegisterState(registerState);
+    }
 
     return <div className={styles.login}>
         <h2>

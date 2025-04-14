@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { logout } from '@/actions/auth';
 
@@ -22,8 +22,6 @@ export default function LoginButton() {
         });
     }
 
-
-
     return <div className={styles.loginbutton}>
         {
             (!pending && !!user && 
@@ -44,22 +42,23 @@ export default function LoginButton() {
 function Timer({endTime}: {endTime: number}) {
     const [timeInterval, setTimeInterval] = useState<number | null>(null);
     const [, setTimeFlipper] = useState(false);
+    const [lastTime, setLastTime] = useState<number>(endTime);
 
-    useEffect(() => {
+    if(endTime != lastTime) {
+        if(timeInterval) {
+            clearInterval(timeInterval);
+        }
+
         const timerHandler: TimerHandler = () => {
             setTimeFlipper(tf => !tf);
         }
         setTimeInterval(setInterval(timerHandler, 60000));
-        return () => {
-            if(!timeInterval) return;
-            clearInterval(timeInterval);
-            setTimeInterval(null);
-        }
-    }, [endTime]);
+        setLastTime(endTime);
+    }
 
     const timeLeft = Math.floor(endTime-(Number(new Date())/1000));
     const hours = Math.floor(timeLeft/60/60);
     const minutes = Math.floor(timeLeft/60 - (hours*60));
 
-    return <>{hours}:{minutes.toString().padStart(2, '0')}</>
+    return <>{hours}:{minutes.toString().padStart(2, '0')}</>;
 }

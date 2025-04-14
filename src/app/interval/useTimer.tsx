@@ -53,6 +53,7 @@ export function useTimer({ onRoundOver }: { onRoundOver: () => void }): timerRet
                 }
             }
         }
+        // eslint-disable-next-line
     }, []);
 
     const setRounds = (n: number) => {
