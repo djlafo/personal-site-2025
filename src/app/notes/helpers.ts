@@ -18,3 +18,13 @@ export function getTextFromDelta(d: string) {
         return d;
     }
 }
+
+export function getNoteTitleFromDelta(s: string, maxLen = 100) {
+    return getNoteTitle(getTextFromDelta(s), maxLen);
+}
+
+
+export function getNoteTitle(s: string, maxLen = 100) {
+    const sub = s.split('\n')[0].substring(0, maxLen);
+    return `${sub}${sub.length === maxLen ? '...' : ''}`;
+}

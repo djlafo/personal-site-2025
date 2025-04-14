@@ -1,6 +1,6 @@
 'use server'
 
-import { eq, asc } from "drizzle-orm";
+import { and, eq, inArray, not } from "drizzle-orm";
 
 import db from "@/db";
 import { notesTable } from "@/db/schema/notes";
@@ -25,7 +25,8 @@ export async function getNote(id: string) {
 export async function getNotes(): Promise<Note[] | MyError> {
     const user = await getUser();
     if(!user) return new MyError({message: 'Not signed in', authRequired: true});
-    const query = await db.select().from(notesTable).where(eq(notesTable.userId, user.id)).orderBy(asc(notesTable.text));
+    // don't bother ordering the query, it's using Ops in JSON for the text, not just regular text
+    const query = await db.select().from(notesTable).where(eq(notesTable.userId, user.id)); 
     return query.map(q => {
         return {
             id: q.id,
@@ -69,6 +70,17 @@ export async function updateNote(id: string, text: string, pub?: boolean) {
     if(pub !== undefined) props.public = pub;
     const updated = await db.update(notesTable).set(props).where(eq(notesTable.id, id)).returning();
     return updated;
+}
+
+export async function moveNotes(ids: string[], newParent: string): Promise<Note[] | MyError> {
+    const user = await getUser();
+    if(!user) return new MyError({message: 'Not signed in', authRequired: true});
+    await db.update(notesTable).set({parentId: newParent || null}).where(and(
+        not(eq(notesTable.id, newParent)),
+        inArray(notesTable.id, ids),
+        eq(notesTable.userId, user.id)
+    ));
+    return await getNotes();
 }
 
 export async function deleteNote(id: string) {

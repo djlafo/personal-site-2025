@@ -6,7 +6,7 @@
     cursor: pointer;
 }
 
-.noteItem > * {
+.noteText > * {
     margin: 0 10px;
 }
 
@@ -28,4 +28,12 @@
     margin: 12px 0;
     overflow: hidden;
     line-height: 1.7;
+}
+
+.notes button, .notes select {
+    margin-left: 10px;
+}
+
+.noteItem {
+    display: flex;
 }

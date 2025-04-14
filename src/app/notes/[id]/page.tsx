@@ -1,6 +1,6 @@
 import { getNote } from "@/actions/notes";
 import EditorProxy from "./EditorProxy";
-import { getTextFromDelta } from "./helpers";
+import { getNoteTitleFromDelta } from "../helpers";
 import { MyError } from "@/lib/myerror";
 
 export async function generateMetadata({ params }: PageProps) { // , parent: ResolvingMetadata
@@ -17,9 +17,8 @@ export async function generateMetadata({ params }: PageProps) { // , parent: Res
                 title: 'Error'
             }
         } else {
-            const text = getTextFromDelta(note.text).split('\n')[0].substring(0, 100);
             return {
-                title: `${text}${text.length === 100 ? '...' : ''}`,
+                title: getNoteTitleFromDelta(note.text),
                 description: 'A note'
             }
         }
