@@ -1,17 +1,15 @@
 'use client'
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './weather.module.css';
 
 export default function Page() {
-    const [zipField, setZipField] = useState(() => {
-        if(typeof window !== 'undefined') {
-            return localStorage.getItem('zip') || undefined;
-        }
-    });
+    let storedZip = '';
+    if(typeof window !== 'undefined') {
+        storedZip = localStorage.getItem('zip') || '';
+    }
 
     const router = useRouter();
 
@@ -30,17 +28,16 @@ export default function Page() {
 
     return <div className={styles.weather}>
         <Info/>
-        <div>
+        <form action={fd => _setLocation(fd.get('zip')?.toString())}>
             <div>
-                ZIP: <input type='text' value={zipField || ''} onChange={e => setZipField(e.target.value)}/>
+                ZIP: <input name='zip' type='text' defaultValue={storedZip || ''}/>
             </div>
             <br/>
             <div>
-                <input type='button' 
-                    value='Get by ZIP' 
-                    onClick={() => _setLocation(zipField)}/>
+                <input type='submit' 
+                    value='Get by ZIP'/>
             </div>
-        </div>
+        </form>
     </div>
 }
 

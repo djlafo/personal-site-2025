@@ -1,12 +1,12 @@
 'use client'
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 
 import { login, register } from '@/actions/auth';
 
 import styles from './login.module.css';
 
-import { UserInfo } from '@/components/Session';
+import { UserInfo, useUser } from '@/components/Session';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function isUser(obj: any): obj is UserInfo {
@@ -17,42 +17,52 @@ function isError(obj: any): obj is {error: string} {
 }
 
 export default function Login() {
+    const [, setUser] = useUser();
+    const loginButton = useRef<HTMLButtonElement>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
-
     const [loginState, _login] = useActionState(login, undefined);
-    const [lastLoginState, setLastLoginState] = useState(loginState);
-
     const [registerState, _register] = useActionState(register, undefined);
-    const [lastRegisterState, setLastRegisterState] = useState(registerState);
 
-    const redirect = () => {
+    const redirect = (u: UserInfo) => {
+        setUser(u);
         const redirect = searchParams.get('redirect');
         router.push(redirect || '/');
     }
 
-    if(lastLoginState !== loginState) {
+    useEffect(() => {
         if(isUser(loginState) && loginState.username) {
-            redirect();
+            redirect(loginState);
+        } else if(isUser(registerState) && registerState.username) {
+            redirect(registerState);
         }
-        setLastLoginState(loginState);
-    } else if (lastRegisterState !== registerState) {
-        if(isUser(registerState) && registerState.username) {
-            redirect();
+        // Don't want this running except after login/register. Will complain about updating
+        // eslint-disable-next-line
+    }, [loginState, registerState]);
+
+    useEffect(() => {
+        const submitForm = (e: KeyboardEvent) => {
+            if(e.key === 'Enter') {
+                loginButton.current?.click();
+            }
         }
-        setLastRegisterState(registerState);
-    }
+
+        window.addEventListener('keydown', submitForm)
+        return () => {
+            window.removeEventListener('keydown', submitForm);
+        }
+    }, [loginButton]);
 
     return <div className={styles.login}>
         <h2>
             Login
         </h2>
-        <form>
+        <form onSubmit={e => e.preventDefault()}>
             <input id='username' name='username' placeholder='username' type='text' autoFocus/>
 
             <input id='password' name='password' placeholder='password' type='password'/>
             
-            <button formAction={_login}>Login</button>
+            <button ref={loginButton} formAction={_login}>Login</button>
             <button formAction={_register}>Register</button>
             <div>
                 {isError(loginState) && loginState.error}<br/>
