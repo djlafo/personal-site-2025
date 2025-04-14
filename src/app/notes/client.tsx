@@ -189,7 +189,8 @@ export function NoteParent({note, notes}: NoteParentProps) {
         <div className={styles.noteItem}>
             {note && <>
                 {children.length && 
-                    <span onClick={() => _setOpened(!opened)}>
+                    <span onClick={() => _setOpened(!opened)}
+                        className={styles.listButton}>
                         {opened ? '-' : '+'}
                     </span> 
                     || <>&nbsp;</>

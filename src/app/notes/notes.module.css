@@ -2,7 +2,7 @@
     padding: 10px;
 }
 
-.parentContainer > span {
+.listButton {
     cursor: pointer;
 }
 
