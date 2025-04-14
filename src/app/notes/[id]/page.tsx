@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps) { // , parent: Res
         } else {
             const text = getTextFromDelta(note.text);
             return {
-                title: `${text.substring(0,25)}...`,
+                title: `${text.split('\n')[0].substring(0, 100)}...`,
                 description: 'A note'
             }
         }
