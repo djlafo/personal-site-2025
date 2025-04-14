@@ -17,9 +17,9 @@ export async function generateMetadata({ params }: PageProps) { // , parent: Res
                 title: 'Error'
             }
         } else {
-            const text = getTextFromDelta(note.text);
+            const text = getTextFromDelta(note.text).split('\n')[0].substring(0, 100);
             return {
-                title: `${text.split('\n')[0].substring(0, 100)}...`,
+                title: `${text}${text.length === 100 ? '...' : ''}`,
                 description: 'A note'
             }
         }

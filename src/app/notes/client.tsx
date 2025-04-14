@@ -11,10 +11,11 @@ interface NoteItemProps {
     note: Note;
 }
 export function NoteItem({note}: NoteItemProps) {
+    const text = getTextFromDelta(note.text).split('\n')[0].substring(0, 100);
 
     return <span className={styles.noteItem}>
         <Link href={`/notes/${note.id}`}>
-            {getTextFromDelta(note.text).split('\n')[0].substring(0, 100)}...
+            {text}{text.length === 100 ? '...' : ''}
         </Link>
     </span>;
 }
