@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { logout } from '@/actions/auth';
 
 import { useUser } from '@/components/Session';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import styles from './headerbar.module.css';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import Link from 'next/link';
 export default function LoginButton() {
     const [user, setUser, pending] = useUser();
     const router = useRouter();
+    const pathname = usePathname();
 
     const _logout = () => {
         logout().then(() => {
@@ -35,7 +36,7 @@ export default function LoginButton() {
                 </span>) 
             ||
             (!pending && !user && 
-                <Link href='/login'>Login</Link>)
+                <Link href={`/login?redirect=${pathname}`}>Login</Link>)
         }
     </div>
 }

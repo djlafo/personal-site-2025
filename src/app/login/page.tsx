@@ -7,7 +7,7 @@ import { login, register } from '@/actions/auth';
 import styles from './login.module.css';
 
 import { UserInfo, useUser } from '@/components/Session';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function isUser(obj: any): obj is UserInfo {
     return typeof obj === 'object' && obj.username;
@@ -19,6 +19,7 @@ function isError(obj: any): obj is {error: string} {
 export default function Login() {
     const [user, setUser] = useUser();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loginState, _login] = useActionState(login, undefined);
     const [registerState, _register] = useActionState(register, undefined);
 
@@ -31,7 +32,10 @@ export default function Login() {
     }, [loginState, registerState]);
 
     useEffect(() => {
-        if(user) router.push('/');
+        if(user) {
+            const redirect = searchParams.get('redirect');
+            router.push(redirect || '/');
+        }
     }, [user]);
 
     return <div className={styles.login}>
