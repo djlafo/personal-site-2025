@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { NoteList } from "./client";
 
 import { MyError } from "@/lib/myerror";
-import { getTextFromDelta } from "./helpers";
 
 export const metadata: Metadata = {
     title: "Notes"
@@ -15,7 +14,7 @@ export default async function Page() {
     const user = await getUser();
 
     if(user) {
-        let notes = await getNotes();
+        const notes = await getNotes();
         if(notes instanceof MyError) {
             return <div>
                 {notes.message}

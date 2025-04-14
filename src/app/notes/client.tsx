@@ -24,7 +24,7 @@ const ListContext = createContext<ListContextType>([
 ]);
 
 const formatNotes = (notes: Note[]) => {
-    let newNotes = notes.map(n => {
+    const newNotes = notes.map(n => {
         return {
             ...n,
             text: getTextFromDelta(n.text)
