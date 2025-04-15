@@ -105,6 +105,7 @@ export async function updateNote(id: string, text: string, pub?: boolean): Promi
     };
 }
 
+export const MAX_FILE_SIZE = 1024 * 1024 * 100;
 export async function addFile(id: string, fileData: FormData): Promise<NoteWithFiles | MyError> {
     // doubling up the user check because lazy and need the username here
     const user = await getUser();
@@ -112,7 +113,10 @@ export async function addFile(id: string, fileData: FormData): Promise<NoteWithF
     if(check instanceof MyError) return check;
 
     const file = fileData.get('file') as File;
-    console.log(`FILE TYPE ${file.type}`);
+
+    if(file.size > MAX_FILE_SIZE) {
+        return new MyError({message: `File size larger than ${MAX_FILE_SIZE/1024/1024}mb`});
+    }
     const body = await file.bytes();
     const awsClient = new S3Client();
     const params = {

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { addFile, createNote, deleteFile, deleteNote, NoteWithFiles, updateNote } from "@/actions/notes";
+import { addFile, createNote, deleteFile, deleteNote, MAX_FILE_SIZE, NoteWithFiles, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter, useSearchParams } from "next/navigation";
 import Quill from "quill";
@@ -52,8 +52,8 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
 
     const _addFile = async () => {
         if(!note || !fileRef.current || !fileRef.current.files || fileRef.current.files.length !== 1) return;
-        if(fileRef.current.files[0].size >= 1024 * 1024 * 100) {
-            toast(`File too big (max 100mb): ${(fileRef.current.files[0].size/1024/1024).toFixed(2)}mb`)
+        if(fileRef.current.files[0].size >= MAX_FILE_SIZE) {
+            toast(`File too big (max ${MAX_FILE_SIZE}mb): ${(fileRef.current.files[0].size/1024/1024).toFixed(2)}mb`)
             return;
         }
         const data = new FormData();
