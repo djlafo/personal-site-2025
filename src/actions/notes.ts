@@ -304,7 +304,7 @@ async function getFilesForNote(id: string, username: string) {
     const client = new S3Client();
     const params = {
         Bucket: process.env.AWS_BUCKET,
-        delimiter: `${username}/${id}`
+        Prefix: `${username}/${id}/`
     }
     const command = new ListObjectsCommand(params);
     try {
@@ -314,6 +314,7 @@ async function getFilesForNote(id: string, username: string) {
         resp.Contents.forEach(c => {
             if(c.Key) files.push(c.Key.replace(`${username}/${id}/`, ''));
         });
+        console.log(files);
         return files;
     } catch {
         return MyError.create({message: 'Failed to read files'});
@@ -327,7 +328,7 @@ async function checkTotalFileSize(username: string, newFileSize: number): Promis
     const client = new S3Client();
     const params = {
         Bucket: process.env.AWS_BUCKET,
-        delimiter: `${username}`
+        Prefix: `${username}/`
     }
     const command = new ListObjectsCommand(params);
     try {
