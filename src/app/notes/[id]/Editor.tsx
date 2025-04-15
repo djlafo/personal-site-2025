@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { useUser } from "@/components/Session";
 
-import { Note } from "@/actions/notes";
+import { NoteWithFiles } from "@/actions/notes";
 
 import QuillEditor from "./components/QuillEditor";
 import ReadDisplay from "./components/ReadDisplay";
@@ -14,7 +14,7 @@ import { AudioPlayerContainer } from "./components/AudioPlayer";
 import styles from "./tts.module.css";  
 
 interface EditorProps {
-    note?: Note;
+    note?: NoteWithFiles;
 }
 export default function Editor({note}: EditorProps) {
     const [user] = useUser();
@@ -22,6 +22,7 @@ export default function Editor({note}: EditorProps) {
 
     return <div className={styles.tts}>
         {user && <Link href='/notes'>Back</Link> || <></>}
+        {note && <span> File owned by {note.username}</span>}
 
         <div className={`${styles.editorDiv} ${paragraphs && paragraphs.length ? styles.hidden : ''}`}>
             <QuillEditor

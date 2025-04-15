@@ -1,10 +1,11 @@
 'use client'
 
 import Link from "next/link";
-import { createNote, deleteNote, Note, updateNote } from "@/actions/notes";
+import { addFile, createNote, deleteFile, deleteNote, NoteWithFiles, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter, useSearchParams } from "next/navigation";
 import Quill from "quill";
+import hljs from 'highlight.js';
 import ImageResize from 'quill-image-resize';
 Quill.register('modules/imageResize', ImageResize);
 import { useEffect, useRef, useState } from "react";
@@ -16,14 +17,16 @@ import { MyError } from "@/lib/myerror";
 
 export interface QuillEditorProps {
     onStart: (paragraphs: string[]) => void;
-    note?: Note;
+    note?: NoteWithFiles;
 }
-export default function QuillEditor({onStart, note}: QuillEditorProps) {
+export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
     const searchParams = useSearchParams();
     const [user] = useUser();
     const router = useRouter();
+    const [note, setNote] = useState(_note);
     const [content, setContent] = useState(note?.text || '[]');
     const [textContent, setTextContent] = useState('');
+    const fileRef = useRef<HTMLInputElement>(null);
     const quillRef = useRef<HTMLDivElement>(null);
 
     const _createNote = async () => {
@@ -32,7 +35,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
             toast(newNote.message);
         } else {
             toast('Created');
-            router.replace(`/notes/${newNote.id}`);
+            setNote(newNote);
         }
 }
 
@@ -43,11 +46,43 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
             toast(updatedNote.message);
         } else {
             toast('Updated');
+            setNote(updatedNote);
+        }
+    }
+
+    const _addFile = async () => {
+        if(!note || !fileRef.current || !fileRef.current.files || fileRef.current.files.length !== 1) return;
+        if(fileRef.current.files[0].size >= 1024 * 1024 * 100) {
+            toast(`File too big (max 100mb): ${(fileRef.current.files[0].size/1024/1024).toFixed(2)}mb`)
+            return;
+        }
+        const data = new FormData();
+        data.append('file', fileRef.current.files[0], fileRef.current.value);
+        toast('Uploading file...');
+        const resp = await addFile(note.id, data);
+        if(resp instanceof MyError) {
+            toast(resp.message)
+        } else {
+            toast('File Added');
+            setNote(resp);
+        }
+    }
+
+    const _deleteFile = async (filename: string) => {
+        if(!note) return;
+        const resp = await deleteFile(note.id, filename);
+
+        if(resp instanceof MyError) {
+            toast(resp.message);
+        } else {
+            toast(`Deleted ${filename}`);
+            setNote(resp);
         }
     }
 
     const _deleteNote = async () => {
         if(!note) return;
+        if(!confirm("Are you sure?")) return;
         localStorage.removeItem(`NOTE[${note.id}]`);
         if(await deleteNote(note.id)) {
             router.push('/notes');
@@ -66,6 +101,7 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
         );
         const quill = new Quill(editorContainer, {
             modules: {
+                syntax: { hljs },
                 toolbar: [
                     [{'size': ['small', false, 'large', 'huge']}], 
                     [{'header': [1,2,3,4,5,6,false]}],
@@ -104,19 +140,39 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
     return <>
         <div className={styles.quill} ref={quillRef}/>
 
+        <div className={styles.fileList}>
+            {
+                note && note.files.length === 0 && <span>No files attached</span>
+            }
+            {
+                note && note.files.length > 0 && note.files.map(f => {
+                    return <div key={f}>
+                        <a href={`/notes/${note.id}/${f}`} 
+                            rel="noopener noreferrer" 
+                            target="_blank">
+                            {f}
+                        </a>
+                        <button onClick={() => _deleteFile(f)}>Delete</button>
+                    </div>;
+                })
+            }
+        </div>
+
         <div className={styles.buttons}>
             <OCR onText={s => setTextContent(tc => tc + s)}
                 className={styles.ocr}/>
             <input type='button' 
                 value="Generate Audio" 
                 onClick={() => onStart(textContent.split('\n\n').filter(p => !!p))}/>
+            {user && (note && note.username === user.username && note.text != content || !note) &&
+                <span className={styles.warningText}>Changes not saved!</span>
+            }
             {user && !note &&
                 <input type='button' 
                     value="Create Note" 
                     onClick={() => _createNote()}/> || <></>
             }
-            
-            {user && note && note.yours && 
+            {user && note && note.username === user.username && 
                 <>
                     <input type='button' 
                         value='Update Note' 
@@ -131,6 +187,8 @@ export default function QuillEditor({onStart, note}: QuillEditorProps) {
                             defaultChecked={note.public}
                             onChange={e => _updateNote(e.target.checked)}/>
                     </div>
+                    <input type='file' ref={fileRef}/>
+                    <button onClick={() => _addFile()}>Add File</button>
                     <Link href={`/notes/new?pId=${note.id}`}>New Subnote</Link>
                 </> || <></>
             }

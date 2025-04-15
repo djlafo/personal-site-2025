@@ -1,4 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css");
 
 .tts {
     margin-left: 2.5%;
@@ -56,8 +57,10 @@
     margin-right: auto;
 }
 
-.quillBar {
-    background-color: cyan;
+.quill :global(.ql-toolbar) {
+    background-color: #CCCCCC;
+    position: sticky;
+    top: 0;
 }
 
 .editorDiv {
@@ -74,4 +77,9 @@
 
 .hidden {
     display: none;
+}
+
+.warningText {
+    text-transform: uppercase;
+    color: red;
 }

@@ -1,10 +1,10 @@
 'use client'
 
 import dynamic from 'next/dynamic';
-import { Note } from '@/actions/notes';
+import { NoteWithFiles } from '@/actions/notes';
 
 interface EditorProps {
-    note?: Note;
+    note?: NoteWithFiles;
 }
 const Editor = dynamic(() => import('./Editor'), {ssr: false});
 export default function Proxy({note}: EditorProps) {

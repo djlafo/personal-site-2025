@@ -57,7 +57,7 @@ export default function Login() {
         <h2>
             Login
         </h2>
-        <form onSubmit={e => e.preventDefault()}>
+        <form>
             <input id='username' name='username' placeholder='username' type='text' autoFocus/>
 
             <input id='password' name='password' placeholder='password' type='password'/>
