@@ -36,7 +36,7 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
             toast.error(newNote.message);
         } else {
             toast.success('Created');
-            setNote(newNote);
+            router.push(`/notes/${newNote.id}`);
         }
 }
 
