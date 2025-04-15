@@ -11,6 +11,6 @@ export async function getOCR(image: File) {
         await worker.terminate();
         return ret.data.text;
     } catch {
-        return new MyError({message: 'Failed to generate OCR'});
+        return MyError.create({message: 'Failed to generate OCR'});
     }
 }

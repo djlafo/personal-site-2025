@@ -7,11 +7,11 @@ import { usersTable } from '@/db/schema/users';
 import { plannerTable } from '@/db/schema/planner';
 
 import { getUser } from '@/lib/sessions';
-import { MyError } from '@/lib/myerror';
+import { MyError, MyErrorObj } from '@/lib/myerror';
 
 import { PlannerData } from '@/app/planner/usePlanner';
 
-export async function getPlannerData(): Promise<PlannerData | MyError>{
+export async function getPlannerData(): Promise<PlannerData | MyErrorObj>{
     const user = await getUser();
     if(user) {
         const planner = await db.select()
@@ -26,14 +26,14 @@ export async function getPlannerData(): Promise<PlannerData | MyError>{
             await db.update(usersTable).set({plannerId: newPlanner[0].id}).where(eq(usersTable.id, user.id));
             return newPlanner[0].data as PlannerData;
         } else {
-            return new MyError({message: 'Somehow more than one planner has shown up'});
+            return MyError.create({message: 'Somehow more than one planner has shown up'});
         }
     } else {
-        return new MyError({message: 'Not logged in', authRequired: true});
+        return MyError.create({message: 'Not logged in', authRequired: true});
     }
 }
 
-export async function savePlannerData(pd: PlannerData) {
+export async function savePlannerData(pd: PlannerData): Promise<PlannerData | MyErrorObj> {
     const user = await getUser();
     if(user) {
         const planner = await db.select()
@@ -50,5 +50,5 @@ export async function savePlannerData(pd: PlannerData) {
             return saved[0].data as PlannerData;
         }
     }
-    return new MyError({message: 'Not logged in', authRequired: true});
+    return MyError.create({message: 'Not logged in', authRequired: true});
 }

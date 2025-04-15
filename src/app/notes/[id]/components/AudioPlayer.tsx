@@ -70,7 +70,7 @@ export function AudioPlayerContainer({paragraphs, currentReading, ...theRest}: A
                 const realAud = await aud;
                 setAudio(realAud);
             } catch (e) {
-                if(typeof e === 'string') toast(e); 
+                if(typeof e === 'string') toast.error(e); 
             } finally {
                 setLoading(false);
             }

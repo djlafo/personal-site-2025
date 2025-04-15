@@ -113,11 +113,11 @@ export function ListButtons({onSelect, selecting, notes, selected, onNotesUpdate
     const _moveNotes = async () => {
         const newNotes = await moveNotes(selected.map(n => n.id), newParent);
         setNewParent('');
-        if(newNotes instanceof MyError) {
-            toast(newNotes.message);
+        if(MyError.isInstanceOf(newNotes)) {
+            toast.error(newNotes.message);
         } else {
             onNotesUpdated(newNotes);
-            toast('Notes Updated');
+            toast.success('Notes Updated');
         }
     }
 

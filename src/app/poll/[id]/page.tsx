@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: PageProps) { // , parent: Res
     const par = await params;
     const fullPoll = await readPoll(par.id);
 
-    if(fullPoll instanceof MyError) {
+    if(MyError.isInstanceOf(fullPoll)) {
         return {
             title: fullPoll.message
         };
@@ -36,7 +36,7 @@ export default function Page({ params }: PageProps) {
 async function PollLoader({ params }: PageProps) {
     const _params = await params;
     const fullPoll = await readPoll(_params.id);
-    if(fullPoll instanceof MyError) {
+    if(MyError.isInstanceOf(fullPoll)) {
         return <div>
             {fullPoll.message}
         </div>;

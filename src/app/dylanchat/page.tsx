@@ -35,8 +35,8 @@ export default function DylanChat() {
             }]);
         });
         const response = await sendChatTTS(userInput, chatText);
-        if(response instanceof MyError) {
-            toast(response.message);
+        if(MyError.isInstanceOf(response)) {
+            toast.error(response.message);
         } else {
             if(audioObj) {
                 audioObj.src = `data:audio/mpeg;base64,${response.audio}`;

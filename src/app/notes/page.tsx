@@ -15,7 +15,7 @@ export default async function Page() {
 
     if(user) {
         const notes = await getNotes();
-        if(notes instanceof MyError) {
+        if(MyError.isInstanceOf(notes)) {
             return <div>
                 {notes.message}
             </div>;

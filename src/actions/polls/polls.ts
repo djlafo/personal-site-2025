@@ -57,7 +57,7 @@ export async function readPoll(uuid: string) {
             eq(pollsTable.active, true)
         ));
 
-    if(!poll[0].polls) return new MyError({message: 'Poll not found'});
+    if(!poll[0].polls) return MyError.create({message: 'Poll not found'});
 
     const seen: {[key:number]: boolean} = {};
     const options = poll.filter(p => {
@@ -94,7 +94,7 @@ export async function readPoll(uuid: string) {
 
 export async function addPoll(formData: FormData) {
     const user = await getUser();
-    if(!user) return new MyError({message: 'Not logged in', authRequired: true});
+    if(!user) return MyError.create({message: 'Not logged in', authRequired: true});
     const currentPolls = await db.select()
         .from(pollsTable)
         .where(and(
@@ -102,7 +102,7 @@ export async function addPoll(formData: FormData) {
                 eq(pollsTable.active, true)
             )
         );
-    if(currentPolls.length > 20) return new MyError({message: 'Poll limit reached'});
+    if(currentPolls.length > 20) return MyError.create({message: 'Poll limit reached'});
     const newRow = await db.insert(pollsTable).values({
         uuid: crypto.randomUUID(),
         userId: user.id,
@@ -114,7 +114,7 @@ export async function addPoll(formData: FormData) {
     if(newRow.length === 1) {
         return newRow[0].uuid;
     } else {
-        return new MyError({message: 'Error creating poll'});
+        return MyError.create({message: 'Error creating poll'});
     }
 }
 
@@ -126,7 +126,7 @@ export interface UpdatePollProps {
 }
 export async function updatePoll(uuid: string, props: UpdatePollProps) {
     const user = await getUser();
-    if(!user) return new MyError({message: 'Not logged in', authRequired: true});
+    if(!user) return MyError.create({message: 'Not logged in', authRequired: true});
     const updated = await db.update(pollsTable)
         .set(props)
         .where(
@@ -135,7 +135,7 @@ export async function updatePoll(uuid: string, props: UpdatePollProps) {
                 eq(pollsTable.userId, user.id)
             )
         ).returning({uuid: pollsTable.uuid});
-    if(updated.length !== 1) return new MyError({message: 'Poll does not exist or unauthorized'});
+    if(updated.length !== 1) return MyError.create({message: 'Poll does not exist or unauthorized'});
     
     // clear all votes attached to poll
     if(Object.keys(props).includes('rankedChoice')) {

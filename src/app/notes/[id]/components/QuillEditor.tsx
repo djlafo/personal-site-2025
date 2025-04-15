@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { addFile, createNote, deleteFile, deleteNote, MAX_FILE_SIZE, NoteWithFiles, updateNote } from "@/actions/notes";
+import { addFile, addFilePart, cancelFilePart, createNote, deleteFile, deleteNote, getNote, NoteWithFiles, updateNote } from "@/actions/notes";
 import { useUser } from "@/components/Session";
 import { useRouter, useSearchParams } from "next/navigation";
 import Quill from "quill";
@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import styles from '../tts.module.css';
 import OCR from "@/components/OCR";
 import { MyError } from "@/lib/myerror";
+import { MAX_FILE_SIZE } from "../../constants";
 
 export interface QuillEditorProps {
     onStart: (paragraphs: string[]) => void;
@@ -31,10 +32,10 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
 
     const _createNote = async () => {
         const newNote = await createNote(content, searchParams.get('pId') || undefined);
-        if(newNote instanceof MyError) {
-            toast(newNote.message);
+        if(MyError.isInstanceOf(newNote)) {
+            toast.error(newNote.message);
         } else {
-            toast('Created');
+            toast.success('Created');
             setNote(newNote);
         }
 }
@@ -42,29 +43,73 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
     const _updateNote = async (checked?: boolean) => {
         if(!note) return;
         const updatedNote = await updateNote(note.id, content, checked);
-        if(updatedNote instanceof MyError) {
-            toast(updatedNote.message);
+        if(MyError.isInstanceOf(updatedNote)) {
+            toast.error(updatedNote.message);
         } else {
-            toast('Updated');
+            toast.success('Updated');
             setNote(updatedNote);
         }
     }
 
     const _addFile = async () => {
         if(!note || !fileRef.current || !fileRef.current.files || fileRef.current.files.length !== 1) return;
-        if(fileRef.current.files[0].size >= MAX_FILE_SIZE) {
-            toast(`File too big (max ${MAX_FILE_SIZE}mb): ${(fileRef.current.files[0].size/1024/1024).toFixed(2)}mb`)
+        if(user && user.username !== 'dylan' && fileRef.current.files[0].size >= MAX_FILE_SIZE) {
+            toast.warning(`File too big (max ${MAX_FILE_SIZE}mb): ${(fileRef.current.files[0].size/1024/1024).toFixed(2)}mb`);
             return;
         }
-        const data = new FormData();
-        data.append('file', fileRef.current.files[0], fileRef.current.value);
-        toast('Uploading file...');
-        const resp = await addFile(note.id, data);
-        if(resp instanceof MyError) {
-            toast(resp.message)
+        const file = fileRef.current.files[0];
+
+        // create multipart
+        const uploadId = await addFile(note.id, file.name, file.type, file.size);
+        if(MyError.isInstanceOf(uploadId)) {
+            toast.error(uploadId.message);
+            return;
+        }
+
+        const lastToast = toast.loading('Uploading file...', {
+            closeOnClick: true,
+            onClose(removedByUser) {
+                if(removedByUser) {
+                    cancelFilePart(uploadId, file.name, note.id).then(res => {
+                        if(MyError.isInstanceOf(res)) {
+                            toast.error('Failed to cancel upload');
+                        } else {
+                            toast.success('Upload cancelled');
+                        }
+                    });
+                }
+            }
+        });
+
+        const data = await file.bytes();
+        let start = 0;
+        const tags = [];
+        const chunkSize = 1024*1024*5; // 5mb
+        do {
+            const toastText = `${(start/file.size*100).toFixed(2)}% (Click to Cancel)`;
+            toast.update(lastToast, {
+                render: toastText
+            });
+            const endByte = (start+chunkSize > file.size) ? file.size : start+chunkSize;
+            const part = await addFilePart(uploadId, data.slice(start,endByte), tags);
+            if(MyError.isInstanceOf(part)) {
+                toast.update(lastToast, {render: part.message, type: 'error'});
+                return;
+            } else if (part==='done') {
+                break;
+            } else {
+                tags.push(part);
+            }
+            start = endByte;
+        } while (start < data.length);
+        toast.dismiss(lastToast);
+        toast.success('File added');
+        
+        const reloadedNote = await getNote(note.id);
+        if(MyError.isInstanceOf(reloadedNote)) {
+            toast.error(reloadedNote.message);
         } else {
-            toast('File Added');
-            setNote(resp);
+            setNote(reloadedNote);
         }
     }
 
@@ -72,10 +117,10 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
         if(!note) return;
         const resp = await deleteFile(note.id, filename);
 
-        if(resp instanceof MyError) {
-            toast(resp.message);
+        if(MyError.isInstanceOf(resp)) {
+            toast.error(resp.message);
         } else {
-            toast(`Deleted ${filename}`);
+            toast.success(`Deleted ${filename}`);
             setNote(resp);
         }
     }
@@ -87,7 +132,7 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
         if(await deleteNote(note.id)) {
             router.push('/notes');
         } else {
-            toast('Failed to delete');
+            toast.error('Failed to delete');
         }
     }
 

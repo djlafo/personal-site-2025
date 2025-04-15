@@ -12,6 +12,6 @@ export default function Page() {
 
 async function PlannerLoader() {
     const resp = await getPlannerData();
-    const plannerData = (resp instanceof MyError) ? undefined : resp;
+    const plannerData = (MyError.isInstanceOf(resp)) ? undefined : resp;
     return <PlannerComponent initPlannerData={plannerData}/>
 }

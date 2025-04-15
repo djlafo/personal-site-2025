@@ -1,0 +1,1 @@
+ALTER TABLE "file_uploads" ADD COLUMN "part_number" integer NOT NULL;

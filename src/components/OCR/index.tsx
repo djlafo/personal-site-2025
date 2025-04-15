@@ -24,8 +24,8 @@ export default function OCR({onText, className}: OCRProps) {
         const text = await getOCR(img);
         setLoading(false);
         // process out extraneous newlines
-        if(text instanceof MyError) {
-            toast(text.message);
+        if(MyError.isInstanceOf(text)) {
+            toast.error(text.message);
         } else {
             onText(text.replaceAll(/(?<!\n)\n(?!\n)/g, '. '));
         }

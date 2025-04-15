@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: PageProps) { // , parent: Res
         }
     } else {
         const note = await getNote(p.id);
-        if(note instanceof MyError) {
+        if(MyError.isInstanceOf(note)) {
             return {
                 title: 'Error'
             }
@@ -34,7 +34,7 @@ export default async function Page({params}: PageProps) {
         return <EditorProxy/>;
     } else {
         const note = await getNote(p.id);
-        if(note instanceof MyError) {
+        if(MyError.isInstanceOf(note)) {
             return <span>{note.message}</span>;
         } else {
             return <EditorProxy note={note}/>;

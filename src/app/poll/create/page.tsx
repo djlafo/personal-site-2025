@@ -12,8 +12,8 @@ export default function Page() {
 
     const _addPoll = (f: FormData) => {
         addPoll(f).then(u => {
-            if(u instanceof MyError) {
-                toast(u.message);
+            if(MyError.isInstanceOf(u)) {
+                toast.error(u.message);
             } else {
                 redirect(`/poll/${u}`);
             }

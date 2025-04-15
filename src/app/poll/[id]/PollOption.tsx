@@ -17,8 +17,8 @@ export default function PollOption(props: PollOptionProps) {
 
     const deleteOption = async(optionId: number, text: string) => {
         const res = await updateOption(props.uuid, optionId, text, false);
-        if(res instanceof MyError) {
-            toast(res.message);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
             props.onPollChange(res);
         }
@@ -30,8 +30,8 @@ export default function PollOption(props: PollOptionProps) {
 
     const vote = async (p: SerializedPollOption) => {
         const res = await voteFor(props.uuid, p.id);
-        if(res instanceof MyError) {
-            toast(res.message);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
             props.onPollChange(res);
         }

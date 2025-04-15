@@ -1,0 +1,1 @@
+ALTER TABLE "file_uploads" ADD COLUMN "file_name" varchar(255) NOT NULL;

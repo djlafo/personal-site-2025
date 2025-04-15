@@ -10,7 +10,7 @@ import { MyError } from "@/lib/myerror";
 export async function voteFor(uuid: string, pollOptionId: number) {
     const user = await getUser();
     const ip = await getClientIdentifier();
-    if(!ip) return new MyError({message: 'Failed to vote'});
+    if(!ip) return MyError.create({message: 'Failed to vote'});
 
     // delete any current votes
     await db.delete(pollVotesTable).where(and(
@@ -27,7 +27,7 @@ export async function voteFor(uuid: string, pollOptionId: number) {
     if(vote.length === 1) {
         return readPoll(uuid);
     }  else {
-        return new MyError({message: 'Failed to vote'});
+        return MyError.create({message: 'Failed to vote'});
     }
 }
 
@@ -38,7 +38,7 @@ export interface RankValueType {
 export async function setVoteRanks(uuid: string, values: RankValueType[]) {
     const user = await getUser();
     const ip = await getClientIdentifier();
-    if(!ip) return new MyError({message: 'Failed to vote'});
+    if(!ip) return MyError.create({message: 'Failed to vote'});
 
     const options = await db.select().from(pollOptionsTable).where(and(
         eq(pollOptionsTable.pollUuid, uuid),

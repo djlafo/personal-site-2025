@@ -19,7 +19,7 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
 
     const checkClipboard = () => {
         if(!navigator.clipboard) {
-            toast('Cant access the clipboard');
+            toast.error('Cant access the clipboard');
             return false;
         }
         return true;
@@ -27,7 +27,7 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
     const copy = () => {
         if(!checkClipboard()) return;
         navigator.clipboard.writeText(JSON.stringify(plannerData));
-        toast('Copied to clipboard');
+        toast.success('Copied to clipboard');
     };
 
     const paste = () => {
@@ -41,7 +41,7 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
                     throw new Error('Invalid tasks format');
                 }
             } catch {
-                toast('This doesn\'t seem to be the right data');
+                toast.warning('This doesn\'t seem to be the right data');
             }
         });
     };
@@ -54,13 +54,13 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
 
     const loadBrowser = () => {
         const loaded = load();
-        if(!loaded) toast('Nothing saved');
+        if(!loaded) toast.info('Nothing saved');
     };
 
     const saveToServer = () => {
         savePlannerData(plannerData).then(r => {
-            if(r instanceof MyError) {
-                toast(r.message);
+            if(MyError.isInstanceOf(r)) {
+                toast.error(r.message);
             } else {
                 setLastSaved(plannerData);
             }
@@ -69,8 +69,8 @@ export default function TaskSaver({onLoad, plannerData}: TaskSaverProps) {
 
     const loadServer = () => {
         getPlannerData().then(pd => {
-            if(pd instanceof MyError) {
-                toast(pd.message);
+            if(MyError.isInstanceOf(pd)) {
+                toast.error(pd.message);
             } else {
                 onLoad(pd);
                 setLastSaved(pd);

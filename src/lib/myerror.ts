@@ -1,21 +1,19 @@
-export interface ErrorOptions {
+export interface MyErrorObj {
+    errorType: 'MyError';
     authRequired?: boolean;
     message: string;
 }
 
 export class MyError {
-    message: string;
-    authRequired: boolean;
-
-    constructor({message, authRequired = false}: ErrorOptions) {
-        this.message = message;
-        this.authRequired = authRequired;
+    static isInstanceOf(obj: any): obj is MyErrorObj {
+        return obj.errorType === 'MyError';
     }
 
-    toObj() {
-        const obj: ErrorOptions = {
-            message: this.message,
-            authRequired: this.authRequired
+    static create({message, authRequired}: Omit<MyErrorObj, "errorType">): MyErrorObj {
+        const obj: MyErrorObj = {
+            errorType: 'MyError',
+            message: message,
+            authRequired: authRequired
         };
         return obj;
     }

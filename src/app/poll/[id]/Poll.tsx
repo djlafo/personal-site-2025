@@ -34,8 +34,8 @@ export default function Poll({ poll: _poll }: PollProps) {
 
     const _updatePoll = async(updateProps: UpdatePollProps) => {
         const res = await updatePoll(poll.uuid, updateProps);
-        if(res instanceof MyError) {
-            toast(res.message);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
             setPoll(res);
         }
@@ -43,12 +43,12 @@ export default function Poll({ poll: _poll }: PollProps) {
 
     const _addOption = async() => {
         if(!newOptionText) {
-            toast('Type it first');
+            toast.warning('Type it first');
             return;
         }
         const res = await addOption(poll.uuid, newOptionText);
-        if(res instanceof MyError) {
-            toast(res.message);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
             setNewOptionText('');
             setPoll(res);
@@ -63,8 +63,8 @@ export default function Poll({ poll: _poll }: PollProps) {
 
     const sendRankedVote = async () => {
         const res = await setVoteRanks(poll.uuid, changedValues);
-        if(res instanceof MyError) {
-            toast(res.message);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
             setChangedValues([]);
             setPoll(res);

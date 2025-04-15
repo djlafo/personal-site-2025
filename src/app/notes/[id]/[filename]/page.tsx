@@ -10,7 +10,7 @@ export default async function Page({params}: PageProps) {
     
     const fileReq = await getFile(p.id, decodeURIComponent(p.filename));
 
-    if(fileReq instanceof MyError) {
+    if(MyError.isInstanceOf(fileReq)) {
         return <span>{fileReq.message}</span>;
     } else {
         redirect(fileReq);

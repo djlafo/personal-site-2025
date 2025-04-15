@@ -23,7 +23,7 @@ export default function useAudioLoader() {
         const newReq = new Promise<string>((acc, rej) => {
             getTTS(text).then(audio => {
                 setRequests(rs => rs.filter(r => r.text !== text));
-                if(audio instanceof MyError) {
+                if(MyError.isInstanceOf(audio)) {
                     rej(audio.message);
                 } else {
                     setAudioLogs(al => al.concat([{
