@@ -197,7 +197,7 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
                             target="_blank">
                             {f}
                         </a>
-                        <button onClick={() => _deleteFile(f)}>Delete</button>
+                        {user && note.username === user.username && <button onClick={() => _deleteFile(f)}>Delete</button> || <></>}
                     </div>;
                 })
             }
