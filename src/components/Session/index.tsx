@@ -35,10 +35,8 @@ export function UserProvider(props: SessionProps) {
         getUserInfo().then(u => {
             if(u) {
                 console.log(u);
-                const expiry = new Date(u.exp*1000 - 1000*60*60*3);
+                const expiry = new Date(u.exp*1000);
                 if(expiry < new Date()) {
-                    // Login will expire in a few hours, just act like we dont have it on initial load
-                    // to get user to relog and not get caught while doing other things
                     u = undefined;
                 }
             }
