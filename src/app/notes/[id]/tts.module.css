@@ -60,6 +60,7 @@
 .quill :global(.ql-toolbar) {
     background-color: #CCCCCC;
     position: sticky;
+    z-index: 10;
     top: 0;
 }
 
