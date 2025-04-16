@@ -7,9 +7,11 @@ import Modal, { openOnEscFn } from '@/components/Modal';
 import Link from 'next/link';
 
 import styles from './headerbar.module.css';
+import { useUser } from '../Session';
 
 export default function HamburgerMenu() {
 	const [open, setOpen] = useState(false);
+	const [user] = useUser();
 
     return <div>
 			<div className={styles.burgermenu} onClick={() => setOpen(true)}>
@@ -69,6 +71,14 @@ export default function HamburgerMenu() {
 							Linux Stuff
 						</Link>
 					</span>
+					{user && user.username === 'dylan' &&
+						<span>
+							<Link href={'/text'}>
+								Text Messages
+							</Link>
+						</span>
+						|| <></>
+					}
 					<div className={styles.linkdivider}/>
 					<span>
 						<Link href='/resume.pdf' target='_blank' rel='noreferrer'>Resume</Link>

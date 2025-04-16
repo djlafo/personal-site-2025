@@ -28,7 +28,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-toastify": "^11.0.3",
-    "tesseract.js": "^6.0.0"
+    "tesseract.js": "^6.0.0",
+    "twilio": "^5.5.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
