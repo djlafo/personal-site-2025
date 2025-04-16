@@ -6,7 +6,7 @@ import next from "next";
 import dotenv from 'dotenv';
 dotenv.config();
 
-import api from './express/index.mts';
+import api from './express/api/index.mts';
 
 const dev = process.env.NODE_ENV === 'development';
 
@@ -15,7 +15,7 @@ const server = express();
 const app = next({ dev, port: 3000 });
 const handle = app.getRequestHandler();
 
-server.use('/api', api);
+server.use('/exp', api);
 
 server.all(/(.*)/, (req, res) => {
   const parsedUrl = parse(req.url!, true);

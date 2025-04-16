@@ -7,17 +7,19 @@ import { toast } from "react-toastify";
 export default function Page() {
     const _sendText = async (f: FormData) => {
         const messageContent = f.get('messagecontent')?.toString();
-        if(!messageContent) {
+        const number = f.get(`number`)?.toString();
+        if(!messageContent || !number) {
             toast.info('Content is empty');
             return;
         }
-        const resp = await sendText(messageContent);
+        const resp = await sendText(messageContent, number);
         if(MyError.isInstanceOf(resp)) toast.error(resp.message);
     }
 
     return <div>
         <form action={_sendText}>
-            <input name='messagecontent' type='text'/>
+            Message: <input name='messagecontent' type='text'/>
+            Number(10 digits): <input name='number' type='text'/>
             <input type='submit' value='Send'/>
         </form>
     </div>

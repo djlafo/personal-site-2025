@@ -6,7 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "express-dev": "TWILIO_AUTH_TOKEN=90edfcba1139a9ef9abed27bf900a30a NODE_ENV=development node express.mts",
+    "express-dev": "NODE_ENV=development node express.mts",
     "express": "node express.ts",
     "lint": "next lint"
   },
