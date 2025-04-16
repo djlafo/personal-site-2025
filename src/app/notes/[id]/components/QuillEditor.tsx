@@ -191,7 +191,7 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
             }
             {
                 note && note.files.length > 0 && note.files.map(f => {
-                    return <div key={f}>
+                    return <div className={styles.fileRow} key={f}>
                         <a href={`/notes/${note.id}/${f}`} 
                             rel="noopener noreferrer" 
                             target="_blank">

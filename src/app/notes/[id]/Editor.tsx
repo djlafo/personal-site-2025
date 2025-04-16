@@ -22,7 +22,7 @@ export default function Editor({note}: EditorProps) {
 
     return <div className={styles.tts}>
         {user && <Link href='/notes'>Back</Link> || <></>}
-        {note && <span> File owned by {note.username}</span>}
+        {note && <span> Owned by {note.username}</span>}
 
         <div className={`${styles.editorDiv} ${paragraphs && paragraphs.length ? styles.hidden : ''}`}>
             <QuillEditor

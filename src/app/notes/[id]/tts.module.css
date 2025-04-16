@@ -84,3 +84,7 @@
     text-transform: uppercase;
     color: red;
 }
+
+.fileRow {
+    padding: 8px;
+}
