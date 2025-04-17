@@ -1,6 +1,15 @@
-.weathergraph {
-    height: max(375px, 68vh);
-    width: max(950px, 100%);
+.weathergraph :global(.recharts-responsive-container) {
     margin-left: auto;
     margin-right: auto;
+}
+
+.tooltip {
+    background: #FFFFFF;
+    color: black;
+    padding: 0 15px;
+    border: 1px solid cyan;
+}
+
+.tooltip td:nth-child(2) {
+    text-align: right;
 }

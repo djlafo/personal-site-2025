@@ -37,7 +37,7 @@ export interface WeatherData {
     tempUnit: string;
     humidity: number;
     rainChance: number;
-    windSpeed: string;
+    windSpeed: number;
     desc: string;
     icon: string;
     uv: number | undefined;

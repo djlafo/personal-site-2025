@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { getWeather } from "./WeatherAPI";
 import WeatherContainer from "./WeatherContainer";
-import { formatWeatherData } from "./WeatherGraph/helpersAndTypes";
 import { getCityFromZip } from "../../location";
 import { LoadingScreenFallBack } from "@/components/LoadingScreen";
 
@@ -37,8 +36,7 @@ interface WeatherContainerContainerProps {
 async function WeatherContainerContainer({zip, coords}: WeatherContainerContainerProps) {
     try {
         const weatherData = await getWeather(zip, coords, true);
-        const formatted = formatWeatherData(weatherData);
-        return <WeatherContainer zip={zip} coords={coords} weatherData={formatted}/>
+        return <WeatherContainer zip={zip} coords={coords} weatherData={weatherData}/>
     } catch {
         return <div>Failed to retrieve weather</div>;
     }

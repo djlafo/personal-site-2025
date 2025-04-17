@@ -35,10 +35,10 @@ export async function getWeather(zip: string, coord: string, cache=false): Promi
                         tempUnit: e.temperatureUnit,
                         humidity: e.relativeHumidity?.value,
                         rainChance: e.probabilityOfPrecipitation.value,
-                        windSpeed: e.windSpeed,
+                        windSpeed: Number(e.windSpeed.split(' ')[0]),
                         desc: e.shortForecast,
                         icon: e.icon,
-                        uv: findUV(uvJson, date)?.UV_VALUE,
+                        uv: (findUV(uvJson, date)?.UV_VALUE || 0)*10,
                         heatIndex: e.relativeHumidity && calcHeatIndex(e.temperature, e.relativeHumidity.value),
                         wetBulb: e.relativeHumidity && calcWetBulb(e.temperature, e.relativeHumidity.value)
                     };
@@ -77,11 +77,11 @@ function calcHeatIndex(T: number, RH: number): number {
             calc -= ((RH-85)/10) * ((87-T)/5);
         }
     }
-    return calc;
+    return Math.round(calc);
 }
 
 function calcWetBulb(T: number, RH: number): number {
-    return T * Math.atan(0.151977 * Math.sqrt(RH + 8.313689)) + 0.00391838 * Math.sqrt(RH**3) * Math.atan(0.023101 * RH) - Math.atan(RH - 1.676331) + Math.atan(T + RH) - 4.686035;
+    return Math.round(T * Math.atan(0.151977 * Math.sqrt(RH + 8.313689)) + 0.00391838 * Math.sqrt(RH**3) * Math.atan(0.023101 * RH) - Math.atan(RH - 1.676331) + Math.atan(T + RH) - 4.686035);
 }
 
 type common = {

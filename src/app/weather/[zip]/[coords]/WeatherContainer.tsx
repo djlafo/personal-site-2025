@@ -1,15 +1,15 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import WeatherGraph from "./WeatherGraph";
 import DaySwitcher from "./DaySwitcher";
 
-import { FormattedWeatherData } from "./WeatherGraph/helpersAndTypes";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { WeatherData } from "./WeatherAPI/types";
 
 interface WeeklyWeatherProps {
-    weatherData: FormattedWeatherData;
+    weatherData: WeatherData[];
     coords: string;
     zip: string;
 }
@@ -19,8 +19,8 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
     const searchParams = useSearchParams();
     const [currentDay, setCurrentDay] = useState<string>(() => {
         const day = searchParams.get('day');
-        if(day && Object.keys(weatherData).includes(day)) return day;
-        return Object.keys(weatherData)[0]
+        if(day && weatherData.find(wd => wd.time.toDateString() === day)) return day;
+        return weatherData[0].time.toDateString();
     });
 
     const _setCurrentDay = (day: string) => {
@@ -39,8 +39,23 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
 
     return <div>
         <DaySwitcher currentDay={currentDay}
-            days={Object.keys(weatherData)}
+            days={getDates(weatherData)}
             onDaySwitched={s => _setCurrentDay(s)}/>
-        <WeatherGraph data={weatherData[currentDay as keyof FormattedWeatherData]}/>
+        <Suspense>
+            <WeatherGraph data={getDailyWeather(weatherData, currentDay)}/>    
+        </Suspense>
     </div>;
+}
+
+function getDailyWeather(weatherData: WeatherData[], day: string) {
+    return weatherData.filter(wd => wd.time.toDateString() === day);
+}
+
+function getDates(weatherData: WeatherData[]) {
+    const dates: string[] = [];
+    weatherData.forEach(wd => {
+        const date = wd.time.toDateString();
+        if(!dates.includes(date)) dates.push(date);
+    });
+    return dates;
 }

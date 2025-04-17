@@ -1,49 +1,3 @@
-import { WeatherData } from '../WeatherAPI/types';
-
-export interface Point {
-    x: string;
-    y: number;
-    color: string;
-}
-export interface WeatherDataPoint {
-    id: string;
-    color: string;
-    data: Point[];
-}
-export interface FormattedWeatherData {
-    [key: string]: WeatherDataPoint[];
-}
-
-export function formatWeatherData(weatherData: WeatherData[]): FormattedWeatherData {
-    const formattedWeatherData: FormattedWeatherData = {};
-    weatherData.forEach(wd => {
-        const date = wd.time.toDateString();
-        if(!formattedWeatherData[date]) {
-            formattedWeatherData[date] = getRowTemplate();
-        }
-        const rowTarget = formattedWeatherData[date];
-        const time = wd.time.toLocaleString();
-        Object.keys(weatherKeyMapping).forEach(k => {
-            const keyRow = rowTarget.find(r => r.id === weatherKeyMapping[k].label);
-            let yValue = wd[k as keyof WeatherData];
-            if(yValue || yValue === 0) {
-                if(k==='windSpeed') {
-                    yValue = Number(yValue.toString().split(' ')[0]);
-                } else if (k==='uv') {
-                    yValue = Number(yValue) * 10;
-                }
-                keyRow?.data.push({
-                    x: time,
-                    y: Number(yValue),
-                    color: keyRow.color
-                });
-            }
-        });
-    });
-    clearUV(formattedWeatherData);
-    return formattedWeatherData;
-}
-
 /* HELPERS TO HELPERS */
 interface WeatherKeyMappingData {
     label: string;
@@ -52,7 +6,7 @@ interface WeatherKeyMappingData {
 interface WeatherKeyMappingType {
     [key: string]: WeatherKeyMappingData;
 }
-const weatherKeyMapping: WeatherKeyMappingType= {
+export const weatherKeyMapping: WeatherKeyMappingType = {
     temp: {
         label: 'Temperature',
         color: 'hsl(7, 88%, 40%)'
@@ -81,23 +35,4 @@ const weatherKeyMapping: WeatherKeyMappingType= {
         label: 'UV Index',
         color: 'hsl(57, 100%, 61%)'
     }
-};
-const getRowTemplate = () => {
-    return Object.keys(weatherKeyMapping).map(k => {
-        return {
-            id: weatherKeyMapping[k].label,
-            color: weatherKeyMapping[k].color,
-            data: []
-        };
-    });
-}
-
-const clearUV = (fwd: FormattedWeatherData) => {
-    Object.keys(fwd).forEach(k => {
-        const dayData = fwd[k as keyof FormattedWeatherData];
-        const uvRow = dayData.findIndex(r => r.id==='UV Index');
-        if(uvRow >= 0 && !dayData[uvRow].data.length) {
-            dayData.splice(uvRow, 1);
-        }
-    });
 };
