@@ -21,6 +21,7 @@ async function userToUserInfo(): Promise<UserInfo | undefined> {
     const session = await getSession();
     if(session) {
         const fullJwt = decrypt(session);
+        if(!fullJwt) return;
         return {
             username: fullJwt.data.username,
             exp: fullJwt.exp,

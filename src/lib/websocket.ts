@@ -43,14 +43,3 @@ export interface WSPlannerEvent extends WebSocketEvent {
         planner: PlannerData
     }
 }
-
-// ws.on('close', () => {
-//     console.log('Websocket closed, retrying in 3 seconds...');
-//     setTimeout(() => {
-//         ws = new WebSocket(endpoint);
-//     }, 3000)
-// });
-
-// ws.on('message', function message(data) {
-//   console.log('received: %s', data);
-// });

@@ -63,12 +63,16 @@
     flex-wrap: wrap-reverse;
 }
 
-.taskdetails > *:last-child {
+.taskdetails > div:last-child {
     margin-left: auto;
     margin-top: 0;
 }
 
-.taskdetails > * {
+.taskdetails > div:last-child > * {
+    margin-left: 5px;
+}
+
+.taskdetails > div {
     margin: 5px 10px;
 }
 

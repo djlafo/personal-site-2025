@@ -6,6 +6,10 @@ import { PlannerData, Task } from "./usePlanner";
 import TimeInput from '@/components/TimeInput';
 
 import styles from './planner.module.css';
+import { useUser } from "@/components/Session";
+import { setupTextAlert } from "@/actions/wss";
+import { MyError } from "@/lib/myerror";
+import { toast } from "react-toastify";
 
 const TEXTAREA_PADDING = 5;
 
@@ -23,6 +27,7 @@ interface TaskListProps {
     children: React.ReactNode;
 }
 export default function TaskList({plannerData, onRemove, onUpdate, children}: TaskListProps) {
+    const [user] = useUser();
     const tasks = plannerData.tasks;
 
     const addRow = () => {
@@ -51,6 +56,16 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
             return Object.assign(t, {done: checked});
         });
         onUpdate(tcc);
+    }
+
+    const _addTextAlert = async (deadline: number, label: string) => {
+        const timeLeft = deadline - Date.now();
+        const resp = await setupTextAlert(timeLeft, label)
+        if(MyError.isInstanceOf(resp)) {
+            toast.error(resp.message);
+        } else {
+            toast.success('Alert added to account page');
+        }
     }
 
     // hack to resize on initial load, i apologize for this
@@ -114,6 +129,7 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
                                     onChange={() => {
                                         updateRow(i, {done: !t.done});
                                     }}/>
+                                {user && t.deadline > Date.now() && <button onClick={() => _addTextAlert(t.deadline, t.label)}>Add Alert</button> || <></>}
                                 <input type='button' value='x' onClick={() => onRemove(tasks[i])}/>
                             </div>
                         </div>

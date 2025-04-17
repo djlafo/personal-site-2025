@@ -1,11 +1,7 @@
+import { TextEventData } from "@/actions/wss";
 import { checkWSAuth } from "@/lib/sessions";
 import { sendText } from "@/lib/twilio";
 
-interface TextEventData {
-    time: number;
-    text: string;
-    recipient: string;
-}
 export async function POST(req: Request) {
     if(!checkWSAuth(req)) return new Response('', {status: 401});
 

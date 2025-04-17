@@ -10,7 +10,7 @@ const secretKey = process.env.AUTH_SECRET;
 
 export interface JWTObjType {
     exp: number;
-    data: typeof usersTable.$inferSelect;
+    data: Omit<typeof usersTable.$inferSelect, "password">;
 }
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
     const {password, ...withoutPW} = obj;
@@ -23,7 +23,9 @@ export async function encrypt(obj: typeof usersTable.$inferSelect) {
 }
 
 export function decrypt(s: string): JWTObjType {
-    return jwt.verify(s, secretKey);
+    try {
+        return jwt.verify(s, secretKey);
+    } catch {}
 }
 
 export function getExpirationDefault() {
@@ -34,6 +36,7 @@ export async function getUser(): Promise<Omit<typeof usersTable.$inferSelect, 'p
     const session = await getSession()
     if(session) {
         const decrypted = decrypt(session);
+        if(!decrypted) return;
         return decrypted.data as typeof usersTable.$inferSelect;
     }
 }
