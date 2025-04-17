@@ -1,0 +1,8 @@
+.account form {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    gap: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}

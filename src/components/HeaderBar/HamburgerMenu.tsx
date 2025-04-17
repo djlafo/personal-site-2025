@@ -31,6 +31,14 @@ export default function HamburgerMenu() {
 							Home
 						</Link>
 					</span>
+					{user &&
+						<span>
+							<Link href={'/account'}>
+								Account
+							</Link>
+						</span>
+						|| <></>
+					}
 					<span>
 						<Link href={'/dylanchat'}>
 							Talk to Dylan

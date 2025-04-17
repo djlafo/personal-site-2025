@@ -120,6 +120,13 @@
       "when": 1744736974725,
       "tag": "0018_confused_madame_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1744834276608,
+      "tag": "0019_lucky_shaman",
+      "breakpoints": true
     }
   ]
 }

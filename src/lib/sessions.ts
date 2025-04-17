@@ -13,15 +13,16 @@ export interface JWTObjType {
     data: typeof usersTable.$inferSelect;
 }
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
+    const {password, ...withoutPW} = obj;
     const token = jwt.sign({
         exp: Math.floor(getExpirationDefault()/1000),
-        data: obj
+        data: withoutPW
     }, secretKey);
 
     return token;
 }
 
-export function decrypt(s: string) {
+export function decrypt(s: string): JWTObjType {
     return jwt.verify(s, secretKey);
 }
 
@@ -29,29 +30,18 @@ export function getExpirationDefault() {
     return (Date.now() + (60 * 60 * 24 * 1000));
 }
 
-export async function getDecryptedJWT() {
-    const decrypted = await decryptSession();
-    if(decrypted) {
-        return decrypted as JWTObjType;
+export async function getUser(): Promise<Omit<typeof usersTable.$inferSelect, 'password'> | undefined> {
+    const session = await getSession()
+    if(session) {
+        const decrypted = decrypt(session);
+        return decrypted.data as typeof usersTable.$inferSelect;
     }
 }
 
-export async function getUser(): Promise<typeof usersTable.$inferSelect | undefined> {
-    const decrypted = await decryptSession();
-    if(decrypted) return decrypted.data as typeof usersTable.$inferSelect;
-}
-
-async function decryptSession() {
+export async function getSession() {
     const cookieStore = await cookies();
     const sessionHeader = cookieStore.get('session')?.value;
-    if(sessionHeader) {
-        try {
-            return decrypt(sessionHeader);
-        } catch {
-            // invalid header
-        }
-    }
-    // no header at all
+    return sessionHeader;
 }
 
 export async function getIp() {

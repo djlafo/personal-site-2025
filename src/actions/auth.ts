@@ -4,12 +4,13 @@ import db from '@/db';
 import { usersTable } from '@/db/schema/users';
 import { eq, or } from 'drizzle-orm';
 
-import { encrypt, getDecryptedJWT, getExpirationDefault } from '@/lib/sessions';
+import { decrypt, encrypt, getExpirationDefault, getSession, getUser } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
 import { cookies, headers } from 'next/headers';
 
 import { UserInfo } from '@/components/Session';
+import { MyError, MyErrorObj } from '@/lib/myerror';
 
 type FormState = {
     error?: string;
@@ -17,11 +18,14 @@ type FormState = {
 } | undefined
 
 async function userToUserInfo(): Promise<UserInfo | undefined> {
-    const fullJwt = await getDecryptedJWT();
-    if(fullJwt) {
+    const session = await getSession();
+    if(session) {
+        const fullJwt = decrypt(session);
         return {
             username: fullJwt.data.username,
-            exp: fullJwt.exp
+            exp: fullJwt.exp,
+            phone: fullJwt.data.phoneNumber || '',
+            token: session
         };
     }
 }
@@ -115,6 +119,31 @@ export async function register(state: FormState, formData: FormData) {
             error: 'Failed to create'
         };
     }
+}
+
+interface UpdateAccountProps {
+    phoneNumber?: string;
+}
+export async function updateAccount({phoneNumber}: UpdateAccountProps): Promise<UserInfo | MyErrorObj> {
+    const user = await getUser();
+    if(!user) return MyError.create({message: 'Not logged in', authRequired: true});
+    if(phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) return MyError.create({message: 'Invalid format'}); 
+    const resp = await db.update(usersTable).set({phoneNumber: phoneNumber}).where(eq(usersTable.id, user.id)).returning();
+    if(resp.length!==1) return MyError.create({message: 'Failed to update'});
+    const jwt = await encrypt(resp[0]);
+    const cookieStore = await cookies();
+
+    cookieStore.set('session', jwt, {
+        httpOnly: true,
+        secure: true,
+        expires: getExpirationDefault(),
+        sameSite: 'lax',
+        path: '/'
+    });
+
+    const ui = await userToUserInfo();
+    if(!ui) return MyError.create({message: 'Failed to get user info'});
+    return ui;
 }
 
 export async function getUserInfo() {
