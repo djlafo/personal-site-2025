@@ -10,7 +10,6 @@ import { getUser } from '@/lib/sessions';
 import { MyError, MyErrorObj } from '@/lib/myerror';
 
 import { PlannerData } from '@/app/planner/usePlanner';
-import { getWebSocket, WSPlannerEvent } from '@/lib/websocket.js';
 
 export async function getPlannerData(): Promise<PlannerData | MyErrorObj>{
     const user = await getUser();

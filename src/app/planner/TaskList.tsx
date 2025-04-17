@@ -59,7 +59,7 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
     }
 
     const _addTextAlert = async (deadline: number, label: string) => {
-        const timeLeft = deadline - Date.now();
+        const timeLeft = (deadline - Date.now())/1000;
         const resp = await setupTextAlert(timeLeft, label)
         if(MyError.isInstanceOf(resp)) {
             toast.error(resp.message);

@@ -102,7 +102,8 @@ input[type=submit] {
 }
 
 input[type=number],
-input[type=text] {
+input[type=text],
+input[type=tel] {
   width: 150px;
 }
 

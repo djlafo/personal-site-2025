@@ -13,7 +13,8 @@ export interface JWTObjType {
     data: Omit<typeof usersTable.$inferSelect, "password">;
 }
 export async function encrypt(obj: typeof usersTable.$inferSelect) {
-    const {password, ...withoutPW} = obj;
+    // eslint-disable-next-line
+    const {password, ...withoutPW} = obj; // remove password
     const token = jwt.sign({
         exp: Math.floor(getExpirationDefault()/1000),
         data: withoutPW
@@ -22,7 +23,7 @@ export async function encrypt(obj: typeof usersTable.$inferSelect) {
     return token;
 }
 
-export function decrypt(s: string): JWTObjType {
+export function decrypt(s: string): JWTObjType | undefined {
     try {
         return jwt.verify(s, secretKey);
     } catch {}

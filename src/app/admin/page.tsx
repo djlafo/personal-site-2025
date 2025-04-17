@@ -1,10 +1,7 @@
 'use client'
 
 import { sendText } from "@/actions/text";
-import { setupTextAlert } from "@/actions/wss";
-import TimeInput from "@/components/TimeInput";
 import { MyError } from "@/lib/myerror";
-import { useState } from "react";
 import { toast } from "react-toastify";
 
 export default function Page() {

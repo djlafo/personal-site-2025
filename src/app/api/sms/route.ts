@@ -19,13 +19,13 @@ export async function POST(req: Request) {
         });
     }
 
-    const twiml = new twilio.twiml.MessagingResponse();
+    // const twiml = new twilio.twiml.MessagingResponse();
+    // twiml.message(`Got it! Received: ${req.body.Body} from ${req.body.From}`);
     // const zip = test.get('FromZip');
     // const state = test.get('FromState');
     // const city = test.get('FromCity');
     // const body = test.get('Body');
     // const number = test.get('From');
     console.log(`Text received from ${fd.get('From')}: ${fd.get('Body')}`);
-    // twiml.message(`Got it! Received: ${req.body.Body} from ${req.body.From}`);
     return new Response('', {status: 200});
 }

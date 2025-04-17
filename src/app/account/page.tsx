@@ -6,7 +6,7 @@ import { updateAccount } from '@/actions/auth';
 import { MyError } from '@/lib/myerror';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
-import { listTextAlerts, setupTextAlert, TextEventData } from '@/actions/wss';
+import { deleteTextAlert, listTextAlerts, setupTextAlert, TextEventData } from '@/actions/wss';
 import TimeInput from '@/components/TimeInput';
 
 export default function Page() {
@@ -31,30 +31,33 @@ export default function Page() {
         if(MyError.isInstanceOf(resp)) {
             toast.error(resp.message);
         } else {
+            await _listAlerts(false);
             toast.success('Created');
         }
     }
 
-    const _deleteAlert = async () => {
-        
-        // 
-
-        if(true) {
-            toast.error('');
+    const _deleteAlert = async (ted: TextEventData) => {
+        const resp = await deleteTextAlert(ted.time, ted.text)
+        if(MyError.isInstanceOf(resp)) {
+            toast.error(resp.message);
         } else {
-            toast.success('deleted');
+            await _listAlerts(false);
+            toast.success('Deleted');
+        }
+    }
+
+    const _listAlerts = async (showToast = true) => {
+        const resp = await listTextAlerts();
+        if(MyError.isInstanceOf(resp)) {
+            toast.error(resp.message);
+        } else {
+            setEventData(resp);
+            if(showToast) toast.success('Loaded alerts');
         }
     }
 
     useEffect(() => {
-        listTextAlerts().then(resp => {
-            if(MyError.isInstanceOf(resp)) {
-                toast.error(resp.message);
-            } else {
-                setEventData(resp);
-            }
-        });
-        // eslint-disable-next-line
+        _listAlerts(false);
     }, []);
 
     return <div className={styles.account}>
@@ -91,10 +94,11 @@ export default function Page() {
         <h3>Alert List</h3>
         <div>
             {
-                eventData && eventData.map(ed => {
-                    return <div>
-                        {new Date(Date.now() + ed.time).toLocaleTimeString('en-US')}: "{ed.text}" 
-                        <button onClick={() => _deleteAlert}>Delete</button>
+                eventData && eventData.sort((b, a) => b.time - a.time).map(ed => {
+                    const d = new Date(ed.time);
+                    return <div key={`${ed.time}-${ed.text}`}>
+                        {d.toLocaleDateString('en-US')} {d.toLocaleTimeString('en-US')}: &quot;{ed.text}&quot;&nbsp;
+                        <button onClick={() => _deleteAlert(ed)}>Delete</button>
                     </div>;
                 })
             }
