@@ -81,8 +81,8 @@ export default function HamburgerMenu() {
 					</span>
 					{user && user.username === 'dylan' &&
 						<span>
-							<Link href={'/text'}>
-								Text Messages
+							<Link href={'/admin'}>
+								Admin
 							</Link>
 						</span>
 						|| <></>

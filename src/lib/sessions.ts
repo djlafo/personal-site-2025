@@ -58,3 +58,8 @@ export async function getClientIdentifier() {
     if(userAgent) client += userAgent;
     return client;
 }
+
+export function checkWSAuth(req: Request) {
+    const auth = req.headers.get('authorization');
+    return (auth && auth === process.env.AUTH_SECRET);
+}

@@ -48,18 +48,6 @@ export async function savePlannerData(pd: PlannerData): Promise<PlannerData | My
 
         if(planner.length === 1) {
             const saved = await db.update(plannerTable).set({ data: pd }).where(eq(plannerTable.id, planner[0].planner.id)).returning();
-            const ws = await getWebSocket({token: process.env.AUTH_TOKEN || '', user:false});
-            if(ws) {
-                const ev: WSPlannerEvent = {
-                    event: 'PlannerUpdate',
-                    data: {
-                        username: user.username,
-                        planner: pd
-                    }
-                }
-                ws.send(JSON.stringify(ev));
-                ws.close();
-            }
             return saved[0].data as PlannerData;
         }
     }
