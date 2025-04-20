@@ -156,7 +156,8 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
                     ['blockquote', 'code-block'], 
                     [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'indent': '-1'}, {'indent': '+1'}], 
                     [{'direction': 'rtl'}, {'align': []}], 
-                    ['link', 'image', 'video']
+                    ['link', 'image', 'video'],
+                    ['clean']
                 ],
                 imageResize: {}
             },
@@ -234,7 +235,7 @@ export default function QuillEditor({onStart, note: _note}: QuillEditorProps) {
                     </div>
                     <input type='file' ref={fileRef}/>
                     <button onClick={() => _addFile()}>Add File</button>
-                    <Link href={`/notes/new?pId=${note.id}`}>New Subnote</Link>
+                    <Link className='button-style' href={`/notes/new?pId=${note.id}`}>New Subnote</Link>
                 </> || <></>
             }
         </div>

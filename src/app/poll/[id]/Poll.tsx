@@ -74,7 +74,7 @@ export default function Poll({ poll: _poll }: PollProps) {
     const mine = poll.yours;
 
     return <>
-        <Link href='/poll'>Back</Link>
+        <Link className='button-style' href='/poll'>Back</Link>
         <div className={styles.pollHeader}>
             <h2>
                 {mine && 

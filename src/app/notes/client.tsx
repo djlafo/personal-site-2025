@@ -91,7 +91,7 @@ export function NoteItem({note}: NoteItemProps) {
     const text = getNoteTitle(note.text);
 
     return <span className={styles.noteText}>
-        <Link href={`/notes/${note.id}`}>
+        <Link className='button-style' href={`/notes/${note.id}`}>
             {text}
         </Link>
     </span>;
@@ -122,7 +122,7 @@ export function ListButtons({onSelect, selecting, notes, selected, onNotesUpdate
     }
 
     return <>
-        <Link href='/notes/new'>New</Link>
+        <Link className='button-style' href='/notes/new'>New</Link>
         <button onClick={_onSelect}>{selecting ? 'Cancel' : 'Select'}</button>
         {
             selecting && <>

@@ -27,61 +27,61 @@ export default function HamburgerMenu() {
 					
 				<nav className={styles.linklist} onClick={() => setOpen(false)}>
 					<span>
-						<Link href={'/'}>
+						<Link className='button-style' href={'/'}>
 							Home
 						</Link>
 					</span>
 					{user &&
 						<span>
-							<Link href={'/account'}>
+							<Link className='button-style' href={'/account'}>
 								Account
 							</Link>
 						</span>
 						|| <></>
 					}
 					<span>
-						<Link href={'/dylanchat'}>
+						<Link className='button-style' href={'/dylanchat'}>
 							Talk to Dylan
 						</Link>
 					</span>
 					<span>
-						<Link href={'/planner'}>
+						<Link className='button-style' href={'/planner'}>
 							Daily Planner
 						</Link>
 					</span>
 					<span>
-						<Link href={'/weather'}>
+						<Link className='button-style' href={user && user.zip ? `/weather/${user.zip}/${user.coords || ''}` : '/weather'}>
 							Weather
 						</Link>
 					</span>
 					<span>
-						<Link href={'/notes'}>
+						<Link className='button-style' href={'/notes'}>
 							Notes & Files
 						</Link>
 					</span>
 					<span>
-						<Link href={'/visualizer'}>
+						<Link className='button-style' href={'/visualizer'}>
 							Music Visualizer
 						</Link>
 					</span>
 					<span>
-						<Link href={'/poll'}>
+						<Link className='button-style' href={'/poll'}>
 							Polls
 						</Link>
 					</span>
 					<span>
-						<Link href={'/interval'}>
+						<Link className='button-style' href={'/interval'}>
 							Interval Timer
 						</Link>
 					</span>
 					<span>
-						<Link href={'/linux'}>
+						<Link className='button-style' href={'/linux'}>
 							Linux Stuff
 						</Link>
 					</span>
 					{user && user.username === 'dylan' &&
 						<span>
-							<Link href={'/admin'}>
+							<Link className='button-style' href={'/admin'}>
 								Admin
 							</Link>
 						</span>
@@ -89,16 +89,16 @@ export default function HamburgerMenu() {
 					}
 					<div className={styles.linkdivider}/>
 					<span>
-						<Link href='/resume.pdf' target='_blank' rel='noreferrer'>Resume</Link>
+						<Link className='button-style' href='/resume.pdf' target='_blank' rel='noreferrer'>Resume</Link>
 					</span>
 					<span>
-						<Link href='mailto:djlafo@gmail.com'>djlafo@gmail.com</Link>
+						<Link className='button-style' href='mailto:djlafo@gmail.com'>djlafo@gmail.com</Link>
 					</span>
 					<span>
-						<Link href='https://github.com/djlafo' target="_blank" rel="noreferrer">github.com/djlafo</Link>
+						<Link className='button-style' href='https://github.com/djlafo' target="_blank" rel="noreferrer">github.com/djlafo</Link>
 					</span>
 					<span>
-						<Link href="https://www.linkedin.com/in/dylan-lafont-99a58a150/" target="_blank" rel="noreferrer">LinkedIn</Link>
+						<Link className='button-style' href="https://www.linkedin.com/in/dylan-lafont-99a58a150/" target="_blank" rel="noreferrer">LinkedIn</Link>
 					</span>
 				</nav>
 			</Modal>

@@ -14,6 +14,6 @@ export function PollButton(props: PollButtonOptions) {
 export function CreateButton() {
     const [user] = useUser();
     if(user) {
-        return <Link href='/poll/create'>Create</Link>
+        return <Link className='button-style' href='/poll/create'>Create</Link>
     }
 }

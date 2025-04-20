@@ -4,8 +4,7 @@
 }
 
 .tooltip {
-    background: #FFFFFF;
-    color: black;
+    background-color: black;
     padding: 0 15px;
     border: 1px solid cyan;
 }

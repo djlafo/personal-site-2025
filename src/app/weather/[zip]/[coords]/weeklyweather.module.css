@@ -4,9 +4,18 @@
     overflow-y: visible;
 }
 
-.dayswitcher {
+/* .dayswitcher {
     text-align: center;
-}
+} */
+
 .dayswitcher input {
     margin: 5px 10px;
+}
+
+.weatherHeader {
+    text-align: center;
+}
+
+.weatherHeader > a {
+    margin-bottom: 10px;
 }

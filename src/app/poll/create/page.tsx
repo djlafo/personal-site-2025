@@ -7,6 +7,7 @@ import { addPoll } from '@/actions/polls/polls';
 import { MyError } from '@/lib/myerror';
 
 import styles from './pollcreate.module.css';
+import Link from 'next/link';
 
 export default function Page() {
 
@@ -21,7 +22,7 @@ export default function Page() {
     }
 
     return <div className={styles.pollcreate}>
-        <input type='button' value='Back' onClick={() => redirect('/poll')}/>
+        <Link className='button-style' href='/poll'>Back</Link>
         <h2>
             Create Poll
         </h2>

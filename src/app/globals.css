@@ -34,28 +34,33 @@ body:has(.modal-parent.opened) {
 }
 
 a, a:visited {
+  color: cyan;
+}
+
+a.button-style {
+  display: inline-block;
   color: white;
   text-decoration: none;
   border: 1px solid cyan;
-  padding: 0px 6px;
-  border-radius: 5px;
+  padding: 5px;
+  border-radius: 8px;
 }
+
+a.button-style:hover {
+  color: cyan;
+}
+
 textarea {
   background-color: #000000;
   color: #FFFFFF;
   border: 1px solid cyan;
 }
 
-a,
 input[type=button],
 button,
 input[type=submit] {
   background-color: rgba(0, 255, 255, 0.1);
   padding: 5px;
-}
-
-a:hover {
-  color: cyan;
 }
 
 code {
@@ -105,6 +110,10 @@ input[type=number],
 input[type=text],
 input[type=tel] {
   width: 150px;
+}
+
+input[type=file] {
+  width: 250px;
 }
 
 input:hover,

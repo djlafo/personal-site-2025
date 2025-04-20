@@ -7,6 +7,9 @@ import DaySwitcher from "./DaySwitcher";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { WeatherData } from "./WeatherAPI/types";
+import Link from "next/link";
+
+import styles from './weeklyweather.module.css';
 
 interface WeeklyWeatherProps {
     weatherData: WeatherData[];
@@ -38,9 +41,12 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
     }, []);
 
     return <div>
-        <DaySwitcher currentDay={currentDay}
-            days={getDates(weatherData)}
-            onDaySwitched={s => _setCurrentDay(s)}/>
+        <div className={styles.weatherHeader}>
+            <Link className='button-style' href='/weather'>Back</Link>
+            <DaySwitcher currentDay={currentDay}
+                days={getDates(weatherData)}
+                onDaySwitched={s => _setCurrentDay(s)}/>
+        </div>
         <Suspense>
             <WeatherGraph data={getDailyWeather(weatherData, currentDay)}/>    
         </Suspense>

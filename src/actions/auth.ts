@@ -26,6 +26,7 @@ async function userToUserInfo(): Promise<UserInfo | undefined> {
             username: fullJwt.data.username,
             exp: fullJwt.exp,
             phone: fullJwt.data.phoneNumber || '',
+            zip: fullJwt.data.zip || '',
             token: session
         };
     }
@@ -124,12 +125,14 @@ export async function register(state: FormState, formData: FormData) {
 
 interface UpdateAccountProps {
     phoneNumber?: string;
+    zip?: string;
 }
-export async function updateAccount({phoneNumber}: UpdateAccountProps): Promise<UserInfo | MyErrorObj> {
+export async function updateAccount({phoneNumber, zip}: UpdateAccountProps): Promise<UserInfo | MyErrorObj> {
     const user = await getUser();
     if(!user) return MyError.create({message: 'Not logged in', authRequired: true});
-    if(phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) return MyError.create({message: 'Invalid format'}); 
-    const resp = await db.update(usersTable).set({phoneNumber: phoneNumber}).where(eq(usersTable.id, user.id)).returning();
+    if(phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) return MyError.create({message: 'Invalid telephone format'}); 
+    if(zip && !/^[0-9]{5}$/.test(zip)) return MyError.create({message: 'Invalid ZIP format'});
+    const resp = await db.update(usersTable).set({phoneNumber: phoneNumber, zip: zip}).where(eq(usersTable.id, user.id)).returning();
     if(resp.length!==1) return MyError.create({message: 'Failed to update'});
     const jwt = await encrypt(resp[0]);
     const cookieStore = await cookies();

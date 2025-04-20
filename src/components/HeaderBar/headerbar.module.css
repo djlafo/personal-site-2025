@@ -6,23 +6,24 @@
     justify-content: space-between;
 }
 
-.headerbar > * {
-    flex: 1;
+.headerbar > div:first-child {
+    width: 78px;
 }
 
-.headerbar > span {
-    text-align: center;
-}
-
-@media screen and (max-width: 720px) {
+/* @media screen and (max-width: 720px) {
     .headerbar > span {
         display: none;
     }
+} */
+
+.nameHeader {
+    display: flex;
+    text-align: center;
+    overflow: hidden;
 }
 
 .loginbutton {
-    display: flex;
-    justify-content: flex-end;
+    text-align: right
 }
 
 .linklist {
@@ -38,7 +39,7 @@
 }
 
 .linklist span {
-    margin: 20px 0;
+    margin: 12px 0;
 }
 
 .linkdivider {

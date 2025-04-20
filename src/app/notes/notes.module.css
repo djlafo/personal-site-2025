@@ -27,7 +27,6 @@
 .parentContainer {
     margin: 12px 0;
     overflow: hidden;
-    line-height: 1.7;
 }
 
 .notes button, .notes select {

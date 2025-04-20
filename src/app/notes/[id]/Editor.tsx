@@ -21,7 +21,7 @@ export default function Editor({note}: EditorProps) {
     const [paragraphs, setParagraphs] = useState<string[]>([]);
 
     return <div className={styles.tts}>
-        {user && <Link href='/notes'>Back</Link> || <></>}
+        {user && <Link className='button-style' href='/notes'>Back</Link> || <></>}
         {note && <span> Owned by {note.username}</span>}
 
         <div className={`${styles.editorDiv} ${paragraphs && paragraphs.length ? styles.hidden : ''}`}>

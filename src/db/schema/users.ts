@@ -8,5 +8,6 @@ export const usersTable = pgTable("users", {
   password: varchar({ length: 255 }).notNull(),
   plannerId: integer('planner_id').references((): AnyPgColumn => plannerTable.id),
   lastIp: varchar('last_ip', {length: 255}),
-  phoneNumber: char('phone_number', {length: 10})
+  phoneNumber: char('phone_number', {length: 10}),
+  zip: char('zip', {length: 5})
 });
