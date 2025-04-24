@@ -1,7 +1,6 @@
 ## My personal site 
 
-Hello, this is the repo for my personal site at dylanlafont.com.  WIP.  
-Don't expect production quality - the intention here is mostly for things I use myself and code with that intent.
+Hello, this is the repo for my personal site at dylanlafont.com
 
 ## Getting Started
 
@@ -12,14 +11,17 @@ You will need to download piper tts binary and place it into /piper along with t
 You will also need ffmpeg.
 
 ### GPT
-This uses my own voice which I won't publish, so it will break unless tweaked
-
-### Visualizer
-Youll need butterchurn .json presets in the butterchurnpresets folder, or go add the npm package.  I'm using my own converted ones
-which I don't want to push to my repo as my own.
+This uses my own voice which I won't publish, so it will break unless tweaked to a different model
 
 ### .ENV File
-You will need a AUTH_SECRET, GPT_KEY, and postgres DATABASE_URL
+AUTH_SECRET for the JWT
+GPT_KEY for chatGPT
+DATABASE_URL for postgres
+AWS_BUCKET for the AWS bucket name for files.  Also need the ~/.aws/credentials file
+WS_ENDPOINT for the localhost address of the websocket project
+TWILIO_ACCOUNT, TWILIO_AUTH_TOKEN, 
+TWILIO_NUMBER in +15551231234 format 
+TWILIO_ENDPOINT being the remote address for this server pointing to the twilio sms endpoint /api/sms
 
 ### Database
 This project uses Drizzle orm, after setting the DATABASE_URL you can run 
@@ -30,19 +32,3 @@ to migrate the db.  There is also important seed data containing ZIP codes for t
 ```bash
 npx tsx src/db/seeds/zips.ts
 ```
-
-### Running
-First, run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-The page auto-updates as you edit the file.
