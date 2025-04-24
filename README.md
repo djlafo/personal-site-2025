@@ -31,9 +31,6 @@ to migrate the db.  There is also important seed data containing ZIP codes for t
 npx tsx src/db/seeds/zips.ts
 ```
 
-### Weather
-Unfortunately due to nivo line not being updated, you have to --force the npm install
-
 ### Running
 First, run the development server:
 ```bash
