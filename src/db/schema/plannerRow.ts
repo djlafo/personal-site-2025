@@ -1,11 +1,12 @@
-import { integer, pgTable, AnyPgColumn, varchar, check, boolean } from "drizzle-orm/pg-core";
+import { integer, pgTable, AnyPgColumn, varchar, boolean, timestamp } from "drizzle-orm/pg-core";
+import { plannerTable } from "./planner";
 
-export const plannerTable = pgTable("planner_row", {
+export const plannerRowTable = pgTable("planner_row", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   plannerId: integer('planner_id').references((): AnyPgColumn => plannerTable.id).notNull(),
   label: varchar({length: 255}).notNull(),
   motivation: integer().notNull(),
-  deadline: integer().notNull().default(0),
+  deadline: timestamp({ mode: 'string' }),
   done: boolean().notNull().default(false),
   text: boolean().notNull().default(false)
 });

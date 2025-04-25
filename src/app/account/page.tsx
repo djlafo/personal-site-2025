@@ -6,14 +6,14 @@ import { updateAccount } from '@/actions/auth';
 import { MyError } from '@/lib/myerror';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
-import { deleteTextAlert, listTextAlerts, setupTextAlert, TextEventData } from '@/actions/wss';
-import TimeInput from '@/components/TimeInput';
+import { listUserTexts, TextMessage } from '@/actions/text';
+// import TimeInput from '@/components/TimeInput';
 
 export default function Page() {
-    const [eventData, setEventData] = useState<TextEventData[]>();
+    const [eventData, setEventData] = useState<TextMessage[]>();
 
     const _listAlerts = async (showToast = true) => {
-        const resp = await listTextAlerts();
+        const resp = await listUserTexts();
         if(MyError.isInstanceOf(resp)) {
             toast.error(resp.message);
         } else {
@@ -29,12 +29,12 @@ export default function Page() {
     return <div className={styles.account}>
         <h3>Set Account Details</h3>
         <AccountDetails/>
+        {/* <br/>
+        <br/>
+        <TextAlerts onAlertsChanged={_listAlerts}/> */}
         <br/>
         <br/>
-        <TextAlerts onAlertsChanged={_listAlerts}/>
-        <br/>
-        <br/>
-        {eventData && <AlertList alerts={eventData} onAlertsChanged={_listAlerts}/> || <></>}
+        {eventData && <AlertList alerts={eventData}/> || <></>}
     </div>;
 }
 
@@ -74,57 +74,46 @@ function AccountDetails() {
     </form>;
 }
 
-interface TextAlertsProps {
-    onAlertsChanged: (showToast: boolean) => Promise<void>;
-}
-function TextAlerts({onAlertsChanged}: TextAlertsProps) {
-    const [time, setTime] = useState<number>(0);
+// interface TextAlertsProps {
+//     onAlertsChanged: (showToast: boolean) => Promise<void>;
+// }
+// function TextAlerts({onAlertsChanged}: TextAlertsProps) {
+//     const [time, setTime] = useState<number>(0);
 
-    const _setAlert = async (f: FormData) => {
-        const messageContent = f.get('messagecontent')?.toString();
-        if(!messageContent) return;
-        const resp = await setupTextAlert(time, messageContent);
-        if(MyError.isInstanceOf(resp)) {
-            toast.error(resp.message);
-        } else {
-            await onAlertsChanged(false);
-            toast.success('Created');
-        }
-    }
+//     const _setAlert = async (f: FormData) => {
+//         const messageContent = f.get('messagecontent')?.toString();
+//         if(!messageContent) return;
+//         const resp = await setupTextAlert(time, messageContent);
+//         if(MyError.isInstanceOf(resp)) {
+//             toast.error(resp.message);
+//         } else {
+//             await onAlertsChanged(false);
+//             toast.success('Created');
+//         }
+//     }
 
-    return <>
-        <h3>Set Text Alert</h3>
-        <form action={_setAlert}>
-            <label htmlFor='messagecontent'>Message</label>
-            <input id='messagecontent' 
-                name='messagecontent' 
-                type='text' 
-                required/>
-            <label htmlFor='time'>Time</label>
-            <TimeInput name='time' 
-                id='time'
-                value={time} 
-                onValueChange={t => setTime(t)}required/>
-            <input type='submit' value='Submit'/>
-        </form>
-    </>;
-}
+//     return <>
+//         <h3>Set Text Alert</h3>
+//         <form action={_setAlert}>
+//             <label htmlFor='messagecontent'>Message</label>
+//             <input id='messagecontent' 
+//                 name='messagecontent' 
+//                 type='text' 
+//                 required/>
+//             <label htmlFor='time'>Time</label>
+//             <TimeInput name='time' 
+//                 id='time'
+//                 value={time} 
+//                 onValueChange={t => setTime(t)}required/>
+//             <input type='submit' value='Submit'/>
+//         </form>
+//     </>;
+// }
 
 interface AlertListProps {
-    alerts: TextEventData[];
-    onAlertsChanged: (showToast: boolean) => Promise<void>;
+    alerts: TextMessage[];
 }
-function AlertList({alerts, onAlertsChanged}: AlertListProps) {
-
-    const _deleteAlert = async (ted: TextEventData) => {
-        const resp = await deleteTextAlert(ted.time, ted.text)
-        if(MyError.isInstanceOf(resp)) {
-            toast.error(resp.message);
-        } else {
-            await onAlertsChanged(false);
-            toast.success('Deleted');
-        }
-    }
+function AlertList({alerts}: AlertListProps) {
 
     return <>
         <h3>Alert List</h3>
@@ -134,7 +123,6 @@ function AlertList({alerts, onAlertsChanged}: AlertListProps) {
                     const d = new Date(ed.time);
                     return <div key={`${ed.time}-${ed.text}`}>
                         {d.toLocaleDateString('en-US')} {d.toLocaleTimeString('en-US')}: &quot;{ed.text}&quot;&nbsp;
-                        <button onClick={() => _deleteAlert(ed)}>Delete</button>
                     </div>;
                 })
             }

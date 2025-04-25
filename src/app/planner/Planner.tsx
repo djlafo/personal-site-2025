@@ -8,16 +8,13 @@ import styles from './planner.module.css';
 
 
 export default function Planner({initPlannerData}: {initPlannerData?: PlannerData}) {
-    const {plannerData, removeTask, sort, setTasks, setPlannerData} = usePlanner(() => initPlannerData);
+    const {plannerData, setPlannerData} = usePlanner(() => initPlannerData);
 
     return <>
         <div className={styles.planner}>
             <h2>Daily Planner</h2>
-            <TaskList plannerData={plannerData} onRemove={removeTask} onUpdate={setTasks}>
-                {
-                    (plannerData.tasks.length > 1 && <input type='button' value='Sort' onClick={() => sort()}/>) || <></>
-                }
-                <TaskSaver plannerData={plannerData} onLoad={setPlannerData}/>
+            <TaskList plannerData={plannerData} onSetPlannerData={setPlannerData}>
+                <TaskSaver plannerData={plannerData} onSetPlannerData={setPlannerData}/>
             </TaskList>
         </div>
     </>;

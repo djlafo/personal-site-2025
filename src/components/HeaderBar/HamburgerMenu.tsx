@@ -31,14 +31,11 @@ export default function HamburgerMenu() {
 							Home
 						</Link>
 					</span>
-					{user &&
-						<span>
-							<Link className='button-style' href={'/account'}>
-								Account
-							</Link>
-						</span>
-						|| <></>
-					}
+					<span>
+						<Link className='button-style' href={'/account'}>
+							Account
+						</Link>
+					</span>
 					<span>
 						<Link className='button-style' href={'/dylanchat'}>
 							Talk to Dylan

@@ -1,15 +1,15 @@
 'use client'
 
 import { useEffect } from "react";
-import { PlannerData, Task } from "./usePlanner";
+import { PlannerData, PlannerRow } from "./usePlanner";
 
 import TimeInput from '@/components/TimeInput';
 
 import styles from './planner.module.css';
 import { useUser } from "@/components/Session";
-import { setupTextAlert } from "@/actions/wss";
 import { MyError } from "@/lib/myerror";
 import { toast } from "react-toastify";
+import { checkAllPlannerRows, createUpdatePlannerRow, deletePlannerRow } from "@/actions/planner";
 
 const TEXTAREA_PADDING = 5;
 
@@ -22,49 +22,67 @@ const onTimerOver = (done: boolean) => {
 
 interface TaskListProps {
     plannerData: PlannerData;
-    onRemove: (t: Task) => void;
-    onUpdate: (ta: Task[]) => void;
+    onSetPlannerData: (pd: PlannerData) => void;
     children: React.ReactNode;
 }
-export default function TaskList({plannerData, onRemove, onUpdate, children}: TaskListProps) {
+export default function TaskList({plannerData, onSetPlannerData, children}: TaskListProps) {
     const [user] = useUser();
     const tasks = plannerData.tasks;
 
-    const addRow = () => {
-        onUpdate(tasks.concat([{
-            UUID: crypto.randomUUID(),
+    const addRow = async () => {
+        const res = await createUpdatePlannerRow({
             label: '',
             motivation: 0,
             done: false,
-            deadline: 0
-        }]));
+            deadline: null,
+            text: false
+        });
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
+        } else {
+            onSetPlannerData(res);
+            toast.success('Added');
+        }
     }
 
-    const updateRow = (ind: number, pt: Partial<Task>) => {
-        const tcc = JSON.parse(JSON.stringify(tasks));
-        tcc.splice(ind, 1, Object.assign(tcc[ind], pt));
-        onUpdate(tcc);
+    const updateRow = async (ind: number, pt: Partial<PlannerRow>) => {
+        let tcc = JSON.parse(JSON.stringify(tasks[ind]));
+        const diff = Object.entries(pt).some(([k, v]) => {
+            return v !== tcc[k];
+        });
+        if(!diff) return;
+        tcc = Object.assign(tcc, pt);
+        const res = await createUpdatePlannerRow(tcc);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
+        } else {
+            onSetPlannerData(res);
+            toast.success('Updated');
+        }
+    }
+
+    const removeRow = async(pr: PlannerRow) => {
+        if(!pr.id) toast.error('This somehow doesn\'t have an ID');
+        const res = await deletePlannerRow(pr.id);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
+        } else {
+            onSetPlannerData(res);
+            toast.success('Deleted');
+        }
     }
 
     const anyChecked = () => {
         return tasks.some(t => t.done);
     }
 
-    const checkAll = (checked: boolean) => {
-        const tcc = tasks.slice();
-        tcc.map(t => {
-            return Object.assign(t, {done: checked});
-        });
-        onUpdate(tcc);
-    }
-
-    const _addTextAlert = async (deadline: number, label: string) => {
-        const timeLeft = (deadline - Date.now())/1000;
-        const resp = await setupTextAlert(timeLeft, label)
-        if(MyError.isInstanceOf(resp)) {
-            toast.error(resp.message);
+    const checkAll = async (checked: boolean) => {
+        const res = await checkAllPlannerRows(checked);
+        if(MyError.isInstanceOf(res)) {
+            toast.error(res.message);
         } else {
-            toast.success('Alert added to account page');
+            onSetPlannerData(res);
+            toast.success(checked ? 'Checked' : 'Unchecked');
         }
     }
 
@@ -97,15 +115,14 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
             <div>
                 {tasks.map((t, i)=> {
 
-                    const overdue = t.deadline ? t.deadline - Date.now() < 0 : false;
-                    const timeLeft = t.deadline && !overdue ? Math.floor((t.deadline - Date.now())/1000) : 0;
+                    const overdue = t.deadline ? new Date(t.deadline).getTime() - Date.now() < 0 : false;
+                    const timeLeft = t.deadline && !overdue ? Math.floor((new Date(t.deadline).getTime() - Date.now())/1000) : 0;
 
-                    return <div key={t.UUID} 
+                    return <div key={t.id} 
                         className={`${styles.taskcell} ${t.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${t.deadline && !overdue ? styles.timed : ''}`}>        
                         <textarea rows={1}
-                            autoFocus={i === tasks.length - 1}
-                            value={t.label} 
-                            onChange={e => {
+                            defaultValue={t.label}
+                            onBlur={e => {
                                 updateRow(i, {label: e.target.value});
                                 e.target.style.height = 'auto';
                                 e.target.style.height = `${e.target.scrollHeight + TEXTAREA_PADDING}px`;
@@ -115,13 +132,13 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
                                 <input type='number' 
                                     min='0'
                                     max='100'
-                                    value={t.motivation.toString()} 
-                                    onChange={e => updateRow(i, {motivation: Number(e.target.value)})}/>
+                                    defaultValue={t.motivation.toString()} 
+                                    onBlur={e => updateRow(i, {motivation: Number(e.target.value)})}/>
                                 <br/>
                                 <TimeInput value={timeLeft} 
                                     countdownOnSet
                                     onZero={() => onTimerOver(t.done)}
-                                    onValueChange={n => updateRow(i, {deadline: n ? Date.now() + n*1000 : 0})}/>
+                                    onValueChange={n => updateRow(i, {deadline: n ? new Date(Date.now() + n*1000).toLocaleString() : null})}/>
                             </div>
                             <div>
                                 <input type='checkbox'
@@ -129,8 +146,11 @@ export default function TaskList({plannerData, onRemove, onUpdate, children}: Ta
                                     onChange={() => {
                                         updateRow(i, {done: !t.done});
                                     }}/>
-                                {user && t.deadline > Date.now() && <button onClick={() => _addTextAlert(t.deadline, t.label)}>Add Alert</button> || <></>}
-                                <input type='button' value='x' onClick={() => onRemove(tasks[i])}/>
+                                {user && 
+                                    t.deadline && 
+                                    new Date(t.deadline).getTime() > Date.now() && 
+                                    <button onClick={() => updateRow(i, {text: !t.text})}>{t.text ? 'Don\'t text' : 'Text Me'}</button> || <></>}
+                                <input type='button' value='x' onClick={() => removeRow(tasks[i])}/>
                             </div>
                         </div>
                     </div>;
