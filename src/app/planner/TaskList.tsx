@@ -118,7 +118,7 @@ export default function TaskList({plannerData, onSetPlannerData, children}: Task
                     const overdue = t.deadline ? new Date(t.deadline).getTime() - Date.now() < 0 : false;
                     const timeLeft = t.deadline && !overdue ? Math.floor((new Date(t.deadline).getTime() - Date.now())/1000) : 0;
 
-                    return <div key={t.id} 
+                    return <div key={`${t.id}-${t.motivation}`} 
                         className={`${styles.taskcell} ${t.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${t.deadline && !overdue ? styles.timed : ''}`}>        
                         <textarea rows={1}
                             defaultValue={t.label}
@@ -132,7 +132,7 @@ export default function TaskList({plannerData, onSetPlannerData, children}: Task
                                 <input type='number' 
                                     min='0'
                                     max='100'
-                                    defaultValue={t.motivation.toString()} 
+                                    defaultValue={t.motivation.toString()}
                                     onBlur={e => updateRow(i, {motivation: Number(e.target.value)})}/>
                                 <br/>
                                 <TimeInput value={timeLeft} 

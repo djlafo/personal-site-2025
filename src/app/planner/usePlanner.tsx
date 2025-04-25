@@ -28,7 +28,9 @@ export function getEmptyPlanner(): PlannerData {
 export default function usePlanner(setter ?: () => PlannerData | undefined) {
     const [plannerData, _setPlannerData] = useState<PlannerData>((setter && setter()) || getEmptyPlanner());
 
-    const setPlannerData = (pd?: PlannerData) => _setPlannerData(pd || getEmptyPlanner());
+    const setPlannerData = (pd?: PlannerData) => {
+        _setPlannerData(pd || getEmptyPlanner());
+    }
 
     const ret: UsePlannerReturn = {
         plannerData,
