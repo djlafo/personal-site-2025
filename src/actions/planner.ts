@@ -24,7 +24,7 @@ export async function getPlannerData(): Promise<PlannerData | MyErrorObj>{
                 asc(plannerRowTable.done), 
                 desc(plannerRowTable.deadline),
                 desc(plannerRowTable.motivation),
-                desc(plannerRowTable.id)
+                asc(plannerRowTable.id)
             )
             
         if(planner.length) {
