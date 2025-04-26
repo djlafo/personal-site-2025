@@ -1,7 +1,7 @@
 import { TextMessage } from '@/actions/text';
 import db from '@/db';
 import { plannerTable } from '@/db/schema/planner';
-import { plannerRowTable } from '@/db/schema/plannerRow';
+import { plannerRowTable } from '@/db/schema/plannerrow';
 import { usersTable } from '@/db/schema/users';
 import { eq } from 'drizzle-orm';
 import 'server-only';

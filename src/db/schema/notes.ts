@@ -4,7 +4,7 @@ import { usersTable } from "./users";
 export const notesTable = pgTable("notes", {
     id: varchar({length: 255}).primaryKey().notNull(),
     parentId: varchar('parent_id', {length: 255}).references((): AnyPgColumn => notesTable.id, { onDelete: 'cascade' }),
-    userId: integer('user_id').references((): AnyPgColumn => usersTable.id),
+    userId: integer('user_id').references((): AnyPgColumn => usersTable.id).notNull(),
     text: varchar().notNull(),
     public: boolean().default(false).notNull()
 });

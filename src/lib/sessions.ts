@@ -5,19 +5,24 @@ import jwt from 'jsonwebtoken';
 import { usersTable } from '@/db/schema/users';
 
 import { cookies, headers } from 'next/headers';
+import { eq } from 'drizzle-orm';
+import db from '@/db';
 
 const secretKey = process.env.AUTH_SECRET;
 
 export interface JWTObjType {
     exp: number;
-    data: Omit<typeof usersTable.$inferSelect, "password">;
+    data: JWTData;
 }
-export async function encrypt(obj: typeof usersTable.$inferSelect) {
+export interface JWTData {
+    username: string,
+    id: number
+}
+export async function encrypt(obj: JWTData) {
     // eslint-disable-next-line
-    const {password, ...withoutPW} = obj; // remove password
     const token = jwt.sign({
         exp: Math.floor(getExpirationDefault()/1000),
-        data: withoutPW
+        data: obj
     }, secretKey);
 
     return token;
@@ -33,12 +38,24 @@ export function getExpirationDefault() {
     return (Date.now() + (60 * 60 * 24 * 1000));
 }
 
-export async function getUser(): Promise<Omit<typeof usersTable.$inferSelect, 'password'> | undefined> {
+export async function getUser(): Promise<JWTData | undefined> {
     const session = await getSession()
     if(session) {
         const decrypted = decrypt(session);
         if(!decrypted) return;
-        return decrypted.data as typeof usersTable.$inferSelect;
+
+            return decrypted.data as typeof usersTable.$inferSelect;
+        }
+}
+
+export async function getFullUser(): Promise<Omit<typeof usersTable.$inferSelect, "password"> | undefined> {
+    const user = await getUser();
+    if(!user) return;
+    const query = await db.select().from(usersTable).where(eq(usersTable.id, user.id));
+    if(query.length === 1) {
+        // eslint-disable-next-line
+        const {password, ...theRest} = query[0];
+        return theRest;
     }
 }
 

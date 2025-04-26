@@ -2,35 +2,22 @@
 
 import db from '@/db';
 import { usersTable } from '@/db/schema/users';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, and } from 'drizzle-orm';
 
-import { decrypt, encrypt, getExpirationDefault, getSession, getUser } from '@/lib/sessions';
+import { decrypt, encrypt, getExpirationDefault, getFullUser, getSession, getUser } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
 import { cookies, headers } from 'next/headers';
 
 import { UserInfo } from '@/components/Session';
 import { MyError, MyErrorObj } from '@/lib/myerror';
+import { phoneVerificationTable } from '@/db/schema/phoneverification';
+import { sendText } from '@/lib/twilio';
 
 type FormState = {
     error?: string;
     username?: string;
 } | undefined
-
-async function userToUserInfo(): Promise<UserInfo | undefined> {
-    const session = await getSession();
-    if(session) {
-        const fullJwt = decrypt(session);
-        if(!fullJwt) return;
-        return {
-            username: fullJwt.data.username,
-            exp: fullJwt.exp,
-            phone: fullJwt.data.phoneNumber || '',
-            zip: fullJwt.data.zip || '',
-            token: session
-        };
-    }
-}
 
 export async function login(state: FormState, formData: FormData) {
     const info = {
@@ -49,7 +36,10 @@ export async function login(state: FormState, formData: FormData) {
         if(correctPass) {
             const headerList = await headers();
             const updatedIp = db.update(usersTable).set({lastIp: headerList.get('x-forwarded-for')}).where(eq(usersTable.username, info.username));
-            const jwt = await encrypt(user);
+            const jwt = await encrypt({
+                username: user.username,
+                id: user.id
+            });
             const cookieStore = await cookies();
 
             cookieStore.set('session', jwt, {
@@ -61,7 +51,7 @@ export async function login(state: FormState, formData: FormData) {
             });
 
             await updatedIp;
-            return await userToUserInfo();
+            return await getUserInfo();
         }
 
     }
@@ -115,7 +105,7 @@ export async function register(state: FormState, formData: FormData) {
             sameSite: 'lax',
             path: '/'
         });
-        return userToUserInfo()
+        return getUserInfo()
     } else {
         return {
             error: 'Failed to create'
@@ -127,13 +117,36 @@ interface UpdateAccountProps {
     phoneNumber?: string;
     zip?: string;
 }
-export async function updateAccount({phoneNumber, zip}: UpdateAccountProps): Promise<UserInfo | MyErrorObj> {
-    const user = await getUser();
+export async function updateAccount({phoneNumber, zip}: UpdateAccountProps) {
+    const user = await getFullUser();
     if(!user) return MyError.create({message: 'Not logged in', authRequired: true});
     if(phoneNumber && !/^[0-9]{10}$/.test(phoneNumber)) return MyError.create({message: 'Invalid telephone format'}); 
     if(zip && !/^[0-9]{5}$/.test(zip)) return MyError.create({message: 'Invalid ZIP format'});
-    const resp = await db.update(usersTable).set({phoneNumber: phoneNumber, zip: zip}).where(eq(usersTable.id, user.id)).returning();
+
+    let updateObj: any = {phoneNumber: phoneNumber || null, zip: zip || null};
+    if(phoneNumber && user.phoneNumber !== phoneNumber) {
+        updateObj = {zip: zip || null};
+        const current = await db.select().from(phoneVerificationTable)
+            .where(and(
+                eq(phoneVerificationTable.verified, false),
+                eq(phoneVerificationTable.userId, user.id),
+                eq(phoneVerificationTable.phoneNumber, phoneNumber)
+            ));
+        if(current.length !== 0) {
+            return MyError.create({message: 'You haven\'t answered the verification text yet'});
+        } else {
+            await db.insert(phoneVerificationTable).values({
+                userId: user.id,
+                phoneNumber: phoneNumber
+            })
+            await sendText('From dylanlafont.com: your number has been added to account '
+                + `${user.username}, respond \'yes ${user.id}\' to confirm.  Respond \'stop\' to stop all messages from this number.`, phoneNumber);
+        }
+    }
+
+    const resp = await db.update(usersTable).set(updateObj).where(eq(usersTable.id, user.id)).returning();
     if(resp.length!==1) return MyError.create({message: 'Failed to update'});
+
     const jwt = await encrypt(resp[0]);
     const cookieStore = await cookies();
 
@@ -145,11 +158,24 @@ export async function updateAccount({phoneNumber, zip}: UpdateAccountProps): Pro
         path: '/'
     });
 
-    const ui = await userToUserInfo();
+    const ui = await getFullUserInfo();
     if(!ui) return MyError.create({message: 'Failed to get user info'});
     return ui;
 }
 
-export async function getUserInfo() {
-    return await userToUserInfo();
+export async function getUserInfo(): Promise<UserInfo | undefined> {
+    const session = await getSession();
+    if(session) {
+        const fullJwt = decrypt(session);
+        if(!fullJwt) return;
+        return {
+            username: fullJwt.data.username,
+            exp: fullJwt.exp,
+            token: session
+        };
+    }
+}
+
+export async function getFullUserInfo() {
+    return await getFullUser();
 }

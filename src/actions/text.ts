@@ -26,7 +26,7 @@ export async function sendText(message: string, number: string): Promise<boolean
 }
 
 export async function listUserTexts() {
-    const user = await getUser();
+    const user = await getUser(true);
     const texts = await listTexts();
     return texts.filter(t => t.recipient === user?.phoneNumber && new Date(t.time) > new Date());
 }

@@ -2,7 +2,7 @@
 
 import { useUser } from '@/components/Session';
 import styles from './account.module.css';
-import { updateAccount } from '@/actions/auth';
+import { getFullUserInfo, updateAccount } from '@/actions/auth';
 import { MyError } from '@/lib/myerror';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
@@ -40,34 +40,48 @@ export default function Page() {
 
 
 function AccountDetails() {
-    const [user, setUser] = useUser();
+    const [user, setUser] = useState<Awaited<ReturnType<typeof getFullUserInfo>>>();
 
     const _updateAccount = async (fd: FormData) => {
+        const phone = fd.get('phonenumber')?.toString();
         const resp = await updateAccount({
-            phoneNumber: fd.get('phonenumber')?.toString(),
+            phoneNumber: phone,
             zip: fd.get('zip')?.toString()
         });
         if(MyError.isInstanceOf(resp)) { 
             toast.error(resp.message);
         } else {
+            if(phone && user?.phoneNumber !== phone) {
+                toast.info('Please answer verification text for phone #');
+            } else {
+                toast.success('Saved!');
+            }
             setUser(resp);
-            toast.success('Saved!');
         }
     }
+
+    useEffect(() => {
+        getFullUserInfo().then(fullUser => {
+            setUser(fullUser);
+        });
+        // eslint-disable-next-line
+    }, []);
+
+    if(!user) return;
 
     return <form action={_updateAccount}>
         <label htmlFor='phonenumber'>Phone(10 digits):</label>
         <input id='phonenumber'
             name='phonenumber' 
             type='tel' 
-            defaultValue={user?.phone}
+            defaultValue={user?.phoneNumber || ''}
             pattern="[0-9]{10}"
             placeholder='5551239876'/>
         <label htmlFor='zip'>ZIP code(5 digits):</label>
         <input id='zip'
             name='zip'
             type='tel'
-            defaultValue={user?.zip}
+            defaultValue={user?.zip || ''}
             pattern="[0-9]{5}"
             placeholder='12345'/>
         <input type='submit' value="Submit"/>

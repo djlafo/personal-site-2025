@@ -10,7 +10,7 @@ import { getUser } from '@/lib/sessions';
 import { MyError, MyErrorObj } from '@/lib/myerror';
 
 import { PlannerData, PlannerRow } from '@/app/planner/usePlanner';
-import { plannerRowTable } from '@/db/schema/plannerRow';
+import { plannerRowTable } from '@/db/schema/plannerrow';
 
 export async function getPlannerData(): Promise<PlannerData | MyErrorObj>{
     const user = await getUser();

@@ -6,10 +6,7 @@ import { getUserInfo } from "@/actions/auth";
 export interface UserInfo {
     username: string;
     exp: number;
-    phone: string;
     token: string;
-    zip: string;
-    coords?: string;
 };
 export type UserContextType = [
     user: UserInfo | undefined,
