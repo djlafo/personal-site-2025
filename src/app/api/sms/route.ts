@@ -1,3 +1,4 @@
+import { sendChat } from '@/actions/gpt';
 import db from '@/db';
 import { phoneVerificationTable } from '@/db/schema/phoneverification';
 import { usersTable } from '@/db/schema/users';
@@ -77,6 +78,9 @@ export async function POST(req: Request) {
             await db.delete(phoneVerificationTable).where(eq(phoneVerificationTable.phoneNumber, number));
             twiml.message('Removed from all!')
         }
+    } else if (parts[0] === 'gpt') {
+        const gptResponse = await sendChat(parts.slice(1).join(' '), []);
+        twiml.message(gptResponse.text);
     } else {
         twiml.message('I didn\'t recognize this command');
     }
