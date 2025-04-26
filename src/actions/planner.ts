@@ -22,7 +22,7 @@ export async function getPlannerData(): Promise<PlannerData | MyErrorObj>{
             .where(eq(usersTable.id, user.id))
             .orderBy(
                 asc(plannerRowTable.done), 
-                desc(plannerRowTable.deadline),
+                asc(plannerRowTable.deadline),
                 desc(plannerRowTable.motivation),
                 asc(plannerRowTable.id)
             )
