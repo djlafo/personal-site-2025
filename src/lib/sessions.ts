@@ -19,7 +19,6 @@ export interface JWTData {
     id: number
 }
 export async function encrypt(obj: JWTData) {
-    // eslint-disable-next-line
     const token = jwt.sign({
         exp: Math.floor(getExpirationDefault()/1000),
         data: obj

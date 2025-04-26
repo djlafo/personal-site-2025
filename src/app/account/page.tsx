@@ -1,6 +1,5 @@
 'use client'
 
-import { useUser } from '@/components/Session';
 import styles from './account.module.css';
 import { getFullUserInfo, updateAccount } from '@/actions/auth';
 import { MyError } from '@/lib/myerror';
@@ -64,7 +63,6 @@ function AccountDetails() {
         getFullUserInfo().then(fullUser => {
             setUser(fullUser);
         });
-        // eslint-disable-next-line
     }, []);
 
     if(!user) return;

@@ -4,13 +4,13 @@ import db from '@/db';
 import { usersTable } from '@/db/schema/users';
 import { eq, or, and } from 'drizzle-orm';
 
-import { decrypt, encrypt, getExpirationDefault, getFullUser, getSession, getUser } from '@/lib/sessions';
+import { decrypt, encrypt, getExpirationDefault, getFullUser, getSession } from '@/lib/sessions';
 import bcrypt from 'bcrypt';
 
 import { cookies, headers } from 'next/headers';
 
 import { UserInfo } from '@/components/Session';
-import { MyError, MyErrorObj } from '@/lib/myerror';
+import { MyError } from '@/lib/myerror';
 import { phoneVerificationTable } from '@/db/schema/phoneverification';
 import { sendText } from '@/lib/twilio';
 

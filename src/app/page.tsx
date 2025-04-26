@@ -25,7 +25,7 @@ export default function Home() {
                 <Link href='https://github.com/djlafo/personal-site-2025' target='_blank' rel='noreferrer'>Here</Link> is a link to the source code<br/>
             </p>
             <p>
-                The features here are mainly things for my daily use.  There are quite a bit of features that are locked behind having an account, and you're free to register.
+                The features here are mainly things for my daily use.  There are quite a bit of features that are locked behind having an account, and you&apos;re free to register.
             </p>
         </div>
     </>;

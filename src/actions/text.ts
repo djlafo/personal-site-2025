@@ -1,7 +1,7 @@
 'use server'
 
 import { MyError, MyErrorObj } from '@/lib/myerror';
-import { getUser } from '@/lib/sessions';
+import { getFullUser, getUser } from '@/lib/sessions';
 import { sendText as _sendText, listTexts } from '@/lib/twilio';
 
 export interface TextEventData {
@@ -26,7 +26,7 @@ export async function sendText(message: string, number: string): Promise<boolean
 }
 
 export async function listUserTexts() {
-    const user = await getUser(true);
+    const user = await getFullUser();
     const texts = await listTexts();
     return texts.filter(t => t.recipient === user?.phoneNumber && new Date(t.time) > new Date());
 }

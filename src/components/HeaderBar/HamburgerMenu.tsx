@@ -1,17 +1,31 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Modal, { openOnEscFn } from '@/components/Modal';
 
 import Link from 'next/link';
 
 import styles from './headerbar.module.css';
-import { useUser } from '../Session';
+import { getFullUserInfo } from '@/actions/auth';
 
 export default function HamburgerMenu() {
 	const [open, setOpen] = useState(false);
-	const [user] = useUser();
+	const [user, setUser] = useState<Awaited<ReturnType<typeof getFullUserInfo>>>();
+	const [coords, setCoords] = useState<string>();
+
+	useEffect(() => {
+		getFullUserInfo().then(fullUser => {
+			if(fullUser && typeof window !== 'undefined') {
+				const zip = localStorage.getItem('zip')?.toString();
+				const coords = localStorage.getItem('coords')?.toString();
+				if(zip === fullUser.zip) {
+					setCoords(coords);
+				}
+			}
+			setUser(fullUser);
+		});
+	}, []);
 
     return <div>
 			<div className={styles.burgermenu} onClick={() => setOpen(true)}>
@@ -47,7 +61,7 @@ export default function HamburgerMenu() {
 						</Link>
 					</span>
 					<span>
-						<Link className='button-style' href={user && user.zip ? `/weather/${user.zip}/${user.coords || ''}` : '/weather'}>
+						<Link className='button-style' href={user && user.zip ? `/weather/${user.zip}/${coords || ''}` : '/weather'}>
 							Weather
 						</Link>
 					</span>

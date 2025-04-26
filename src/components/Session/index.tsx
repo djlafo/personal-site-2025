@@ -36,12 +36,6 @@ export function UserProvider(props: SessionProps) {
         getUserInfo().then(u => {
             if(u) {
                 console.log(u);
-                if(localStorage.getItem('zip') === u.zip) {
-                    const coords = localStorage.getItem('coords');
-                    if(coords) {
-                        u = Object.assign({coords: coords}, u);
-                    }   
-                }
                 const expiry = new Date(u.exp*1000);
                 if(expiry < new Date()) {
                     u = undefined;

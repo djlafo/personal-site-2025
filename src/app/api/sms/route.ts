@@ -2,7 +2,7 @@ import { sendChat } from '@/actions/gpt';
 import db from '@/db';
 import { phoneVerificationTable } from '@/db/schema/phoneverification';
 import { usersTable } from '@/db/schema/users';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import twilio from 'twilio';
 
 export async function POST(req: Request) {
