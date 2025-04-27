@@ -16,6 +16,7 @@ export default function TaskContainer({ task, onSetPlannerData }: TaskContainerP
             onFinishEdit={() => setEditing(false)}/>
     } else {
         return <TaskCard task={task} 
+            onSetPlannerData={onSetPlannerData}
             onSetEdit={() => setEditing(true)}/>;
     }
     

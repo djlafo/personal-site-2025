@@ -1,4 +1,3 @@
-import { useUser } from "@/components/Session";
 import { PlannerData, PlannerRow } from "../usePlanner";
 import { useState } from "react";
 import { createUpdatePlannerRow, deletePlannerRow } from "@/actions/planner";
@@ -13,7 +12,6 @@ interface TaskEditorProps {
     onFinishEdit: () => void;
 }
 export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: TaskEditorProps) {
-    const [user] = useUser();
     const [editedTask, setEditedTask] = useState<PlannerRow>(task);
     const [showDeadline, setShowDeadline] = useState(!!task.deadline);
 
@@ -106,17 +104,15 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
                 updateRow({deadline: new Date(e.target.value).toLocaleString()})
             }}/>}
 
-        {user && 
-            editedTask.deadline && 
-            new Date(editedTask.deadline).getTime() > Date.now() && 
-            <span>
-                <label htmlFor='textmessage'>Text Message</label>
-                <input type='checkbox'
-                    id='textmessage'
-                    name='textmessage'
-                    onChange={e => updateRow({text: e.target.checked})}/>
-            </span>
-        }
+
+        <span>
+            <label htmlFor='textmessage'>Text Message</label>
+            <input type='checkbox'
+                id='textmessage'
+                name='textmessage'
+                checked={editedTask.text}
+                onChange={e => updateRow({text: e.target.checked})}/>
+        </span>
 
         <div className={styles.buttons}>
             <button onClick={saveRow}>Save</button>

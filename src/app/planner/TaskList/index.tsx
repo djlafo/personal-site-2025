@@ -20,6 +20,7 @@ export default function TaskList({plannerData, onSetPlannerData, date}: TaskList
     const done = tasks.filter(t => t.done);
 
     return <div className={styles.tasklist}>
+        <NewTask date={date} onSetPlannerData={onSetPlannerData}/>
         {timed.length && <>
             <span>Timed</span>
             <div>
@@ -59,7 +60,6 @@ export default function TaskList({plannerData, onSetPlannerData, date}: TaskList
             || 
             <></>
         }
-        <NewTask date={date} onSetPlannerData={onSetPlannerData}/>
     </div>;
 }
 
