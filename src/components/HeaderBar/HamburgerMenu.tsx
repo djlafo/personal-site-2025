@@ -57,7 +57,7 @@ export default function HamburgerMenu() {
 					</span>
 					<span>
 						<Link className='button-style' href={'/planner'}>
-							Daily Planner
+							Planner
 						</Link>
 					</span>
 					<span>

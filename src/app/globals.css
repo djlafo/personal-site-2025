@@ -112,6 +112,10 @@ input[type=tel] {
   width: 150px;
 }
 
+input[type=datetime-local] {
+  width: 330px;
+}
+
 input[type=file] {
   width: 250px;
 }

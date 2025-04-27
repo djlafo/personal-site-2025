@@ -1,4 +1,4 @@
-import React, { useState, useRef, ComponentProps } from 'react';
+import React, { useState, useRef, ComponentProps, useEffect } from 'react';
 import './timeinput.css';
 
 type valueChangeFunction = (n: number) => void;
@@ -12,6 +12,9 @@ const calculateTime = (s: string): number => {
             let multiplier = 0;
             if(p.length > 0) {
                 switch(p.charAt(p.length-1).toLowerCase()) {
+                    case 'd':
+                        multiplier = 60*60*24;
+                    break;
                     case 'h':
                         multiplier = 60*60;
                     break;
@@ -37,18 +40,21 @@ const calculateTime = (s: string): number => {
 const calculateString = (n: number): string => {
     let minutes = Math.floor(n / 60);
     const seconds = n % 60;
-    const hours = Math.floor(minutes / 60);
+    let hours = Math.floor(minutes / 60);
     minutes -= hours*60;
-    return `${hours ? `${hours}h ` : ''}${minutes ? `${minutes}m ` : '' }${seconds}s`;
+    const days = Math.floor(hours / 24);
+    hours -= days*24;
+    return `${days ? `${days}d ` : ''}${hours ? `${hours}h ` : ''}${minutes ? `${minutes}m ` : '' }${seconds}s`;
 };
 
 export interface TimeProps extends ComponentProps<'input'> {
     value?: number; 
     onValueChange?: valueChangeFunction;
     countdownOnSet?: boolean;
+    noInput?: boolean;
     onZero?: () => void;
 }
-export default function TimeInput({ value, onValueChange, countdownOnSet, onZero, ...props }: TimeProps ) {
+export default function TimeInput({ value, onValueChange, noInput, countdownOnSet, onZero, ...props }: TimeProps ) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [remainingTimeText, setRemainingTimeText] = useState('');
     const [internalValue, setInternalValue] = useState<number | null>();
@@ -68,16 +74,10 @@ export default function TimeInput({ value, onValueChange, countdownOnSet, onZero
     }
     const startCountdown = (v: number) => {
         if(!v) return;
-        const now = Number(new Date());
-        const handler: TimerHandler = () => {
-            setInternalValue(Math.floor(((v*1000) - (Number(new Date()) - now))/1000));
-            setTickerFlag(t => !t);
-        }
-        setTicker(setInterval(handler, 1000));
+        setTicker(v);
     }
     const stopCountdown = () => {
         if(!countdownOnSet || !ticker) return;
-        clearInterval(ticker);
         setTicker(null);
         setInternalValue(null);
     }
@@ -103,7 +103,22 @@ export default function TimeInput({ value, onValueChange, countdownOnSet, onZero
         }
     }
 
-    return <span className='time-input'>
+    useEffect(() => {
+        if(!ticker) return;
+
+        const now = Number(new Date());
+        const handler: TimerHandler = () => {
+            setInternalValue(Math.floor(((ticker*1000) - (Number(new Date()) - now))/1000));
+            setTickerFlag(t => !t);
+        }
+        const int = setInterval(handler, 1000);
+        return () => {
+            clearInterval(int);
+        }
+        // eslint-disable-next-line
+    }, [ticker])
+
+    return !noInput ? <span className='time-input'>
         <input type="text" 
             value={remainingTimeText} 
             onChange={e => setRemainingTimeText(e.target.value)} 
@@ -114,7 +129,7 @@ export default function TimeInput({ value, onValueChange, countdownOnSet, onZero
             onBlur={e => alertValueChange(e.target.value)} 
             ref={inputRef} 
             {...props}/>
-        <span className='help-text'>Format 8h 4m 2s</span>
-    </span>;
+        {!props.readOnly && <span className='help-text'>Format 2d 8h 4m 2s</span>}
+    </span> : remainingTimeText;
 
 }

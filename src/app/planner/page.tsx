@@ -20,6 +20,6 @@ async function PlannerLoader() {
             return <span>{resp.message}</span>
         }
     } else {
-        return <PlannerComponent initPlannerData={resp}/>
+        return <PlannerComponent initPlannerData={resp}/>;
     }
 }

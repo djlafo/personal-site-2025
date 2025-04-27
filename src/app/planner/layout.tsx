@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Daily Planner"
+  title: "Planner"
 };
 
 export default async function RootLayout({
