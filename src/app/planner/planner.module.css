@@ -116,19 +116,26 @@
 }
 
 .taskCard .header {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 36px;
+    gap: 16px;
+    flex-wrap: wrap-reverse;
 }
 .taskCard .header > div {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-wrap: wrap-reverse;
+    overflow: hidden;
+}
+.taskCard .header .motHeader {
+    margin-left: auto;
 }
 .taskCard .body {
+    margin-top: 8px;
     display: flex;
     flex-direction: column;
 }
