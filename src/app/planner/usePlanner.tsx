@@ -29,7 +29,7 @@ export function getEmptyPlanner(): PlannerData {
 
 export default function usePlanner(setter?: PlannerData | undefined) {
     const [wholePlannerData, setWholePlannerData] = useState<PlannerData>(setter || getEmptyPlanner());
-    const [date, _setDate] = useState<Value>(null);
+    const [date, _setDate] = useState<Value>(new Date());
     const _filterPlannerData = (pd: PlannerData, date: Value) => {
         const filtered = {tasks: pd.tasks.filter(t => {
             if(date instanceof Date) {

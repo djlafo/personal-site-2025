@@ -105,7 +105,7 @@
     width: 100%;
     box-sizing: border-box;
 }
-.taskCard.done {
+.taskCard.done, .taskCard.unimportant {
     opacity: 0.3;
 }
 .taskCard.overdue {

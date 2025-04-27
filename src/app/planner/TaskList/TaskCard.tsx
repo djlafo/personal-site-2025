@@ -10,7 +10,8 @@ const TimeInput = dynamic(() => import('@/components/TimeInput'), {
     ssr: false
 })
 
-const onTimerOver = () => {
+const onTimerOver = (done: boolean) => {
+    if(done) return;
     const a = new Audio('/timer-alert.mp3');
     a.play();
     alert('Deadline reached!');
@@ -22,7 +23,7 @@ interface TaskCardProps {
     onSetPlannerData: (pd: PlannerData) => void;
 }
 export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCardProps) {
-    const overdue = task.deadline ? new Date(task.deadline).getTime() - Date.now() < 0 : false;
+    const overdue = task.deadline && !task.done ? new Date(task.deadline).getTime() - Date.now() < 0 : false;
 
     const setDone = async (b: boolean) => {
         const resp = await createUpdatePlannerRow(Object.assign(task, {done: b}));
@@ -33,7 +34,7 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
         }
     }
 
-    return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''}`}>
+    return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''} ${task.motivation === 0 ? styles.unimportant : ''}`}>
         <div className={styles.header}>
             <div>
                 <button onClick={onSetEdit}>Edit</button>
@@ -55,7 +56,7 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
                 </span>
                 <TimeInput value={Math.floor((new Date(task.deadline).getTime() - Date.now())/1000)} 
                     noInput
-                    onZero={onTimerOver}
+                    onZero={() => onTimerOver(task.done)}
                     countdownOnSet/>
             </>}
         </div>
