@@ -115,7 +115,6 @@ export default function TimeInput({ value, onValueChange, noInput, countdownOnSe
         return () => {
             clearInterval(int);
         }
-        // eslint-disable-next-line
     }, [ticker])
 
     return !noInput ? <span className='time-input'>

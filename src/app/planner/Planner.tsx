@@ -1,6 +1,6 @@
 'use client'
 
-import usePlanner, { PlannerData, PlannerRow, Value } from './usePlanner';
+import usePlanner, { PlannerData, Value } from './usePlanner';
 import TaskList from './TaskList';
 
 import styles from './planner.module.css';
