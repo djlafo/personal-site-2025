@@ -14,7 +14,6 @@ const onTimerOver = (done: boolean) => {
     if(done) return;
     const a = new Audio('/timer-alert.mp3');
     a.play();
-    alert('Deadline reached!');
 }
 
 interface TaskCardProps {
@@ -44,21 +43,24 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
                 <input type='checkbox' 
                     defaultChecked={task.done} 
                     onChange={e => setDone(e.target.checked)}/>
-                {task.text && <Image src='/icons/phone.png' alt='Text Enabled' width={18} height={30}/>}
+                {task.textAt && <Image src='/icons/phone.png' alt='Text Enabled' width={18} height={30}/>}
                 <span className={styles.motivation}>{task.motivation}</span>
             </div>
         </div>
         
         <div className={styles.body}>
             {task.deadline && <>
-                <span>
-                    Date: {new Date(task.deadline).toLocaleString('en-US')}
-                </span>
                 <TimeInput value={Math.floor((new Date(task.deadline).getTime() - Date.now())/1000)} 
                     noInput
                     onZero={() => onTimerOver(task.done)}
                     countdownOnSet/>
+                <span>
+                    Date: {new Date(task.deadline).toLocaleString('en-US')}
+                </span>
             </>}
+            {task.textAt && <span>
+                Text at: {new Date(task.textAt).toLocaleString('en-US')}
+            </span>}
         </div>
     </div>
 }

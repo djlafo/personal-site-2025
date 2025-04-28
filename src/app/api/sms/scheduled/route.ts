@@ -26,10 +26,10 @@ export async function GET(req: Request) {
         return (new Date(txt.time) < new Date());
     });
 
-    await db.update(plannerRowTable).set({text: false}).where(inArray(plannerRowTable.id, overdue.map(t => t.id)));
+    await db.update(plannerRowTable).set({textAt: null}).where(inArray(plannerRowTable.id, overdue.map(t => t.id)));
     
     overdue.forEach(t => {
-        sendText(`Planner reminder: ${t.text}`, t.recipient);
+        sendText(t.text, t.recipient);
     });
 
     return new Response('', {status: 200});

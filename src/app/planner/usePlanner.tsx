@@ -12,7 +12,7 @@ export interface PlannerRow {
     motivation: number;
     done: boolean;
     deadline: string | null;
-    text: boolean;
+    textAt: string | null;
 }
 export interface PlannerData {
     tasks: PlannerRow[];

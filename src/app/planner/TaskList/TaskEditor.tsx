@@ -14,6 +14,7 @@ interface TaskEditorProps {
 export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: TaskEditorProps) {
     const [editedTask, setEditedTask] = useState<PlannerRow>(task);
     const [showDeadline, setShowDeadline] = useState(!!task.deadline);
+    const [showText, setShowText] = useState(!!task.textAt);
 
     const saveRow = async () => {
         if(!editedTask.label) {
@@ -55,8 +56,12 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
         }
     }
 
-    const date = editedTask.deadline ? new Date(editedTask.deadline) : new Date();
-    const dateString = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}T${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    const deadlineDate = editedTask.deadline ? new Date(editedTask.deadline) : new Date();
+    const deadlineDateString = `${deadlineDate.getFullYear()}-${(deadlineDate.getMonth()+1).toString().padStart(2, '0')}-${deadlineDate.getDate().toString().padStart(2, '0')}T${deadlineDate.getHours().toString().padStart(2, '0')}:${deadlineDate.getMinutes().toString().padStart(2, '0')}`;
+
+    const textDate = editedTask.textAt ? new Date(editedTask.textAt) : new Date();
+    const textDateString = `${textDate.getFullYear()}-${(textDate.getMonth()+1).toString().padStart(2, '0')}-${textDate.getDate().toString().padStart(2, '0')}T${textDate.getHours().toString().padStart(2, '0')}:${textDate.getMinutes().toString().padStart(2, '0')}`;
+
     return <div className={`${styles.taskCard} ${styles.editing}`}>
         {(editedTask.id || editedTask.id == 0) && <>
             <input type='checkbox'
@@ -93,13 +98,13 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
                 id='showdeadline'
                 name='showdeadline'
                 checked={showDeadline}
-                onChange={() => {
-                    updateRow({deadline: showDeadline ? null : new Date().toLocaleString()})
-                    setShowDeadline(!showDeadline)
+                onChange={e => {
+                    updateRow({deadline: e.target.checked ? new Date().toLocaleString(): null})
+                    setShowDeadline(e.target.checked);
                 }}/>
         </span>
 
-        {showDeadline && <input type="datetime-local" value={dateString}
+        {showDeadline && <input type="datetime-local" value={deadlineDateString}
             onChange={e => {
                 updateRow({deadline: new Date(e.target.value).toLocaleString()})
             }}/>}
@@ -110,9 +115,17 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
             <input type='checkbox'
                 id='textmessage'
                 name='textmessage'
-                checked={editedTask.text}
-                onChange={e => updateRow({text: e.target.checked})}/>
+                checked={showText}
+                onChange={e => {
+                    updateRow({textAt: e.target.checked ? new Date().toLocaleString() : null});
+                    setShowText(e.target.checked);
+                }}/>
         </span>
+
+        {showText && <input type="datetime-local" value={textDateString}
+            onChange={e => {
+                updateRow({textAt: new Date(e.target.value).toLocaleString()})
+            }}/>}
 
         <div className={styles.buttons}>
             <button onClick={saveRow}>Save</button>

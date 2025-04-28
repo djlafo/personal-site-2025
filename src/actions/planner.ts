@@ -85,7 +85,7 @@ interface PlannerRowUpdateType {
     motivation: number;
     done: boolean;
     deadline: string | null;
-    text: boolean;
+    textAt: string | null;
 }
 export async function createUpdatePlannerRow(pr: PlannerRowUpdateType): Promise<PlannerData | MyErrorObj> {
     const planner = await getUserPlanner();

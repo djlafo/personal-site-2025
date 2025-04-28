@@ -3,7 +3,7 @@ import db from '@/db';
 import { plannerTable } from '@/db/schema/planner';
 import { plannerRowTable } from '@/db/schema/plannerrow';
 import { usersTable } from '@/db/schema/users';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNotNull } from 'drizzle-orm';
 import 'server-only';
 
 import twilio from 'twilio';
@@ -26,19 +26,19 @@ export async function listTexts() {
             .innerJoin(plannerTable, eq(plannerTable.id, plannerRowTable.plannerId))
             .innerJoin(usersTable, eq(usersTable.plannerId, plannerTable.id))
             .where(and(
-                eq(plannerRowTable.text, true),
+                isNotNull(plannerRowTable.textAt),
                 eq(plannerRowTable.done, false)
             ));
     
     const texts: TextMessage[] = [];
     
     alerts.forEach(a => {
-        if(!a.planner_row.deadline) return;
+        if(!a.planner_row.textAt) return;
         if(!a.users.phoneNumber) return;
         texts.push({
             id: a.planner_row.id,
-            time: new Date(a.planner_row.deadline).getTime(),
-            text: a.planner_row.label,
+            time: new Date(a.planner_row.textAt).getTime(),
+            text: `Planner event "${a.planner_row.label}" ${a.planner_row.deadline ? `at ${new Date(a.planner_row.deadline).toLocaleString('en-US')}` : ''}`,
             recipient: a.users.phoneNumber
         });
     });
