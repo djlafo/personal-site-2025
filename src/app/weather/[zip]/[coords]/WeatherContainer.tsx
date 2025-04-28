@@ -53,7 +53,7 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
         }).catch(() => {
             toast.error('Failed to get sunrise and sunset');
         });
-    }, [currentDay]);
+    }, [currentDay, coords]);
 
     return <div>
         <div className={styles.weatherHeader}>
