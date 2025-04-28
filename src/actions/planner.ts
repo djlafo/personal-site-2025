@@ -1,7 +1,7 @@
 'use server'
 
 import db from '@/db';
-import { eq, isNotNull, and, asc, desc } from 'drizzle-orm';
+import { eq, isNotNull, and, asc, desc, isNull } from 'drizzle-orm';
 
 import { usersTable } from '@/db/schema/users';
 import { plannerTable } from '@/db/schema/planner';
@@ -59,8 +59,11 @@ export async function clearPlannerValues(): Promise<PlannerData | MyErrorObj> {
     if(MyError.isInstanceOf(planner)) {
         return planner;
     } else {
-        await db.update(plannerRowTable).set({motivation: 0, deadline: null, text: false})
-            .where(eq(plannerRowTable.plannerId, planner.planner.id));
+        await db.update(plannerRowTable).set({motivation: 0})
+            .where(and(
+                eq(plannerRowTable.plannerId, planner.planner.id),
+                isNull(plannerRowTable.deadline)
+            ));
         return await getPlannerData();
     }
 }

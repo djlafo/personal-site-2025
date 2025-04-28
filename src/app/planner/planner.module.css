@@ -47,9 +47,12 @@
 }
 .tasklist > span {
     margin: 16px 0;
-    display: block;
-    text-align: center;
     font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 /* .taskcell {

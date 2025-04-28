@@ -6,6 +6,9 @@ import { useState } from "react";
 import styles from '../planner.module.css';
 import TaskContainer from "./TaskContainer";
 import TaskEditor from "./TaskEditor";
+import { clearPlannerValues } from "@/actions/planner";
+import { MyError } from "@/lib/myerror";
+import { toast } from "react-toastify";
 
 interface TaskListProps {
     plannerData: PlannerData;
@@ -18,6 +21,16 @@ export default function TaskList({plannerData, onSetPlannerData, date}: TaskList
     const timed = tasks.filter(t => t.deadline && !t.done);
     const noTime = tasks.filter(t => !t.deadline && !t.done);
     const done = tasks.filter(t => t.done);
+
+    const _clearValues = async () => {
+        const resp = await clearPlannerValues();
+        if(MyError.isInstanceOf(resp)) {
+            toast.error(resp.message);
+        } else {
+            onSetPlannerData(resp);
+            toast.success('Cleared');
+        }
+    }
 
     return <div className={styles.tasklist}>
         <NewTask date={date} onSetPlannerData={onSetPlannerData}/>
@@ -35,7 +48,10 @@ export default function TaskList({plannerData, onSetPlannerData, date}: TaskList
             <></>
         }
         {noTime.length && <>
-                <span>Anytime</span>
+                <span>
+                    Anytime
+                    <button onClick={_clearValues}>Clear Importance</button>
+                </span>
                 <div>
                             {noTime.map(t => {
                                 return <TaskContainer key={`${t.id}-${t.motivation}`} 
