@@ -82,7 +82,6 @@ function getCustomXAxis(value: any) {
 
 function CustomTooltip(params: any) { //payload, label, active
     if(!params.active) return null;
-    console.log(JSON.stringify(params.payload));
     return <div className={styles.tooltip}>
         <h3>{new Date(params.label).toLocaleTimeString('en-US')}</h3>
         <table>

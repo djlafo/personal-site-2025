@@ -10,6 +10,8 @@ import { WeatherData } from "./WeatherAPI/types";
 import Link from "next/link";
 
 import styles from './weeklyweather.module.css';
+import { getSunrise, SunriseDetails } from "./sunrise";
+import { toast } from "react-toastify";
 
 interface WeeklyWeatherProps {
     weatherData: WeatherData[];
@@ -25,8 +27,10 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
         if(day && weatherData.find(wd => wd.time.toDateString() === day)) return day;
         return weatherData[0].time.toDateString();
     });
+    const [sunrise, setSunrise] = useState<SunriseDetails>();
 
-    const _setCurrentDay = (day: string) => {
+
+    const _setCurrentDay = async (day: string) => {
         router.replace(`${pathname}?day=${day}`);
         setCurrentDay(day);
     }
@@ -40,12 +44,24 @@ export default function WeeklyWeather({zip, coords, weatherData}: WeeklyWeatherP
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        const date = new Date(currentDay);
+        const formatted = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+        const _coords = decodeURIComponent(coords).split(',');
+        getSunrise(_coords[0],_coords[1],formatted).then(sunrise => {
+            setSunrise(sunrise);
+        }).catch(() => {
+            toast.error('Failed to get sunrise and sunset');
+        });
+    }, [currentDay]);
+
     return <div>
         <div className={styles.weatherHeader}>
             <Link className='button-style' href='/weather'>Back</Link>
             <DaySwitcher currentDay={currentDay}
                 days={getDates(weatherData)}
                 onDaySwitched={s => _setCurrentDay(s)}/>
+            {sunrise && <span><b>Sunrise:</b> {sunrise.sunrise} <b>Noon:</b> {sunrise.solar_noon} <b>Sunset:</b> {sunrise.sunset} <b>Length:</b> {sunrise.day_length}</span>}
         </div>
         <Suspense>
             <WeatherGraph data={getDailyWeather(weatherData, currentDay)}/>    
