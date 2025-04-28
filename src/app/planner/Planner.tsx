@@ -54,7 +54,7 @@ function MyCalendar({ date, onDateChange, plannerData }: MyCalendarProps) {
 
     const checkEvent = (pd: PlannerData) => {
         return ({date:_date, view}: {date: Date, view: string}) => {
-            const eventFound = pd.tasks.some(t => t.deadline && new Date(t.deadline).toDateString() === _date.toDateString());
+            const eventFound = pd.tasks.some(t => t.deadline && new Date(t.deadline).toDateString() === _date.toDateString() && !t.done);
             if(view === 'month' && eventFound) {
                 return styles.eventDay;
             }

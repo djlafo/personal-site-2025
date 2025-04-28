@@ -25,7 +25,7 @@
     background-color: #44FF44;
     color: black;
 }
-.myCalendar :global(.react-calendar .react-calendar__tile--now):not(.eventDay) {
+.myCalendar :global(.react-calendar .react-calendar__tile--now:not(.react-calendar__tile--active)):not(.eventDay) {
     background-color: white;
     color: black;
 }
