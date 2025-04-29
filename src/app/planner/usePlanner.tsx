@@ -36,10 +36,13 @@ export default function usePlanner(setter?: PlannerData | undefined) {
     const [date, _setDate] = useState<Value>(new Date());
     const _filterPlannerData = (pd: PlannerData, _date: Value) => {
         if(_date instanceof Date) {
-            const filtered = {tasks: pd.tasks.filter(t => !t.deadline || t.done || taskOnDay(t, _date, true))};
+            const filtered = {tasks: pd.tasks.filter(t => !t.deadline || t.done || taskOnDay(t, _date))};
             return filtered;
+        } else if (!_date) {
+            return pd;
+        } else {
+            return {tasks: []};
         }
-        return {tasks: []};
     }
     const [plannerData, _setPlannerData] = useState<PlannerData>(_filterPlannerData(wholePlannerData, date));
 
