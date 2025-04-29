@@ -3,7 +3,7 @@ import { PlannerRow } from "./usePlanner";
 export function taskOnDay(task: PlannerRow, date: Date): boolean {
     if(task.deadline) {
         if(task.recurMonths && task.recurDays) return false;
-        if(new Date(task.deadline).getTime() > date.getTime()) return false;
+        if((new Date(task.deadline).getTime()-(1000*60*60*24)) > date.getTime()) return false;
         if(task.recurMonths) {
             return new Date(task.deadline).getDate() === date.getDate();
         } else if (task.recurDays) {
