@@ -86,16 +86,18 @@ interface PlannerRowUpdateType {
     done: boolean;
     deadline: string | null;
     textAt: string | null;
+    recurMonths: number;
+    recurDays: number;
 }
 export async function createUpdatePlannerRow(pr: PlannerRowUpdateType): Promise<PlannerData | MyErrorObj> {
     const planner = await getUserPlanner();
     if(MyError.isInstanceOf(planner)) {
         return planner;
     } else {
+        if(pr.recurDays && pr.recurMonths) return MyError.create({message: 'You can\'t repeat both months and days'});
         if(pr.id) {
             const copy = JSON.parse(JSON.stringify(pr));
             delete copy.id;
-            console.log('DEBUG');
             const update = await db.update(plannerRowTable).set({...copy, plannerId: planner.planner.id}).where(
                 and(
                     eq(plannerRowTable.id, pr.id),

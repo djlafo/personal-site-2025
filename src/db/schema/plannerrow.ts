@@ -8,5 +8,8 @@ export const plannerRowTable = pgTable("planner_row", {
   motivation: integer().notNull(),
   deadline: timestamp({ mode: 'string' }),
   done: boolean().notNull().default(false),
-  textAt: timestamp({ mode: 'string' })
+  textAt: timestamp('text_at', { mode: 'string' }),
+  lastText: timestamp('last_text', { mode: 'string' }),
+  recurMonths: integer('recur_months').notNull().default(0),
+  recurDays: integer('recur_days').notNull().default(0),
 });

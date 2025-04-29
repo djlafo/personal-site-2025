@@ -4,6 +4,7 @@ import { getPlannerData } from "@/actions/planner";
 import { MyError } from "@/lib/myerror";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { taskOnDay } from "./helpers";
 
 export interface PlannerRow {
     id?: number;
@@ -13,6 +14,9 @@ export interface PlannerRow {
     done: boolean;
     deadline: string | null;
     textAt: string | null;
+    lastText: string | null;
+    recurMonths: number;
+    recurDays: number;
 }
 export interface PlannerData {
     tasks: PlannerRow[];
@@ -30,19 +34,12 @@ export function getEmptyPlanner(): PlannerData {
 export default function usePlanner(setter?: PlannerData | undefined) {
     const [wholePlannerData, setWholePlannerData] = useState<PlannerData>(setter || getEmptyPlanner());
     const [date, _setDate] = useState<Value>(new Date());
-    const _filterPlannerData = (pd: PlannerData, date: Value) => {
-        const filtered = {tasks: pd.tasks.filter(t => {
-            if(date instanceof Date) {
-                if(t.deadline && !t.done) {
-                    return new Date(t.deadline).toDateString() === date.toDateString();
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        })};
-        return filtered;
+    const _filterPlannerData = (pd: PlannerData, _date: Value) => {
+        if(_date instanceof Date) {
+            const filtered = {tasks: pd.tasks.filter(t => !t.deadline || t.done || taskOnDay(t, _date))};
+            return filtered;
+        }
+        return {tasks: []};
     }
     const [plannerData, _setPlannerData] = useState<PlannerData>(_filterPlannerData(wholePlannerData, date));
 

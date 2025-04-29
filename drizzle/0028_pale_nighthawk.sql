@@ -1,0 +1,1 @@
+ALTER TABLE "planner_row" ADD COLUMN "last_text" timestamp;

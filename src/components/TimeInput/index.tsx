@@ -87,7 +87,7 @@ export default function TimeInput({ value, onValueChange, noInput, countdownOnSe
         setLastValue(value);
         setInternalValue(value);
         setRemainingTimeText(calculateString(value || 0));
-        if(!ticker && value && countdownOnSet) startCountdown(value);
+        if(!ticker && value && value >= 0 && countdownOnSet) startCountdown(value);
     } else if(!editing) {
         if(countdownOnSet && ticker) {
             if(internalValue && (internalValue < 0 || internalValue === 0)) {

@@ -6,6 +6,7 @@ import TaskList from './TaskList';
 import styles from './planner.module.css';
 import Calendar from 'react-calendar';
 import { useState } from 'react';
+import { taskOnDay } from './helpers';
 
 export default function Planner({initPlannerData}: {initPlannerData?: PlannerData}) {
     const {plannerData, wholePlannerData, setPlannerData, setDate, date} = usePlanner(initPlannerData);
@@ -53,8 +54,8 @@ function MyCalendar({ date, onDateChange, plannerData }: MyCalendarProps) {
     }
 
     const checkEvent = (pd: PlannerData) => {
-        return ({date:_date, view}: {date: Date, view: string}) => {
-            const eventFound = pd.tasks.some(t => t.deadline && new Date(t.deadline).toDateString() === _date.toDateString() && !t.done);
+        return ({ date: _date, view }: { date: Date, view: string }) => {
+            const eventFound = pd.tasks.some(t => taskOnDay(t, _date));
             if(view === 'month' && eventFound) {
                 return styles.eventDay;
             }

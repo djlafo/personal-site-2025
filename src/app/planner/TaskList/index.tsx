@@ -93,7 +93,10 @@ function NewTask({ onSetPlannerData, date }: NewTaskProps) {
             motivation: 0,
             done: false,
             deadline: deadline,
-            text: false
+            textAt: null,
+            lastText: null,
+            recurDays: 0,
+            recurMonths: 0
         });
     }
 

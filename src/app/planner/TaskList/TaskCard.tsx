@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { createUpdatePlannerRow } from "@/actions/planner";
 import { MyError } from "@/lib/myerror";
 import { toast } from "react-toastify";
+import { getNextDeadlineAndText } from "../helpers";
 const TimeInput = dynamic(() => import('@/components/TimeInput'), {
     ssr: false
 })
@@ -13,7 +14,9 @@ const TimeInput = dynamic(() => import('@/components/TimeInput'), {
 const onTimerOver = (done: boolean) => {
     if(done) return;
     const a = new Audio('/timer-alert.mp3');
-    a.play();
+    // try {
+        a.play();
+    // }
 }
 
 interface TaskCardProps {
@@ -22,7 +25,7 @@ interface TaskCardProps {
     onSetPlannerData: (pd: PlannerData) => void;
 }
 export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCardProps) {
-    const overdue = task.deadline && !task.done ? new Date(task.deadline).getTime() - Date.now() < 0 : false;
+    const overdue = task.deadline && !task.done && !task.recurMonths && !task.recurDays ? new Date(task.deadline).getTime() - Date.now() < 0 : false;
 
     const setDone = async (b: boolean) => {
         const resp = await createUpdatePlannerRow(Object.assign(task, {done: b}));
@@ -32,6 +35,8 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
             onSetPlannerData(resp);
         }
     }
+
+    const deadlines = getNextDeadlineAndText(task);
 
     return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''} ${task.motivation === 0 ? styles.unimportant : ''}`}>
         <div className={styles.header}>
@@ -49,17 +54,29 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
         </div>
         
         <div className={styles.body}>
-            {task.deadline && <>
-                <TimeInput value={Math.floor((new Date(task.deadline).getTime() - Date.now())/1000)} 
+            {deadlines.deadline && <>
+                <TimeInput value={Math.floor((deadlines.deadline.getTime() - Date.now())/1000)} 
                     noInput
                     onZero={() => onTimerOver(task.done)}
                     countdownOnSet/>
                 <span>
-                    Date: {new Date(task.deadline).toLocaleString('en-US')}
+                    Date: {deadlines.deadline.toLocaleString('en-US')}
                 </span>
             </>}
-            {task.textAt && <span>
-                Text at: {new Date(task.textAt).toLocaleString('en-US')}
+            {task.recurMonths && task.recurDays && <span>
+                Invalid recur setup
+            </span> || <></>}
+            {task.recurMonths && <span>
+                Repeats every {task.recurMonths} months
+            </span> || <></>}
+            {task.recurDays && <span>
+                Repeats every {task.recurDays} days
+            </span> || <></>}
+            {deadlines.textAt && <span>
+                Text at: {deadlines.textAt.toLocaleString('en-US')}
+            </span>}
+            {task.lastText && <span>
+                Last text: {new Date(task.lastText).toLocaleString('en-US')}
             </span>}
         </div>
     </div>

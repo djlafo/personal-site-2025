@@ -21,13 +21,11 @@ export async function GET(req: Request) {
     if(!checkWSAuth(req)) return new Response('', {status: 401});
 
     // grab all alerts
-    const texts = await listTexts();
+    const texts = await listTexts(true);
     const overdue = texts.filter(txt => {
-        return (new Date(txt.time) < new Date());
+        return (txt.time < Date.now());
     });
 
-    await db.update(plannerRowTable).set({textAt: null}).where(inArray(plannerRowTable.id, overdue.map(t => t.id)));
-    
     overdue.forEach(t => {
         sendText(t.text, t.recipient);
     });

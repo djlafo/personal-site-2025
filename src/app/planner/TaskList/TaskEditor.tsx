@@ -15,6 +15,7 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
     const [editedTask, setEditedTask] = useState<PlannerRow>(task);
     const [showDeadline, setShowDeadline] = useState(!!task.deadline);
     const [showText, setShowText] = useState(!!task.textAt);
+    const [showRepeat, setShowRepeat] = useState(!!task.deadline && (!!task.recurDays || !!task.recurMonths));
 
     const saveRow = async () => {
         if(!editedTask.label) {
@@ -99,7 +100,7 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
                 name='showdeadline'
                 checked={showDeadline}
                 onChange={e => {
-                    updateRow({deadline: e.target.checked ? new Date().toLocaleString(): null})
+                    updateRow({deadline: e.target.checked ? new Date().toLocaleString() : null, recurDays: 0, recurMonths: 0});
                     setShowDeadline(e.target.checked);
                 }}/>
         </span>
@@ -109,6 +110,36 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
                 updateRow({deadline: new Date(e.target.value).toLocaleString()})
             }}/>}
 
+        {showDeadline && <span>
+            <label htmlFor='showrepeat'>Repeat event</label>
+            <input type='checkbox'
+                id='showrepeat'
+                name='showrepeat'
+                checked={showRepeat}
+                onChange={e => {
+                    updateRow({recurMonths: 0, recurDays: 0})
+                    setShowRepeat(e.target.checked);
+                }}/>
+        </span>}
+
+        {showRepeat && <>
+            <span>    
+                <label htmlFor='recurmonths'>Months: </label>
+                <input type='number' 
+                    id='recurmonths'
+                    name='recurmonths'
+                    value={editedTask.recurMonths} 
+                    onChange={e => updateRow({recurMonths: Number(e.target.value), recurDays: 0})}/>
+            </span>
+            <span>    
+                <label htmlFor='recurdays'>Days: </label>
+                <input type='number' 
+                    id='recurdays'
+                    name='recurdays'
+                    value={editedTask.recurDays} 
+                    onChange={e => updateRow({recurDays: Number(e.target.value), recurMonths: 0})}/>
+            </span>
+        </>}
 
         <span>
             <label htmlFor='textmessage'>Text Message</label>
