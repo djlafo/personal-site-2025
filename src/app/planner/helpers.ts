@@ -1,7 +1,7 @@
 import { PlannerRow } from "./usePlanner";
 
-export function taskOnDay(task: PlannerRow, date: Date): boolean {
-    if(task.deadline) {
+export function taskOnDay(task: PlannerRow, date: Date, includeOthers = false): boolean {
+    if(task.deadline && !task.done) {
         if(task.recurMonths && task.recurDays) return false;
         if((new Date(task.deadline).getTime()-(1000*60*60*24)) > date.getTime()) return false;
         if(task.recurMonths) {
@@ -11,9 +11,9 @@ export function taskOnDay(task: PlannerRow, date: Date): boolean {
             const days = Math.floor(timeDiff / (1000*60*60*24));
             return Number.isInteger(days / task.recurDays);
         }
-        return !!(task.deadline && !task.done && new Date(task.deadline).toDateString() === date.toDateString());
+        return !!(task.deadline && new Date(task.deadline).toDateString() === date.toDateString());
     } else {
-        return false;
+        return includeOthers;
     }
 }
 
