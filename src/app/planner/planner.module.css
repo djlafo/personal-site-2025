@@ -55,47 +55,6 @@
     flex-wrap: wrap;
 }
 
-/* .taskcell {
-    margin: 10px 0;
-    display: flex;
-    flex-wrap: wrap-reverse;
-}
-
-.taskcell.done {
-    opacity: 0.4;
-}
-
-.taskcell.overdue {
-    border: 3px solid red;
-}
-
-.taskcell.timed {
-    border: 3px solid white;
-}
-
-.taskdetails {
-    display: flex;
-    flex: 1;
-    min-width: 180px;
-    padding-top: 15px;
-    padding-bottom: 5px;
-    border: 1px solid cyan;
-    flex-wrap: wrap-reverse;
-}
-
-.taskdetails > div:last-child {
-    margin-left: auto;
-    margin-top: 0;
-}
-
-.taskdetails > div:last-child > * {
-    margin-left: 5px;
-}
-
-.taskdetails > div {
-    margin: 5px 10px;
-} */
-
 /*  */
 
 /* TASK CARD */
@@ -108,7 +67,7 @@
     width: 100%;
     box-sizing: border-box;
 }
-.taskCard.done, .taskCard.unimportant {
+.taskCard.done {
     opacity: 0.3;
 }
 .taskCard.overdue {

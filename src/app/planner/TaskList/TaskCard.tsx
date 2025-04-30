@@ -36,9 +36,13 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
         }
     }
 
-    const deadlines = getNextDeadlineAndText(task);
+    const toMyDateFormat = (d: Date) => d.toLocaleDateString('en-US', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric'});
 
-    return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''} ${task.motivation === 0 ? styles.unimportant : ''}`}>
+    const deadlines = getNextDeadlineAndText(task);
+    // const red = Math.floor(task.motivation * (15/100)).toString(16); // hex
+    // const green = Math.floor(15 - (task.motivation * (15/100))).toString(16); // hex
+    return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''}`}
+        style={task.motivation === 0 ? {opacity: .2} : {opacity: (task.motivation / 100) * (7/10) + .3, backgroundColor: '#007777'}}>
         <div className={styles.header}>
             <div>
                 <button onClick={onSetEdit}>Edit</button>
@@ -55,28 +59,28 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
         
         <div className={styles.body}>
             {deadlines.deadline && <>
-                <TimeInput value={Math.floor((deadlines.deadline.getTime() - Date.now())/1000)} 
+                <b><TimeInput value={Math.floor((deadlines.deadline.getTime() - Date.now())/1000)} 
                     noInput
                     onZero={() => onTimerOver(task.done)}
-                    countdownOnSet/>
+                    countdownOnSet/></b>
                 <span>
-                    Date: {deadlines.deadline.toLocaleString('en-US')}
+                    <b>Date:</b> {toMyDateFormat(deadlines.deadline)}
                 </span>
             </>}
             {task.recurMonths && task.recurDays && <span>
                 Invalid recur setup
             </span> || <></>}
+            {deadlines.textAt && <span>
+                <b>Text:</b> {toMyDateFormat(deadlines.textAt)}
+            </span>}
             {task.recurMonths && <span>
-                Repeats every {task.recurMonths} months
+                <b>Repeats</b> every {task.recurMonths} month(s)
             </span> || <></>}
             {task.recurDays && <span>
-                Repeats every {task.recurDays} days
+                <b>Repeats</b> every {task.recurDays} day(s)
             </span> || <></>}
-            {deadlines.textAt && <span>
-                Text at: {deadlines.textAt.toLocaleString('en-US')}
-            </span>}
             {task.lastText && <span>
-                Last text: {new Date(task.lastText).toLocaleString('en-US')}
+                <br/><b>Last text:</b> {toMyDateFormat(new Date(task.lastText))}
             </span>}
         </div>
     </div>
