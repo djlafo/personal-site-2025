@@ -108,6 +108,8 @@ function getNextText(task: PlannerRow) {
             } else {
                 endDate = new Date(textTime + (dayTime * (intervals + 1)));
             }
+        } else {
+            return null;
         }
         return endDate;
     }

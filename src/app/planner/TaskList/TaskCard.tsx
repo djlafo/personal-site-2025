@@ -42,7 +42,7 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
     // const red = Math.floor(task.motivation * (15/100)).toString(16); // hex
     // const green = Math.floor(15 - (task.motivation * (15/100))).toString(16); // hex
     return <div className={`${styles.taskCard} ${task.done ? styles.done : ''} ${overdue ? styles.overdue : ''} ${task.deadline && !overdue ? styles.timed : ''}`}
-        style={task.motivation === 0 ? {opacity: .2} : {opacity: (task.motivation / 100) * (7/10) + .3, backgroundColor: '#007777'}}>
+        style={task.motivation === 0 || task.done ? {opacity: .2} : {opacity: (task.motivation / 100) * (7/10) + .3, backgroundColor: '#007777'}}>
         <div className={styles.header}>
             <div>
                 <button onClick={onSetEdit}>Edit</button>

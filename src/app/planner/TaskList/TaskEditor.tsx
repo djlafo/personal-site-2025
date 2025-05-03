@@ -148,7 +148,7 @@ export default function TaskEditor({ task, onSetPlannerData, onFinishEdit }: Tas
                 name='textmessage'
                 checked={showText}
                 onChange={e => {
-                    updateRow({textAt: e.target.checked ? new Date().toLocaleString() : null});
+                    updateRow({textAt: e.target.checked ? task.deadline : null});
                     setShowText(e.target.checked);
                 }}/>
         </span>
