@@ -8,10 +8,18 @@ interface sslOpts {
 }
 
 const dbCreds : {
-  url: string;
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
   ssl?: ConnectionOptions;
 } = {
-  url: process.env.DATABASE_URL!,
+  host: process.env.DATABASE_HOST!,
+  port: parseInt(process.env.DATABASE_PORT!),
+  user: process.env.DATABASE_USER!,
+  password: process.env.DATABASE_PASSWORD!,
+  database: process.env.DATABASE!
 };
 
 if(process.env.DATABASE_CA) {
