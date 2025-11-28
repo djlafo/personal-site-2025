@@ -49,3 +49,7 @@ piper/*
 eng.traineddata
 
 butterchurnpresets/*
+
+ca.pem
+containers/credentials
+containers/prod.env

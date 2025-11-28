@@ -65,8 +65,8 @@ export default function DylanChat() {
         </div>
         <hr/>
         <div className={styles.chatBox}>
-            {chatText.map(ct => {
-                return <React.Fragment key={crypto.randomUUID()}>
+            {chatText.map((ct,i) => {
+                return <React.Fragment key={i}>
                     <div className={ct.fromGPT ? styles.left : styles.right}>
                         <b>{ct.fromGPT ? 'Dylan' : 'You'}</b>
                         <br/>

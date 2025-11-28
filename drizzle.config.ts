@@ -1,10 +1,14 @@
 import 'dotenv/config';
 import { defineConfig } from 'drizzle-kit';
 import type { Config } from 'drizzle-kit';
+import { readFileSync } from 'node:fs';
 import { ConnectionOptions } from 'node:tls';
 
-interface sslOpts {
-  ca?: string;
+let ca: ReturnType<typeof readFileSync> | boolean; 
+try {
+  ca = readFileSync('./ca.pem');
+} catch {
+  ca = false
 }
 
 export const dbCreds : {
@@ -13,16 +17,16 @@ export const dbCreds : {
   user: string;
   password: string;
   database: string;
-  ssl?: ConnectionOptions | "prefer";
+  ssl?: ConnectionOptions | boolean;
 } = {
   host: process.env.DATABASE_HOST!,
   port: parseInt(process.env.DATABASE_PORT!),
   user: process.env.DATABASE_USER!,
   password: process.env.DATABASE_PASSWORD!,
   database: process.env.DATABASE!,
-  ssl: process.env.DATABASE_CA ? {
-    ca: process.env.DATABASE_CA!
-  } : "prefer"
+  ssl: ca ? {
+    ca
+  } : false
 };
 
 const config: Config = {

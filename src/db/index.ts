@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { readFileSync } from 'node:fs';
 import { ConnectionOptions } from 'node:tls';
 
 interface connectionInfo {
@@ -12,6 +13,13 @@ interface connectionInfo {
     ssl?: ConnectionOptions | boolean;
 }
 
+let ca: ReturnType<typeof readFileSync> | boolean; 
+try {
+    ca = readFileSync('./ca.pem');
+} catch {
+    ca = false;
+}
+
 const config : {
     connection: connectionInfo
 } = {
@@ -21,10 +29,10 @@ const config : {
         user: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE,
-        ssl: process.env.DATABASE_CA ? {
-            ca: process.env.DATABASE_CA,
+        ssl: ca ? {
+            ca,
             rejectUnauthorized: true
-        } : false
+        } : ca
     }
 };
 
