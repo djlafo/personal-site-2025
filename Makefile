@@ -6,7 +6,10 @@ build_prod:
 
 run_prod:
 	docker rm nextjs-website || true
-	docker run --env-file containers/prod.env -p 3000:3000 --name nextjs-website djlafo/nextjs 
+	docker run -d --env-file containers/prod.env -p 3000:3000 --name nextjs-website djlafo/nextjs
+
+logs_prod:
+	docker logs nextjs-website
 
 sh:
 	docker exec -it nextjs-website sh
@@ -19,6 +22,7 @@ push:
 pull:
 	aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 022498999375.dkr.ecr.us-east-2.amazonaws.com
 	docker pull 022498999375.dkr.ecr.us-east-2.amazonaws.com/djlafo/nextjs:latest
+	docker tag 022498999375.dkr.ecr.us-east-2.amazonaws.com/djlafo/nextjs:latest djlafo/nextjs
 
 sh_nginx:
 	docker exec -it nextjs-nginx sh
