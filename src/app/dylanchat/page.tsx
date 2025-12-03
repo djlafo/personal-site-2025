@@ -39,6 +39,7 @@ export default function DylanChat() {
             toast.error(response.message);
         } else {
             if(audioObj) {
+                // eslint-disable-next-line
                 audioObj.src = `data:audio/mpeg;base64,${response.audio}`;
                 audioObj.play();
             }

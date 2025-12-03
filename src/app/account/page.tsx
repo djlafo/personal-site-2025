@@ -22,6 +22,7 @@ export default function Page() {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line
         _listAlerts(false);
     }, []);
 

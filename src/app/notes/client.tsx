@@ -180,6 +180,7 @@ export function NoteParent({note, notes}: NoteParentProps) {
     useEffect(() => {
         if(typeof window !== 'undefined' && note) {
             const ls = localStorage.getItem(`NOTE[${note.id}]`);
+            // eslint-disable-next-line
             setOpened(!!ls);
         }
         // eslint-disable-next-line

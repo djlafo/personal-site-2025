@@ -45,7 +45,9 @@ export function useTimer({ onRoundOver }: { onRoundOver: () => void }): timerRet
                 if(s) {
                     ti[ro] = Number(s);
                 }
+                // eslint-disable-next-line
                 setTimes(ti);
+                // eslint-disable-next-line
                 setRound(ro);
                 if(!s && td) {
                     setTimerDate(new Date(td));

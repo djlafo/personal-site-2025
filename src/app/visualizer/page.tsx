@@ -23,6 +23,7 @@ export default function Visualizer() {
 
     useEffect(() => {
         supported().then(b => setIsSupported(b));
+        // eslint-disable-next-line
         setMediaDevices(!!navigator.mediaDevices);
     }, []);
 

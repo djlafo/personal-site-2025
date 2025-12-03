@@ -25,6 +25,7 @@ interface TaskCardProps {
     onSetPlannerData: (pd: PlannerData) => void;
 }
 export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCardProps) {
+    // eslint-disable-next-line
     const overdue = task.deadline && !task.done && !task.recurMonths && !task.recurDays ? new Date(task.deadline).getTime() - Date.now() < 0 : false;
 
     const setDone = async (b: boolean) => {
@@ -59,7 +60,9 @@ export default function TaskCard({ task, onSetEdit, onSetPlannerData }: TaskCard
         
         <div className={styles.body}>
             {deadlines.deadline && <>
-                <b><TimeInput value={Math.floor((deadlines.deadline.getTime() - Date.now())/1000)} 
+            {
+                // eslint-disable-next-line
+            }<b><TimeInput value={Math.floor((deadlines.deadline.getTime() - Date.now())/1000)} 
                     noInput
                     onZero={() => onTimerOver(task.done)}
                     countdownOnSet/></b>
