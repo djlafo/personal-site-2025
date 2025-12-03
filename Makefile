@@ -6,7 +6,7 @@ build_prod:
 
 run_prod:
 	docker rm nextjs-website || true
-	docker run -d --env-file containers/prod.env -p 3000:3000 --name nextjs-website djlafo/nextjs
+	docker run -d --add-host host.docker.internal:host-gateway --env-file containers/prod.env -p 3000:3000 --name nextjs-website djlafo/nextjs
 
 logs_prod:
 	docker logs nextjs-website
